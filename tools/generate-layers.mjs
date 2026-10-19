@@ -23,10 +23,14 @@ const palette = JSON.parse(
 // ============================================================================
 // 1. ORGANIC MULTI-PEAK 3D TOPOGRAPHY & FOREST TREES
 // ============================================================================
-const MIN_X = -260;
+const MIN_X = -370;
 const MAX_X = 320;
 const MIN_Z = -410;
 const MAX_Z = 570;
+
+function getValleyStreamX(z) {
+  return Math.round(-276 + Math.sin(z * 0.026) * 14 + Math.cos(z * 0.055) * 5);
+}
 
 function ridgeNoise(x, z) {
   const n1 = Math.sin(x * 0.032 + z * 0.021) * Math.cos(z * 0.028 - x * 0.019);
@@ -49,9 +53,9 @@ function gaussianPeak(x, z, px, pz, rx, rz, height) {
 function computeMountainHeight(x, z) {
   const rNoise = ridgeNoise(x, z);
 
-  // 1. Western Cliff Boundary (Separates the low-lying NW FIELDS from the Mountain Massif)
+  // 1. Western Cliff Boundary (Separates the low-lying NW FIELDS / Valley from the Mountain Massif)
   // On basgiath-map.jpg, the low-lying FIELDS are ONLY in the North-West (x < -178, z < 205).
-  // South of the Ravine (z >= 210), the entire Southern Plateau (Y = 55) extends all the way to the western map edge
+  // South of the Ravine (z >= 218), the entire Southern Plateau (Y = 55) extends all the way to the western map edge
   // so the Scribe Quadrant (Underground) sits 100% underground beneath the Y = 55 forest plateau!
   let westCliffX = -178;
   if (z < -135) {
@@ -59,12 +63,30 @@ function computeMountainHeight(x, z) {
   } else if (z >= -135 && z <= 175) {
     westCliffX = -182 + Math.sin(z * 0.04) * 5;
   } else {
-    // At z = 175..220, the cliff turns sharply WEST to the left edge of the map (x = -265)
-    westCliffX = -182 - smoothstep(175, 218, z) * 95;
+    // At z = 175..218, the cliff turns sharply WEST to the left edge of the map (x = -375)
+    westCliffX = -182 - smoothstep(175, 218, z) * 198;
   }
 
   const fieldToMountain = smoothstep(westCliffX - 32, westCliffX + 2, x);
-  const fieldsHeight = 16 + Math.round(Math.sin(x * 0.025 + z * 0.025) * 2.5);
+
+  // Sculpt the low-lying Valley (FIELDS, Presentation Meadow & Threshing Glade):
+  // Flat Y = 16 across the Presentation Meadow, Threshing Clearing, Valley Stream & Pastures,
+  // with gentle rolling wooded hills (Y = 17..24) along the outer western/northern rim!
+  let fieldsHeight =
+    16 +
+    Math.round(
+      Math.max(0, Math.sin(x * 0.028 + z * 0.022) * 3.2 + Math.cos(x * 0.05 - z * 0.04) * 1.8)
+    );
+  // Keep Presentation Meadow (-268..-192, -104..-20), Threshing Clearing (r=30 around -312, -188), Pastures & Stream level at Y = 16
+  const dxThresh = x + 312;
+  const dzThresh = z + 188;
+  const inPresentationArea = x >= -270 && x <= -190 && z >= -106 && z <= -18;
+  const inThreshingGlade = dxThresh * dxThresh + dzThresh * dzThresh <= 32 * 32;
+  const inPastureArea = x >= -336 && x <= -222 && z >= 16 && z <= 122;
+  const distStream = Math.abs(x - getValleyStreamX(z));
+  if (inPresentationArea || inThreshingGlade || inPastureArea || distStream <= 8) {
+    fieldsHeight = 16;
+  }
 
   // 2. Ravine & Main Plateau Profile
   const ravineCenterZ = 155 + Math.sin(x * 0.025) * 13 - x * 0.035;
@@ -167,11 +189,11 @@ function getH(x, z) {
   return heightGrid.get(`${x},${z}`) ?? 16;
 }
 
-// Returns true if (x, z) is within a safety margin of ANY building, tower, courtyard, or bridge
-// so forest trees never clip through walls, roofs, or the dragon landing pad!
+// Returns true if (x, z) is within a safety margin of ANY building, tower, courtyard, bridge, or Valley lore clearing
+// so forest trees never clip through walls, roofs, dragons, or the Presentation / Threshing stages!
 function isNearAnyBuildingOrBridge(x, z) {
-  // 1. Riders Quadrant, North Citadel, Courtyard & Towers (with safety buffer)
-  if (x >= -186 && x <= 128 && z >= -176 && z <= 92) return true;
+  // 1. Riders Quadrant, North Citadel, Courtyard, Outer Rampart Walls & Bastion Towers (with generous safety buffer)
+  if (x >= -202 && x <= 130 && z >= -182 && z <= 95) return true;
   // 2. Flight Field Viaduct Bridge & Stone Causeway
   if (x >= 112 && x <= 230 && z >= -190 && z <= -136) return true;
   // 3. Flight Field Circular Dragon Landing Pad (Center: 242, -218, r = 52 + 5-block buffer)
@@ -189,11 +211,19 @@ function isNearAnyBuildingOrBridge(x, z) {
   if (z >= 70 && z <= 240 && ((x >= -130 && x <= -100) || (x >= 60 && x <= 90))) return true;
   // 7. South Campus Citadel, Scribe West Projection, Bell Tower & Corner Towers (with 10-block buffer)
   if (x >= -172 && x <= 170 && z >= 202 && z <= 568) return true;
+  // 8. Valley Lore Clearings: Switchback Trail, Presentation Meadow (Kaori & Inspection Dragons), Threshing Glade, Stream & Pastures
+  if (x >= -268 && x <= -168 && z >= -106 && z <= -22) return true; // Switchback Trail + Presentation Meadow
+  const dxTh = x + 312;
+  const dzTh = z + 188;
+  if (dxTh * dxTh + dzTh * dzTh <= 25 * 25) return true; // Threshing Clearing Interior (Andarna & Tairn)
+  if (x >= -315 && x <= -235 && z >= -190 && z <= -95 && Math.abs((x + 240) - (z + 95) * 0.78) <= 8) return true; // Forest trail to Threshing Glade
+  if (z <= 145 && Math.abs(x - getValleyStreamX(z)) <= 6) return true; // Winding Valley Stream
+  if (x >= -332 && x <= -226 && z >= 20 && z <= 116) return true; // Sheep & Cattle Pastures + Shepherd Lodge
   return false;
 }
 
 // ============================================================================
-// 2. GENERATE CONTINUOUS FOREST TREES AROUND BASGIATH & FLIGHT FIELD
+// 2. GENERATE CONTINUOUS FOREST TREES AROUND BASGIATH, FLIGHT FIELD & VALLEY
 // ============================================================================
 const forestTrees = [];
 for (let z = MIN_Z + 12; z <= MAX_Z - 12; z += 11) {
@@ -213,7 +243,7 @@ for (let z = MIN_Z + 12; z <= MAX_Z - 12; z += 11) {
     // 1. East Woods & Continuous Mountain Slope up to the Flight Field & Cliff Grove (x >= 130, z in [-295..88])
     // 2. Northern Cliff Woods west of the Gauntlet (x in [-180..-58], z in [-225..-140])
     // 3. East & West of South Campus on the Y=55 plateau (x > 172 or x < -174, z in [235..545])
-    // 4. Scattered clumps in the North-Western Fields (x < -195, z < 165)
+    // 4. Dense, organic Threshing & Presentation Woodland across the Western Valley (x <= -195, z in [-350..150])
     const inEastAndFlightFieldWoods =
       jx >= 130 && jx <= 310 && jz >= -295 && jz <= 88 && h >= 75 && h <= 135;
     const inNorthWestMountainWoods =
@@ -221,19 +251,24 @@ for (let z = MIN_Z + 12; z <= MAX_Z - 12; z += 11) {
     const inSouthEastWoods =
       jx >= 172 && jx <= 252 && jz >= 235 && jz <= 545 && h >= 54 && h <= 82;
     const inSouthWestWoods =
-      jx >= -248 && jx <= -174 && jz >= 235 && jz <= 535 && h >= 53 && h <= 62;
-    const inFieldClumps =
-      jx <= -198 && jz <= 160 && h <= 22 && Math.sin(jx * 0.08) + Math.cos(jz * 0.08) > 0.75;
+      jx >= -355 && jx <= -174 && jz >= 235 && jz <= 535 && h >= 53 && h <= 62;
+    const inValleyWoods =
+      jx <= -196 &&
+      jz >= -355 &&
+      jz <= 142 &&
+      h >= 15 &&
+      h <= 26 &&
+      Math.sin(jx * 0.065) + Math.cos(jz * 0.055) > -0.35;
 
     if (
       inEastAndFlightFieldWoods ||
       inNorthWestMountainWoods ||
       inSouthEastWoods ||
       inSouthWestWoods ||
-      inFieldClumps
+      inValleyWoods
     ) {
       const isGolden = Math.abs(jx + jz) % 4 === 0;
-      const isBroadOak = h >= 120 && Math.abs(jx * 3 + jz) % 3 === 0;
+      const isBroadOak = (h >= 120 || h <= 24) && Math.abs(jx * 3 + jz) % 3 === 0;
       forestTrees.push({
         x: jx,
         z: jz,
@@ -1255,10 +1290,11 @@ for (const y of sortedYLevels) {
     label = `Wardstone-Kammer (Schutzzauber-Obelisk) & Tiefe Kavernen (Y=${y})`;
     zone = 'wardstone-obelisk';
     desc = 'Uralte unterirdische Felskaverne mit dem 27 Blöcke hohen Schutzzauber-Obelisken (Wardstone), 7 Drachenfeuer-Kanälen & geheimem Runen-Stollen';
-  } else if (y >= 10 && y <= 24) {
-    label = `Scribe Quadrant Katakomben, Wardstone-Kuppel & West-Fields (Y=${y})`;
-    zone = 'scribe-quadrant';
-    desc = 'Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen, Obelisken-Spitze sowie westliches Tiefland';
+  } else if (y >= 10 && y <= 36) {
+    label = `Das Tal (Vorstellen & Dreschen), Scribe-Katakomben & Wardstone-Kuppel (Y=${y})`;
+    zone = y >= 16 && y <= 36 ? 'threshing-valley' : 'scribe-quadrant';
+    desc =
+      'Das westliche Tal (Fields): Kaoris Drachenkunde-Lehrplatz, Aufmarsch des Vorstellens (3 Drachen), Lichtung des Dreschens (Andarna & Tairn), Drachen-Weiden & Scribe-Katakomben';
   } else if (y >= 55 && y <= 69) {
     label = `Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=${y})`;
     zone = 'south-campus';
@@ -1446,34 +1482,6 @@ for (const y of sortedYLevels) {
     }
   }
 
-  // 7. Secret Stepped Rune Tunnel connecting Scribe Underground Archive (X=-106, Y=10) to Wardstone Chamber (X=-60, Y=-11)
-  if (y >= -12 && y <= 19) {
-    for (let x = -108; x <= -58; x++) {
-      const tStep = (x + 108) / 50; // 0 at Scribe Archive (-108), 1 at Wardstone Chamber (-58)
-      const stepFloorY = Math.round(10 - tStep * 21); // Descends from Y=10 down to Y=-11
-      const relT = y - stepFloorY;
-      if (relT === 0) {
-        b.addLine(x, 373, x, 383, 6, 1);
-        b.addLine(x, 375, x, 381, 30, 1); // Red carpet runner down the secret stairs
-      } else if (relT >= 1 && relT <= 7) {
-        const inset = relT >= 6 ? relT - 5 : 0;
-        const northZ = 373 + inset;
-        const southZ = 383 - inset;
-        b.setBlock(x, northZ, x % 6 === 0 ? 28 : 6);
-        b.setBlock(x, southZ, x % 6 === 0 ? 28 : 6);
-        for (let z = northZ + 1; z <= southZ - 1; z++) {
-          b.clearBlock(x, z);
-        }
-        if (x % 8 === 0 && relT === 4) {
-          b.setBlock(x, northZ + 1, 12);
-          b.setBlock(x, southZ - 1, 12);
-        }
-      } else if (relT === 8) {
-        b.addLine(x, 375, x, 381, 6, 1);
-      }
-    }
-  }
-
   // --------------------------------------------------------------------------
   // B) SCRIBE QUADRANT UNDERGROUND ARCHIVES (Y = 10..22) + SPIRAL STAIR / ELEVATOR (Y = 10..55)
   // --------------------------------------------------------------------------
@@ -1495,7 +1503,7 @@ for (const y of sortedYLevels) {
     // 2. Carve Walkable Hollow Interior on relA = 1..11 (relA=0 is Floor, relA=12 is Vaulted Ceiling)
     if (relA >= 1 && relA <= 11) {
       b.carveCircle(cx, cz, 35);
-      // Carve the East Portal (X = -108..-103, Z = 375..381) leading into the Secret Wardstone Rune Tunnel!
+      // Carve the East Portal (X = -109..-103, Z = 375..381) leading into the Secret Wardstone Rune Tunnel!
       if (relA <= 7) {
         b.carveRect(-109, 375, -103, 381);
       }
@@ -1550,23 +1558,424 @@ for (const y of sortedYLevels) {
     }
   }
 
-  // Hollow Limestone Shaft with Spiral Staircase & Bronze Book Elevator from Y = 10 up to Scribe West Hall (Y = 55)!
+  // Secret Stepped Rune Tunnel connecting Scribe Underground Archive (X=-108, Y=10) to Wardstone Chamber (X=-56, Y=-11)
+  // Drawn AFTER both Wardstone Chamber & Scribe Underground Archive with 2-block-thick steps so both ends are 100% open & connected!
+  if (y >= -13 && y <= 19) {
+    for (let x = -109; x <= -56; x++) {
+      const tStep = Math.max(0, Math.min(1, (x + 107) / 49)); // 0 at Scribe Archive (-107), 1 at Wardstone Chamber (-58)
+      const stepFloorY = Math.round(10 - tStep * 21); // Descends smoothly from Y=10 down to Y=-11
+      const relT = y - stepFloorY;
+      if (relT === -1 || relT === 0) {
+        b.addLine(x, 373, x, 383, 6, 1);
+        if (relT === 0) {
+          b.addLine(x, 375, x, 381, 30, 1); // Continuous red carpet runner down the secret stairs
+        }
+      } else if (relT >= 1 && relT <= 7) {
+        const inset = relT >= 6 ? relT - 5 : 0;
+        const northZ = 373 + inset;
+        const southZ = 383 - inset;
+        b.setBlock(x, northZ, x % 6 === 0 ? 28 : 6);
+        b.setBlock(x, southZ, x % 6 === 0 ? 28 : 6);
+        for (let z = northZ + 1; z <= southZ - 1; z++) {
+          b.clearBlock(x, z);
+        }
+        if (x % 8 === 0 && relT === 4) {
+          b.setBlock(x, northZ + 1, 12);
+          b.setBlock(x, southZ - 1, 12);
+        }
+      } else if (relT === 8) {
+        b.addLine(x, 375, x, 381, 6, 1);
+      }
+    }
+  }
+
+  // Hollow Limestone Shaft with Continuous Helical Staircase & Bronze Book Elevator from Y = 10 up to Scribe West Hall (Y = 55)!
   if (y >= 10 && y <= 55) {
     const cx = -142;
     const cz = 378;
     b.addCircle(cx, cz, 10, 6, false, 2);
     b.carveCircle(cx, cz, 8);
-    // Spiral staircase steps climbing around the central Book Elevator
-    const stairAngle = ((y - 10) * 30 * Math.PI) / 180;
+    // Continuous spiral staircase steps climbing around the central Book Elevator (arrives at angle 0° East at Y = 55!)
+    const stairAngle = ((55 - y) * 24 * Math.PI) / 180;
+    const prevAngle = ((55 - (y - 1)) * 24 * Math.PI) / 180;
     const sx = Math.round(cx + Math.cos(stairAngle) * 6);
     const sz = Math.round(cz + Math.sin(stairAngle) * 6);
+    const prevSx = Math.round(cx + Math.cos(prevAngle) * 6);
+    const prevSz = Math.round(cz + Math.sin(prevAngle) * 6);
+    b.addLine(prevSx, prevSz, sx, sz, 29, 3);
     b.addCircle(sx, sz, 2, 29, true);
     b.addCircle(cx, cz, 2, 13, true); // Central Bronze Book Elevator Mechanism
     if (y >= 11 && y <= 17) {
       // Open East/West/North/South Archways at the bottom of the shaft into the Underground Rotunda
       b.carveRect(cx - 11, cz - 2, cx + 11, cz + 2);
       b.carveRect(cx - 2, cz - 11, cx + 2, cz + 11);
+      b.addLine(prevSx, prevSz, sx, sz, 29, 3);
       b.addCircle(cx, cz, 2, 13, true);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // B.2) DAS WESTLICHE TAL (FIELDS): SERPENTINEN-ABSTIEG, DAS VORSTELLEN
+  //      (PRESENTATION & KAORIS LEHRPLATZ), DIE LICHTUNG DES DRESCHENS
+  //      (THRESHING GLADE – VIOLET, ANDARNA & TAIRN), TALBACH & DRACHEN-WEIDEN
+  // --------------------------------------------------------------------------
+  // 1. Serpentinen-Felsweg (Valley Switchback Staircase, Y = 16..80):
+  //    Exits the West Bastion Tower (-172, -35) via an outer Upper Cliff Landing (-186, -35, Y=80),
+  //    descends along the outer western cliff slope to the Mid-Cliff Bastion (-196, -89, Y=48),
+  //    and turns southwards down to the Valley Gatehouse (-202, -62, Y=16).
+  //    All terrain above the steps is carved open to the sky (up to Y=88) and solid masonry anchors every step into the cliff!
+  if (y >= 16 && y <= 88) {
+    // Helper for exact step coordinates along the two switchback legs on the outer cliff face
+    const getSwitchbackPos = (sY) => {
+      if (sY >= 48) {
+        const t1 = (80 - sY) / 32; // 0 at Y=80 (-186, -41), 1 at Y=48 (-196, -89)
+        return [Math.round(-186 - t1 * 10), Math.round(-41 - t1 * 48)];
+      } else {
+        const t2 = (48 - sY) / 32; // 0 at Y=48 (-198, -85), 1 at Y=16 (-202, -62)
+        return [Math.round(-198 - t2 * 4), Math.round(-85 + t2 * 23)];
+      }
+    };
+
+    // Upper Cliff Terrace Landing outside the West Bastion Tower Gate (X = -190..-182, Z = -41..-29, Y = 58..84)
+    if (y >= 58 && y <= 80) {
+      b.addRect(-190, -41, -180, -29, y === 80 ? 33 : 2, true);
+      if (y === 80) {
+        b.addRect(-190, -41, -182, -29, 3, false, 1);
+      }
+    } else if (y === 81) {
+      b.addLine(-190, -41, -190, -29, 3, 1);
+      b.addLine(-190, -29, -183, -29, 3, 1);
+      b.carveRect(-189, -41, -183, -30); // Open northern edge at Z = -41 onto Step 80!
+    } else if (y === 82) {
+      b.setBlock(-190, -40, 34);
+      b.setBlock(-190, -30, 34);
+      b.carveRect(-189, -41, -183, -30);
+    } else if (y >= 83 && y <= 87) {
+      b.carveRect(-189, -41, -183, -30);
+    }
+
+    // Solid Mid-Cliff Bastion Tower at (-196, -89, r = 6) anchored from the valley floor (Y=16) up to Y=51!
+    if (y >= 16 && y <= 48) {
+      b.addCircle(-196, -89, 6, y === 48 ? 33 : 2, true);
+      b.addRect(-196, -93, -180, -85, 2, true); // Solid masonry anchor into the eastern cliff wall!
+      if (y === 48) {
+        b.addCircle(-196, -89, 5, 33, true);
+        b.addCircle(-196, -89, 6, 3, false, 1);
+      }
+    } else if (y === 49) {
+      b.addCircle(-196, -89, 6, 3, false, 1);
+      b.carveCircle(-196, -89, 5);
+    } else if (y === 50) {
+      b.setBlock(-201, -89, 34);
+      b.setBlock(-196, -94, 34);
+      b.carveCircle(-196, -89, 5);
+    } else if (y >= 51 && y <= 88) {
+      b.carveCircle(-196, -89, 5);
+    }
+
+    // First pass: Solid rock-anchored masonry substructure & continuous connected cobblestone stairs
+    for (let stepY = 16; stepY <= 80; stepY++) {
+      const [sx, sz] = getSwitchbackPos(stepY);
+      const [nextSx, nextSz] = getSwitchbackPos(Math.max(16, stepY - 1));
+      const relStep = y - stepY;
+
+      if (relStep < 0 && y >= 16) {
+        // Fill solid masonry underneath every step and anchor horizontally East into the cliff wall (up to X = -180)
+        // so the staircase is 100% solid and NEVER floats or exposes a hollow cliff interior!
+        const cliffAnchorX = stepY >= 48 ? -180 : -190;
+        b.addRect(sx - 3, sz - 1, Math.max(sx + 3, cliffAnchorX), sz + 1, relStep === -1 ? 3 : 2, true);
+      } else if (relStep === 0) {
+        b.addLine(sx, sz, nextSx, nextSz, 33, 5);
+        b.addRect(sx - 2, sz - 1, sx + 2, sz + 1, 33, true);
+      }
+    }
+
+    // Second pass: Carve open sky above every step all the way up to Y = 88 so ZERO cliff or tower blocks ever hide the stairs!
+    for (let stepY = 16; stepY <= 80; stepY++) {
+      const [sx, sz] = getSwitchbackPos(stepY);
+      const [nextSx, nextSz] = getSwitchbackPos(Math.max(16, stepY - 1));
+      const relStep = y - stepY;
+      if (relStep >= 1) {
+        b.carveLine(sx, sz, nextSx, nextSz, 5);
+        b.carveRect(sx - 2, sz - 1, sx + 2, sz + 1);
+      }
+    }
+
+    // Third pass: Place outer & inner stone curbs, guardrails, and torch braziers along the cleared staircase edges
+    for (let stepY = 16; stepY <= 80; stepY++) {
+      const [sx, sz] = getSwitchbackPos(stepY);
+      const relStep = y - stepY;
+      if (relStep === 0 || relStep === 1) {
+        b.setBlock(sx - 3, sz, relStep === 0 || stepY % 8 === 0 ? 3 : 29); // Outer western parapet & guardrail
+        if (stepY >= 48) {
+          b.setBlock(sx + 3, sz, 3); // Inner eastern cliff retaining curb
+        }
+      } else if (relStep === 2 && stepY % 8 === 0) {
+        b.setBlock(sx - 3, sz, 34); // Torch brazier every 8 vertical blocks
+      }
+    }
+
+    // Valley Gatehouse Arch at the bottom of the Switchback Staircase (-204, -62, Y = 16..23)
+    if (y >= 16 && y <= 23) {
+      const relG = y - 16;
+      b.carveArchway(-206, -66, -200, -58, relG, 7, 'x', 2, 33);
+      if (relG === 7) {
+        b.setBlock(-206, -65, 34);
+        b.setBlock(-206, -59, 34);
+      }
+    }
+  }
+
+  // 2. Valley Floor Lore Details: Stream, Presentation Meadow, Kaori's Arena, Threshing Glade & Pastures (Y = 16..37)
+  if (y >= 16 && y <= 37) {
+    const relV = y - 16; // 0..21 (Y = 16 is Valley Ground)
+
+    // 2a) Der Talbach (Winding Valley Stream from Z = -355 down to the Ravine Cliff at Z = 135) + 2 Timber Bridges
+    if (relV === 0) {
+      for (let z = -355; z <= 135; z++) {
+        const stX = getValleyStreamX(z);
+        b.addLine(stX - 3, z, stX + 3, z, 47, 1); // River gravel banks
+        b.addLine(stX - 2, z, stX + 2, z, 46, 1); // Mossy cobblestone edge
+        b.addLine(stX - 1, z, stX + 1, z, 21, 1); // Flowing mountain stream
+      }
+    }
+    // Two Rustic Timber & Stone Bridges across the Valley Stream (North Bridge at Z = -124, South Bridge at Z = 14)
+    for (const brZ of [-124, 14]) {
+      const stX = getValleyStreamX(brZ);
+      if (relV === 0) {
+        b.addRect(stX - 5, brZ - 2, stX + 5, brZ + 2, 5, false, 1);
+      } else if (relV === 1) {
+        b.addRect(stX - 4, brZ - 2, stX + 4, brZ + 2, 29, true); // Timber bridge deck
+      } else if (relV === 2) {
+        b.addLine(stX - 4, brZ - 2, stX + 4, brZ - 2, 35, 1); // North timber railing
+        b.addLine(stX - 4, brZ + 2, stX + 4, brZ + 2, 35, 1); // South timber railing
+        b.setBlock(stX - 4, brZ - 2, 34);
+        b.setBlock(stX + 4, brZ - 2, 34);
+        b.setBlock(stX - 4, brZ + 2, 34);
+        b.setBlock(stX + 4, brZ + 2, 34);
+      }
+    }
+
+    // 2b) DAS VORSTELLEN (PRESENTATION MEADOW) & PROFESSOR KAORIS LEHRPLATZ (X = -266..-196, Z = -100..-24)
+    if (relV === 0) {
+      // Main cobbled road from the Valley Gatehouse (-202, -62) to Kaori's Lecture Circle (-215, -62) and the Presentation Walk (-232, -62)
+      b.addLine(-200, -62, -232, -62, 33, 5);
+
+      // Professor Kaori's Dragonkind Lecture Amphitheater (Center: X = -212, Z = -62, r = 11)
+      b.addCircle(-212, -62, 11, 6, true);
+      b.addCircle(-212, -62, 9, 32, false, 1);
+      b.addCircle(-212, -62, 4, 28, true); // Arcane projection dais
+
+      // Cadet Presentation Inspection Line (Aufmarschlinie des Vorstellens: X = -232, Z = -96..-26)
+      b.addRect(-234, -96, -230, -26, 33, true);
+      b.addRect(-235, -96, -235, -26, 6, true); // Western border facing the dragons
+      b.addRect(-229, -96, -229, -26, 6, true);
+
+      // Scorched Dragonfire Patch on the Presentation Line (-232, -46) where a panicked cadet bolted and was torched!
+      b.addCircle(-233, -46, 4, 1, true);
+      b.addCircle(-233, -46, 2, 14, true);
+      b.setBlock(-233, -46, 34);
+
+      // Stone & Gravel Dragon Perch Pads on the Western side of the Presentation Meadow (X = -255)
+      b.addCircle(-255, -86, 12, 47, true);
+      b.addCircle(-257, -60, 13, 47, true);
+      b.addCircle(-254, -34, 12, 47, true);
+    }
+
+    // Kaori's Raised Teaching Podium, Dragon-Illusion Holo-Crystal & Cadet Benches (relV = 1..5)
+    if (relV === 1) {
+      // Raised lectern & arcane projection pedestal at (-212, -62)
+      b.addCircle(-212, -62, 3, 28, true);
+      b.setBlock(-212, -62, 20);
+      // 2 Curved semi-circles of Dark Oak Cadet Benches (#11) on the East side facing Kaori & the Dragons
+      for (let deg = -65; deg <= 65; deg += 12) {
+        const rad = (deg * Math.PI) / 180;
+        b.setBlock(-212 + Math.round(Math.cos(rad) * 6), -62 + Math.round(Math.sin(rad) * 6), 11);
+        b.setBlock(-212 + Math.round(Math.cos(rad) * 8), -62 + Math.round(Math.sin(rad) * 8), 11);
+      }
+      // Presentation Line Braziers & Banner Posts along X = -228 and X = -236
+      for (let z = -94; z <= -28; z += 11) {
+        b.setBlock(-228, z, 3);
+        b.setBlock(-236, z, 3);
+      }
+    } else if (relV === 2) {
+      b.setBlock(-212, -62, 11); // Kaori's Lectern
+      b.setBlock(-214, -62, 12); // Arcane Signet Projection Crystal
+      for (let z = -94; z <= -28; z += 11) {
+        b.setBlock(-228, z, 34); // Torch Braziers along the Presentation Walk
+        b.setBlock(-236, z, 34);
+      }
+    } else if (relV >= 3 && relV <= 5) {
+      // Floating Arcane Dragon-Illusion Ring above Kaori's Podium (Kaori's Signet in Chapter 13!)
+      if (relV === 4) {
+        b.addCircle(-214, -62, 3, 12, false, 1);
+        b.setBlock(-214, -62, 34);
+      } else {
+        b.setBlock(-214, -62, 12);
+      }
+    }
+
+    // 3 Detailed Inspection Dragons on the Presentation Meadow (relV = 1..15) examining the Cadet Line!
+    if (relV >= 1 && relV <= 15) {
+      // 1) Green Clubtail Dragon (Grüner Keulenschwanz-Drache, perched North-West at -255, -86, facing East toward cadets)
+      stampDetailedDragonAtY(b, relV, {
+        cx: -255,
+        cz: -86,
+        facingDeg: 355,
+        scale: 0.58,
+        scaleMat: 16,     // Green Veridium Dragonscale
+        bellyMat: 6,      // Limestone Underbelly
+        membraneMat: 36,  // Deep Green Wing Membranes
+        hornMat: 20,      // Gold Horns & Clubtail Studs
+        eyeMat: 34,
+        tailType: 'clubtail'
+      });
+
+      // 2) Red Swordtail Dragon (Roter Schwertschwanz-Drache, perched Center-West at -257, -60, facing East)
+      stampDetailedDragonAtY(b, relV, {
+        cx: -257,
+        cz: -60,
+        facingDeg: 0,
+        scale: 0.64,
+        scaleMat: 17,     // Crimson Dragonscale
+        bellyMat: 3,      // Polished Blackstone Underbelly
+        membraneMat: 30,  // Deep Crimson Wing Membranes
+        hornMat: 9,       // Steel Swordtail Blades & Horns
+        eyeMat: 34,
+        tailType: 'swordtail'
+      });
+
+      // 3) Brown Scorpiontail Dragon (Brauner Skorpionschwanz-Drache, perched South-West at -254, -34, facing East)
+      stampDetailedDragonAtY(b, relV, {
+        cx: -254,
+        cz: -34,
+        facingDeg: 8,
+        scale: 0.56,
+        scaleMat: 19,     // Bronze/Scoria Brown Dragonscale
+        bellyMat: 5,      // Cobblestone Underbelly
+        membraneMat: 29,  // Dark Timber Wing Membranes
+        hornMat: 20,      // Golden Scorpion Stinger & Horns
+        eyeMat: 12,
+        tailType: 'scorpiontail'
+      });
+    }
+
+    // 2c) DIE WALDLICHTUNG DES DRESCHENS (THE THRESHING CLEARING – KAPITEL 16: VIOLET, ANDARNA & TAIRN)
+    // Center: X = -312, Z = -188, surrounded by a dense ring of 10 monumental ancient trees & mossy crag boulders!
+    if (relV === 0) {
+      // Winding forest trail from Presentation Meadow (-232, -96) over North Stream Bridge (-264, -124) into the Threshing Glade (-312, -188)
+      b.addLine(-232, -96, getValleyStreamX(-124) + 3, -124, 47, 3);
+      b.addLine(getValleyStreamX(-124) - 3, -124, -295, -172, 47, 3);
+
+      // Mossy Forest Glade Floor (Center: -312, -188, r = 24)
+      b.addCircle(-312, -188, 22, 23, true);
+      b.addCircle(-318, -192, 9, 46, false, 2); // Mossy stone ring around Andarna's shelter
+
+      // Scorched Earth & Lightning Blast Crater at (-300, -180) where Tairn lands & incinerates Oren during Threshing!
+      b.addCircle(-300, -180, 7, 1, true);
+      b.addCircle(-300, -180, 4, 14, true);
+      b.addCircle(-300, -180, 2, 34, true);
+      b.setBlock(-296, -178, 12);
+      b.setBlock(-303, -183, 12);
+    }
+
+    // Protective Mossy Rock Outcrop / Crag Boulders (-326, -196, relV = 0..7) where Violet shields Andarna!
+    if (relV <= 7) {
+      const boulderR = Math.max(1, 6 - Math.floor(relV * 0.75));
+      b.addCircle(-326, -196, boulderR, relV <= 2 ? 25 : 22, true);
+      if (relV <= 5) {
+        b.addCircle(-321, -202, Math.max(1, 4 - Math.floor(relV * 0.7)), 46, true);
+        b.addCircle(-330, -189, Math.max(1, 4 - Math.floor(relV * 0.7)), 22, true);
+      }
+    }
+
+    // Golden Feathertail ANDARNA on the Threshing Clearing (-316, -191, relV = 1..12) sheltered beside the boulders!
+    if (relV >= 1 && relV <= 12) {
+      stampDetailedDragonAtY(b, relV, {
+        cx: -316,
+        cz: -191,
+        facingDeg: 42,
+        scale: 0.48,
+        scaleMat: 20,     // Golden Feathertail Scales
+        bellyMat: 6,      // Limestone Underbelly
+        membraneMat: 13,  // Bronze Wing Membranes
+        hornMat: 12,      // Glowing Crystal Horns & Feathertail Plume
+        eyeMat: 34,
+        tailType: 'feathertail'
+      });
+    }
+
+    // Ring of 10 Monumental Ancient Oak & Golden Aurum Trees encircling the Threshing Glade (relV = 1..20)
+    if (relV >= 1 && relV <= 20) {
+      const threshingTreeRing = [
+        { cx: -312, cz: -216, height: 19, pMat: 36, sMat: 27 },
+        { cx: -334, cz: -208, height: 20, pMat: 27, sMat: 36 },
+        { cx: -340, cz: -186, height: 18, pMat: 36, sMat: 27 },
+        { cx: -332, cz: -165, height: 17, pMat: 27, sMat: 36 },
+        { cx: -310, cz: -158, height: 19, pMat: 36, sMat: 27 },
+        { cx: -288, cz: -166, height: 16, pMat: 27, sMat: 36 },
+        { cx: -282, cz: -190, height: 18, pMat: 36, sMat: 27 },
+        { cx: -290, cz: -210, height: 17, pMat: 27, sMat: 36 },
+        { cx: -268, cz: -146, height: 16, pMat: 36, sMat: 27 },
+        { cx: -248, cz: -116, height: 17, pMat: 27, sMat: 36 }
+      ];
+      for (const tt of threshingTreeRing) {
+        stampAncientLoreTreeAtY(b, relV, {
+          cx: tt.cx,
+          cz: tt.cz,
+          height: tt.height,
+          trunkMat: 35,
+          primaryLeafMat: tt.pMat,
+          secondaryLeafMat: tt.sMat,
+          snowDusted: false
+        });
+      }
+    }
+
+    // 2d) DRACHEN-WEIDEN & HIRTENHOF IM SÜDLICHEN TAL (SHEEP & CATTLE PASTURES FOR DRAGON FEEDING, X = -330..-230, Z = 22..114)
+    if (relV === 0) {
+      // Dirt & gravel pasture paths connecting South Stream Bridge (-272, 14) to the Shepherd Lodge (-246, 65) and Paddocks
+      b.addLine(-232, -26, getValleyStreamX(14) + 3, 14, 47, 3);
+      b.addLine(getValleyStreamX(14) - 3, 14, -295, 24, 47, 3);
+      b.addLine(getValleyStreamX(14) + 3, 14, -246, 52, 47, 3);
+      // Water troughs (#5 stone border, #21 water) & Golden Hay Bales (#20) inside North & South Paddocks
+      b.addRect(-318, 34, -310, 38, 5, true);
+      b.addRect(-317, 35, -311, 37, 21, true);
+      b.addCircle(-292, 48, 4, 20, true);
+      b.addRect(-318, 82, -310, 86, 5, true);
+      b.addRect(-317, 83, -311, 85, 21, true);
+      b.addCircle(-294, 96, 4, 20, true);
+    } else if (relV === 1) {
+      // Timber Fences around North Sheep Paddock (X = -326..-282, Z = 24..64) & South Cattle Paddock (X = -326..-282, Z = 72..112)
+      b.addRect(-326, 24, -282, 64, 29, false, 1);
+      b.addRect(-326, 72, -282, 112, 29, false, 1);
+      // Hay bale tops (#20)
+      b.addCircle(-292, 48, 2, 20, true);
+      b.addCircle(-294, 96, 2, 20, true);
+      // Grazing Sheep (#26 white wool) & Cattle (#19 brown hides) scattered in the paddocks
+      const sheepCoords = [
+        [-305, 32], [-312, 46], [-298, 56], [-288, 36], [-318, 54], [-302, 42]
+      ];
+      for (const [sx, sz] of sheepCoords) b.setBlock(sx, sz, 26);
+      const cattleCoords = [
+        [-306, 80], [-314, 94], [-296, 104], [-288, 84], [-316, 102]
+      ];
+      for (const [cxP, czP] of cattleCoords) b.addRect(cxP, czP, cxP + 1, czP, 19, true);
+    }
+
+    // Shepherd & Beastmaster Lodge (X = -256..-234, Z = 52..76, relV = 0..9)
+    if (relV <= 5) {
+      b.addRect(-256, 52, -234, 76, relV <= 1 ? 5 : 29, relV === 0, 2);
+      if (relV >= 1 && relV <= 4) {
+        b.carveRect(-254, 54, -236, 74);
+        if (relV <= 3) b.carveRect(-256, 62, -254, 66); // West Doorway facing the paddocks
+        if (relV === 1) {
+          b.addRect(-242, 56, -238, 60, 20, true); // Fodder & grain storage inside lodge
+          b.setBlock(-238, 72, 34); // Warm hearth fire
+        }
+      }
+    } else if (relV >= 6 && relV <= 9) {
+      b.addGableRoof(-257, 51, -233, 77, relV - 5, 4, true, 8, 29);
     }
   }
 
@@ -1680,13 +2089,19 @@ for (const y of sortedYLevels) {
         b.carveRect(-132, 328, -58, 477);
         b.carveRect(-159, 351, -58, 405);
       }
-      // Preserve the Book Elevator & Spiral Staircase Entrance at (-142, 378) on the Ground Floor!
+      // Preserve the Book Elevator & Continuous Spiral Staircase Landing at (-142, 378) on the Ground Floor (Y = 55)!
       if (relS <= 6) {
         b.addCircle(-142, 378, 10, 6, false, 2);
         b.carveCircle(-142, 378, 8);
+        if (relS === 0) {
+          // Solid Stone & Timber Landing Platform on the East side of the shaft (X = -140..-132, Z = 374..382, Y = 55)
+          // connecting the top spiral step (-136, 378, Y = 55) flush into the Scribe Overground Hall!
+          b.addRect(-140, 374, -132, 382, 29, true);
+          b.addLine(-139, 376, -130, 378, 30, 3);
+        }
         b.addCircle(-142, 378, 2, 13, true);
         // Open East Archway from the Elevator Rotunda into the Scribe Hall
-        b.carveArchway(-135, 372, -130, 384, relS, 6, 'x', 28, null);
+        b.carveArchway(-135, 372, -130, 384, relS, 6, 'x', 28, relS === 0 ? 30 : null);
       }
       // Windows on West Cross-Gable Facade
       if ((relS >= 3 && relS <= 6) || (relS >= 12 && relS <= 15)) {
@@ -1791,16 +2206,27 @@ for (const y of sortedYLevels) {
       const tMat = isSpire ? 8 : 4;
 
       // --- A) NW Healer Parapet Tower (X = -115, Z = 235) ---
-      if (!isSpire && !isGround && !isFloor2 && relS !== 17) {
+      // Open stairwell from Ground (relS = 0, Y = 55) up to Parapet Exit Level (relS = 17, Y = 72) so stairs are NEVER buried under a tower floor!
+      if (!isSpire && !isGround) {
         b.carveCircle(-115, 235, rT - 3); // Clear any Healer wall/roof clipping inside the tower!
       }
-      b.addCircle(-115, 235, rT, tMat, isGround || isFloor2 || relS === 17 || rT <= 4, 3);
-      if (!isSpire && relS >= 1 && relS <= 16) {
-        const stairAngle = (relS * 32 * Math.PI) / 180;
+      b.addCircle(-115, 235, rT, tMat, isGround || rT <= 4, 3);
+      if (!isSpire && relS <= 17) {
+        // Continuous helical staircase from South Entrance (90° at relS=0, Z=249) winding 1.5 turns to North Parapet Exit (270° at relS=17, Z=221)!
+        const stairAngle = ((90 + (relS / 17) * 540) * Math.PI) / 180;
+        const prevAngle = ((90 + (Math.max(0, relS - 1) / 17) * 540) * Math.PI) / 180;
         const sx = Math.round(-115 + Math.cos(stairAngle) * 14);
         const sz = Math.round(235 + Math.sin(stairAngle) * 14);
+        const prevSx = Math.round(-115 + Math.cos(prevAngle) * 14);
+        const prevSz = Math.round(235 + Math.sin(prevAngle) * 14);
+        b.addLine(prevSx, prevSz, sx, sz, 29, 5);
         b.addCircle(sx, sz, 4, 29, true);
-        b.addCircle(-115, 235, 4, 4, true);
+        b.addCircle(-115, 235, 5, 4, true); // Central masonry column supporting the spiral stairs
+        if (relS === 17) {
+          // Upper Parapet Landing Platform on the North side of the tower (Z = 212..226, Y = 72) leading directly onto the Parapet!
+          b.addRect(-123, 212, -107, 226, 32, true);
+          b.addRect(-118, 212, -112, 224, 24, true);
+        }
       }
       b.carveArchway(-121, 255, -109, 262, relS, 7, 'z', 28, 32);
       if (relS >= 17 && relS <= 25) {
@@ -1843,11 +2269,23 @@ for (const y of sortedYLevels) {
       b.addRect(45, 281, 53, 289, 3, true);
       b.addRect(97, 281, 105, 289, 3, true);
 
-      // Grand Staircase inside the Bell Tower Gatehouse climbing from Courtyard level (Y=55, relB=0) up to East Bridge Deck (Y=64, relB=9)!
+      // Grand Staircase inside the Bell Tower Gatehouse:
+      // Starts at Z = 256 (leaving Z = 256..282 completely open for the West Courtyard Portal & South Admin Portal!)
+      // and rises smoothly (2 Z-blocks per step) up to the Upper Bridge Landing (Z = 232..238, Y = 64, relB = 9)!
+      if (relB === 0) {
+        b.addRect(52, 254, 98, 282, 32, true);
+        b.addRect(52, 256, 81, 263, 30, true); // Red carpet from West Courtyard Portal
+        b.addRect(69, 254, 81, 284, 30, true); // Red carpet from South Admin Portal to Staircase base
+      }
       if (relB >= 0 && relB <= 9) {
-        const stepZ = 276 - relB * 3;
-        b.addRect(66, 235, 84, stepZ, 32, true);
-        b.addRect(69, stepZ - 3, 81, stepZ, 30, true);
+        const stepZ = 256 - relB * 2; // 256 at relB=0 (Y=55) -> 238 at relB=9 (Y=64)
+        b.addRect(66, 234, 84, stepZ, 32, true);
+        b.addRect(69, Math.max(234, stepZ - 3), 81, stepZ, 30, true);
+        if (relB === 9) {
+          // Flush Upper Landing connecting to East Viaduct Bridge at Z = 232, Y = 64
+          b.addRect(64, 232, 86, 240, 32, true);
+          b.addRect(69, 232, 81, 240, 33, true);
+        }
       }
       b.carveArchway(46, 252, 54, 266, relB, 8, 'x', 28, 32);
       b.carveArchway(68, 282, 82, 290, relB, 8, 'z', 28, 32);
@@ -2011,13 +2449,28 @@ for (const y of sortedYLevels) {
     // ========================================================================
     if (relY <= 24) {
       if (isGround) {
-        // Paved slate courtyard west & north-west of the Rotunda & North Citadel
-        b.addRect(-162, -130, -30, 40, 1, true);
+        // Exact polygon paving inside the angled Outer Courtyard Rampart Wall
+        // ((-148, 40) -> (-172, -35) -> (-132, -135) -> (-28, -162)) so ZERO slate blocks stick out outside the wall!
+        for (let cz = -160; cz <= 40; cz++) {
+          let wallWestX;
+          if (cz >= -35) {
+            wallWestX = -172 + ((cz + 35) / 75) * 24;
+          } else if (cz >= -135) {
+            wallWestX = -132 - ((cz + 135) / 100) * 40;
+          } else {
+            wallWestX = -28 - ((cz + 162) / 27) * 104;
+          }
+          const minCourtX = Math.ceil(wallWestX) + 2;
+          if (minCourtX <= -28) {
+            b.addLine(minCourtX, cz, -28, cz, 1, 1);
+          }
+        }
         // Paved East Terrace & Approach to the Flight Field Viaduct Bridge (X = 34..120, Z = -156..46)
         b.addRect(34, -156, 120, 46, 1, true);
         // Grand Cobblestone Roadways across the Riders Quadrant
-        b.addRect(-155, -7, -52, 7, 33, true); // West Road to Rotunda
-        b.addRect(-121, -110, -109, 40, 33, true); // Parapet Road north to Combat Pit
+        b.addRect(-162, -7, -52, 7, 33, true); // West Road to Rotunda
+        b.addLine(-160, 0, -160, -35, 33, 7);  // Cobblestone Road leading directly to the West Bastion Gate (-161, -35)!
+        b.addRect(-121, -65, -109, 40, 33, true); // Parapet Road north to Combat Pit
         b.addRect(69, -152, 81, 84, 33, true); // East Viaduct Roadway north to Citadel & Flight Field Bridge
         b.addRect(81, -152, 118, -140, 33, true); // Turn East to Flight Field Viaduct Bridge (X=116, Z=-146)
         // 4 Sparring & Formation Quadrants in Main Courtyard
@@ -2025,24 +2478,24 @@ for (const y of sortedYLevels) {
         b.addRect(-104, 8, -76, 32, 32, false, 2);
         b.addRect(-148, -50, -124, -22, 32, false, 2);
         b.addRect(-104, -50, -76, -22, 32, false, 2);
-        // Circular Hand-to-Hand Combat Pit in the NW Courtyard
-        b.addCircle(-115, -85, 14, 30, false, 2);
-        b.addCircle(-115, -85, 12, 29, true);
+        // Circular Hand-to-Hand Combat Pit in the W/NW Courtyard (shifted cleanly inside the courtyard at -122, -78)
+        b.addCircle(-122, -78, 14, 30, false, 2);
+        b.addCircle(-122, -78, 12, 29, true);
         // Secluded Garden Bed for the Courtyard Listening Tree (Kapitel 6 – Treffen der Gezeichneten)
-        b.addCircle(-146, -102, 8, 32, false, 2);
-        b.addCircle(-146, -102, 6, 23, true);
+        // Placed at (-92, -118) with 27+ blocks of clearance from the outer rampart walls so ZERO leaves touch the wall!
+        b.addCircle(-92, -118, 9, 32, false, 2);
+        b.addCircle(-92, -118, 7, 23, true);
       }
 
       // The Courtyard Listening Tree (Kapitel 6: where Violet hides in the branches during the Marked Ones' secret meeting)
       if (relY >= 1 && relY <= 18) {
         stampAncientLoreTreeAtY(b, relY, {
-          cx: -146,
-          cz: -102,
+          cx: -92,
+          cz: -118,
           height: 18,
           trunkMat: 35,
           primaryLeafMat: 36,
           secondaryLeafMat: 27,
-          blossomMat: 12,
           snowDusted: false
         });
       }
@@ -2068,7 +2521,6 @@ for (const y of sortedYLevels) {
 
       // Outer Courtyard Rampart Wall:
       // Connects (-148, 40) -> (-172, -35) -> (-132, -135) -> (-28, -162) [NW Corner Tower of the North Citadel!]
-      // This follows the outer cliff edge on basgiath-map.jpg and NEVER cuts into the Riders Quadrant or Citadel!
       if (relY <= 15) {
         const isBattlement = relY >= 13;
         if (!isBattlement || relY % 2 === 1) {
@@ -2095,9 +2547,32 @@ for (const y of sortedYLevels) {
           b.carveCircle(tx, tz, rB - 2); // Prevent rampart walls from clipping inside bastion towers!
         }
         b.addCircle(tx, tz, rB, isRoof ? 8 : 3, isGround || relY === 12 || rB <= 3, 2);
+        // Spiral stairs inside SW (-148, 40) and NW (-132, -135) Bastion Towers up to the relY = 12 Rampart Walkway!
+        if ((tx !== -172) && relY >= 1 && relY <= 12) {
+          if (relY === 12) b.carveCircle(tx, tz, 6);
+          const bAng = ((relY * 28) * Math.PI) / 180;
+          const prevBAng = (((relY - 1) * 28) * Math.PI) / 180;
+          b.addLine(
+            Math.round(tx + Math.cos(prevBAng) * 6),
+            Math.round(tz + Math.sin(prevBAng) * 6),
+            Math.round(tx + Math.cos(bAng) * 6),
+            Math.round(tz + Math.sin(bAng) * 6),
+            29,
+            3
+          );
+          b.addCircle(tx, tz, 2, 3, true);
+        }
+      }
+      // Walkable Cobblestone Gatehouse Passage straight through the West Bastion Tower (-172, -35)
+      // from the Courtyard (X = -159) out to the Upper Cliff Terrace Landing (X = -184..-190, Z = -41..-29, Y = 80)!
+      if (isGround) {
+        b.addCircle(-172, -35, 9, 33, true);
       }
       b.carveArchway(-140, 36, -135, 44, relY, 6, 'x', 28, 32);
-      b.carveArchway(-164, -39, -159, -31, relY, 6, 'x', 28, 32);
+      b.carveArchway(-184, -39, -159, -31, relY, 7, 'x', 28, 33); // Straight Gatehouse Tunnel through West Bastion Tower to Upper Cliff Landing!
+      if (relY >= 1 && relY <= 7) {
+        b.carveRect(-189, -42, -184, -30); // Guarantee unobstructed transition from West Gate onto Step 80 (-186, -41)!
+      }
       b.carveArchway(-136, -127, -128, -122, relY, 6, 'z', 28, 32);
     }
 
@@ -2481,24 +2956,29 @@ for (const y of sortedYLevels) {
   // F) GAUNTLET APPROACH TRAIL (Z = -163..-225), THE GAUNTLET (Z = -225..-385) & FLIGHT FIELD (Y = 132..145)
   // --------------------------------------------------------------------------
   // 1. Scenic Alpine Approach Trail from the Citadel North Gate (Z = -163, Y = 80) to the Gauntlet Base Plaza (Z = -225, Y = 85)
-  if (y >= 80 && y <= 88) {
+  if (y >= 79 && y <= 92) {
     for (let z = -163; z >= -225; z--) {
       const tA = (-163 - z) / (225 - 163);
       const trailY = Math.round(80 + tA * 5);
       const trailX = Math.round(25 - tA * 7 + Math.sin((z + 163) * 0.05) * 6);
-      if (y === trailY) {
+      if (y === trailY || y === trailY - 1) {
         b.addRect(trailX - 4, z, trailX + 4, z, 33, true);
         b.setBlock(trailX - 5, z, 3);
         b.setBlock(trailX + 5, z, 3);
-      } else if (y === trailY + 1 && Math.abs(z) % 12 === 0) {
-        b.setBlock(trailX - 5, z, 34);
-        b.setBlock(trailX + 5, z, 34);
+      } else if (y >= trailY + 1 && y <= trailY + 6) {
+        b.carveRect(trailX - 4, z, trailX + 4, z);
+        if (y === trailY + 1 && Math.abs(z) % 12 === 0) {
+          b.setBlock(trailX - 5, z, 34);
+          b.setBlock(trailX + 5, z, 34);
+        }
       }
     }
-    if (y === 85) {
+    if (y === 84 || y === 85) {
       // Gauntlet Base Starting Plaza at Z = -225 (Over 60 blocks north of the Riders Citadel!)
       b.addCircle(18, -225, 11, 2, true);
       b.addCircle(18, -225, 9, 32, false, 2);
+    } else if (y >= 86 && y <= 91) {
+      b.carveCircle(18, -225, 10);
     }
   }
 
@@ -2737,6 +3217,13 @@ const manifest = {
       center: { x: -25, y: 0, z: 378 },
       yRange: [-12, 16],
       description: 'Tief im Felsmassiv verborgene Runen-Kaverne (Y = -12..18) mit dem 27 Blöcke hohen Schutzzauber-Obelisken, 7 Drachenfeuer-Kanälen, Runen-Stollen zum Archiv & Drachen-Tunnel zur Schlucht'
+    },
+    {
+      id: 'threshing-valley',
+      name: 'Das Tal: Vorstellen & Dreschen (Fields)',
+      center: { x: -265, y: 24, z: -115 },
+      yRange: [15, 45],
+      description: 'Weitläufiges westliches Tal (Fields): Serpentinen-Abstieg, Kaoris Drachenkunde-Lehrplatz, Aufmarsch des Vorstellens (3 Drachen), Waldlichtung des Dreschens (Andarna & Tairn), Talbach & Drachen-Weiden'
     },
     {
       id: 'gauntlet-flight-field',

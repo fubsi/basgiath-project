@@ -292,9 +292,18 @@ flowchart TD
 
 ### Zone 4: Außenbereiche (Fields, Gauntlet, Flight Field)
 
-1. **Fields (Westliches Tiefland)**
-   - **Kartenmerkmal:** Große, flache Ebene westlich unterhalb des Felsplateaus (`FIELDS`), durchzogen von einer Hangkante und Baumgruppen.
-   - **Umsetzung:** Landwirtschaftliche Versorgungsflächen, Weiden (für die Schafe/Rinder zur Drachenfütterung) und Übungsfelder der Infanterie.
+1. **Fields / Das Westliche Tal (`X = -370..-180, Z = -355..150, Y = 16..37`) – Das Vorstellen (*Presentation*), Kaoris Drachenkunde & Das Dreschen (*Threshing*)**
+   - **Lore-Hintergrund (*Fourth Wing*, Kapitel 13–16):**
+     - Bevor die Erstklässler am 1. Oktober zum **Dreschen (*Threshing*)** zugelassen werden, finden im weitläufigen, von Wäldern, Hügeln, Felsen und einem Gebirgsbach durchzogenen **Tal unterhalb der Westklippe des Reiterquadranten (`FIELDS` am Übergang zum *Vale*)** der praktische **Drachenkunde-Unterricht von Professor Kaori** sowie das **Vorstellen (*Presentation*)** statt.
+   - **Architektur & Details im 3D-Modell:**
+     - **Serpentinen-Felsweg (`Valley Switchback Cliff Trail`, `Y = 16..80`):** Ein in die steile Westklippe geschlagener, durch Stützmauern (`#2`), Brustwehren (`#3`) und Feuerschalen (`#34`) gesicherter Serpentinen-Abstieg führt vom Westtor des Reiterquadranten (`X = -172, Z = -35, Y = 80`) über eine Mittel-Bastion (`X = -185, Z = -92, Y = 48`) hinab zum steinernen **Tal-Torhaus (`X = -196, Z = -62, Y = 16`)**.
+     - **Professor Kaoris Drachenkunde-Lehrplatz (`X = -212, Z = -62, Y = 16..21`):** Direkt vor dem Tal-Torhaus liegt das halbkreisförmige Freiluft-Auditorium (`Ø 22 Blöcke`) mit aufsteigenden *Dark Oak*-Sitzbänken (`#11`) und Kaoris erhöhtem **Illusions-Podium (`#28 / #20`)**, über dem ein leuchtender Kristall- & Feuer-Projektionsring (`#12 / #34`) schwebt – eine direkte Darstellung von **Professor Kaoris Siegelkraft (*Signet*)**, mit der er den Kadetten vor dem Vorstellen und Dreschen lebensgroße Illusionen der Drachenarten, ihrer Schwanzwaffen (*Daggertail, Clubtail, Scorpiontail, Swordtail, Morningstail, Feathertail*) und ihrer Temperamente projiziert und erklärt.
+     - **Das Vorstellungs-Feld (`Presentation Meadow`, `X = -265..-225, Z = -98..-26, Y = 16..31`):** Westlich des Lehrplatzes verläuft die gepflasterte, von Feuerschalen gesäumte **Aufmarschlinie des Vorstellens (`X = -232, Z = -96..-26`)**, auf der die ungebundenen Kadetten einzeln an den versammelten Drachen vorbeigehen müssen (inklusive einer verbrannten Einschlagstelle bei `X = -233, Z = -46`, wo ein in Panik fliehender Kadett geröstet wurde). Direkt gegenüber mustern **3 voll ausmodellierte Drachen** die Reihe der Kadetten:
+       1. **Grüner Keulenschwanz-Drache (*Green Clubtail*, `X = -255, Z = -86`)**
+       2. **Roter Schwertschwanz-Drache (*Red Swordtail*, `X = -257, Z = -60`)**
+       3. **Brauner Skorpionschwanz-Drache (*Brown Scorpiontail*, `X = -254, Z = -34`)**
+     - **Die Waldlichtung des Dreschens (`The Threshing Clearing – Kapitel 16`, Zentrum: `X = -312, Z = -188, Y = 16..36`):** Über einen geschwungenen Waldpfad und die nördliche Holzbrücke (`Z = -124`) über den **Talbach (`Valley Stream`)** gelangt man tief in den nordwestlichen Talwald auf die von **10 monumentalen, uralten Eichen- und Aurum-Bäumen** umschlossene Lichtung des Dreschens. Dort befinden sich die bemoosten **Schutzfelsen (`X = -326, Z = -196`)**, vor denen Violet die kleine goldene **Andarna (`X = -316, Z = -191`, *Feathertail*)** gegen Jack Barlowe, Oren und Tynan verteidigt, sowie der **verbrannte Landungs- & Blitzkrater (`X = -300, Z = -180`)**, auf dem der kolossale schwarze **Tairn** landet, Oren verbrennt und sich gemeinsam mit Andarna an Violet bindet.
+     - **Drachen-Weiden & Hirtenhof im südlichen Tal (`Sheep & Cattle Pastures`, `X = -330..-230, Z = 22..114, Y = 16..25`):** Zwei große, eingezäunte Schaf- und Rinderkoppeln (`#29`) mit Heuballen (`#20`), Wassertränken (`#21`), weidenden Herden (`#26 / #19`) und dem **Futtermeister- & Hirtenhaus (`X = -256..-234, Z = 52..76`)** zur Versorgung der Drachen.
 
 2. **The Gauntlet (Nördliches Felslabyrinth)**
    - **Kartenmerkmal:** Direkt nördlich des *Riders Quadrant* in eine steile, zerklüftete Felsschlucht/Bergflanke eingebettet (`GAUNTLET`).
