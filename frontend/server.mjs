@@ -10,10 +10,22 @@ const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT || 80);
 const DIST_DIR = path.join(__dirname, 'dist');
-// Prefer public/data if mounted/present so edits persist directly on the source layer.Y.json files
 const PUBLIC_DATA_DIR = path.join(__dirname, 'public', 'data');
 const DIST_DATA_DIR = path.join(DIST_DIR, 'data');
-const DATA_DIR = fs.existsSync(PUBLIC_DATA_DIR) ? PUBLIC_DATA_DIR : DIST_DATA_DIR;
+
+// Choose data directory that actually contains manifest.json (prevents empty mounted volumes from shadowing build data)
+function resolveDataDir() {
+  if (fs.existsSync(path.join(PUBLIC_DATA_DIR, 'manifest.json'))) {
+    return PUBLIC_DATA_DIR;
+  }
+  if (fs.existsSync(path.join(DIST_DATA_DIR, 'manifest.json'))) {
+    return DIST_DATA_DIR;
+  }
+  return fs.existsSync(PUBLIC_DATA_DIR) ? PUBLIC_DATA_DIR : DIST_DATA_DIR;
+}
+
+const DATA_DIR = resolveDataDir();
+console.log(`[BWC] Resolved DATA_DIR: ${DATA_DIR} (has manifest: ${fs.existsSync(path.join(DATA_DIR, 'manifest.json'))})`);
 
 const apiMiddleware = createLayerApiMiddleware(DATA_DIR);
 
