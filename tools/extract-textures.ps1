@@ -114,3 +114,55 @@ Extract-Texture $vanillaJar "assets/minecraft/textures/block/calcite.png" "calci
 
 # 27: regions_unexplored:forest_leaves (Bergwald)
 Extract-Texture $faJar "assets/forbidden_arcanus/textures/block/aurum_leaves.png" "mountain_leaves.png"
+
+# 28..36 (Ensure all base textures exist)
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/spruce_planks.png" "spruce_planks.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/red_wool.png" "red_wool.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/white_wool.png" "white_wool.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/chiseled_stone_bricks.png" "chiseled_stone_bricks.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/cobblestone.png" "cobblestone.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/shroomlight.png" "shroomlight.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/spruce_log.png" "spruce_log.png"
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/spruce_leaves.png" "spruce_leaves.png"
+
+# ============================================================================
+# WEATHERED & TEXTURE-VARIATION PALETTE ADDITIONS (37..48)
+# ============================================================================
+# 37: minecraft:cracked_deepslate_bricks
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/cracked_deepslate_bricks.png" "cracked_deepslate_bricks.png"
+
+# 38: minecraft:polished_deepslate
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/polished_deepslate.png" "polished_deepslate.png"
+
+# 39: minecraft:cracked_polished_blackstone_bricks
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/cracked_polished_blackstone_bricks.png" "cracked_polished_blackstone_bricks.png"
+
+# 40: minecraft:gilded_blackstone
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/gilded_blackstone.png" "gilded_blackstone.png"
+
+# 41: minecraft:cracked_stone_bricks
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/cracked_stone_bricks.png" "cracked_stone_bricks.png"
+
+# 42: minecraft:mossy_stone_bricks
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/mossy_stone_bricks.png" "mossy_stone_bricks.png"
+
+# 43: minecraft:polished_andesite
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/polished_andesite.png" "polished_andesite.png"
+
+# 44: chisel:limestone_weathered (or raw/cracked limestone variation)
+if (-not (Extract-Texture $chiselJar "assets/chisel/textures/block/limestone/*weathered*.png" "chisel_limestone_weathered.png")) {
+  Extract-Texture $vanillaJar "assets/minecraft/textures/block/smooth_sandstone.png" "chisel_limestone_weathered.png"
+}
+
+# 45: minecraft:cracked_deepslate_tiles (Roof shingle variation)
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/cracked_deepslate_tiles.png" "cracked_deepslate_tiles.png"
+
+# 46: minecraft:mossy_cobblestone (Pathway variation)
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/mossy_cobblestone.png" "mossy_cobblestone.png"
+
+# 47: minecraft:gravel (Pathway & courtyard wear variation)
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/gravel.png" "gravel.png"
+
+# 48: minecraft:andesite (Mountain rock stratum variation)
+Extract-Texture $vanillaJar "assets/minecraft/textures/block/andesite.png" "andesite.png"
+

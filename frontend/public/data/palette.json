@@ -336,6 +336,115 @@
       "texture": "/textures/blocks/spruce_leaves.png",
       "roughness": 0.9,
       "isTerrain": true
+    },
+    "37": {
+      "id": "minecraft:cracked_deepslate_bricks",
+      "name": "Cracked Deepslate Bricks (Rissige Hof- & Fundamentziegel)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#282830",
+      "texture": "/textures/blocks/cracked_deepslate_bricks.png",
+      "roughness": 0.9
+    },
+    "38": {
+      "id": "minecraft:polished_deepslate",
+      "name": "Polished Deepslate (Glatte Hofplatten-Variation)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#373740",
+      "texture": "/textures/blocks/polished_deepslate.png",
+      "roughness": 0.72
+    },
+    "39": {
+      "id": "minecraft:cracked_polished_blackstone_bricks",
+      "name": "Cracked Blackstone Bricks (Rissige Reiter-Festungsziegel)",
+      "mod": "Vanilla",
+      "category": "Riders Quadrant",
+      "color": "#1e1b23",
+      "texture": "/textures/blocks/cracked_polished_blackstone_bricks.png",
+      "roughness": 0.88
+    },
+    "40": {
+      "id": "minecraft:gilded_blackstone",
+      "name": "Gilded Blackstone (Golddurchzogener Festungsstein)",
+      "mod": "Vanilla",
+      "category": "Riders Quadrant",
+      "color": "#382b1e",
+      "texture": "/textures/blocks/gilded_blackstone.png",
+      "roughness": 0.65
+    },
+    "41": {
+      "id": "minecraft:cracked_stone_bricks",
+      "name": "Cracked Stone Bricks (Rissige Mauerziegel)",
+      "mod": "Vanilla",
+      "category": "Süd-Campus (Hauptkomplex)",
+      "color": "#76797b",
+      "texture": "/textures/blocks/cracked_stone_bricks.png",
+      "roughness": 0.88
+    },
+    "42": {
+      "id": "minecraft:mossy_stone_bricks",
+      "name": "Mossy Stone Bricks (Bemooste Mauerziegel)",
+      "mod": "Vanilla",
+      "category": "Süd-Campus (Hauptkomplex)",
+      "color": "#6f7d67",
+      "texture": "/textures/blocks/mossy_stone_bricks.png",
+      "roughness": 0.88
+    },
+    "43": {
+      "id": "minecraft:polished_andesite",
+      "name": "Polished Andesite (Glatter Fassaden-Andesit)",
+      "mod": "Vanilla",
+      "category": "Süd-Campus (Hauptkomplex)",
+      "color": "#848786",
+      "texture": "/textures/blocks/polished_andesite.png",
+      "roughness": 0.7
+    },
+    "44": {
+      "id": "chisel:limestone_weathered",
+      "name": "Weathered Limestone (Verwitterter Kalkstein)",
+      "mod": "Chisel",
+      "category": "Healer & Scribe Quadrant",
+      "color": "#c5bda8",
+      "texture": "/textures/blocks/chisel_limestone_weathered.png",
+      "roughness": 0.78
+    },
+    "45": {
+      "id": "minecraft:cracked_deepslate_tiles",
+      "name": "Cracked Deepslate Tiles (Rissige Dachschiefer-Ziegel)",
+      "mod": "Vanilla",
+      "category": "Dächer & Kuppel",
+      "color": "#2e3039",
+      "texture": "/textures/blocks/cracked_deepslate_tiles.png",
+      "roughness": 0.75
+    },
+    "46": {
+      "id": "minecraft:mossy_cobblestone",
+      "name": "Mossy Cobblestone (Bemoostes Kopfsteinpflaster)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#5d6e55",
+      "texture": "/textures/blocks/mossy_cobblestone.png",
+      "roughness": 0.92
+    },
+    "47": {
+      "id": "minecraft:gravel",
+      "name": "Gravel (Kies- & Schotter-Hofwege)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#817f7e",
+      "texture": "/textures/blocks/gravel.png",
+      "roughness": 0.95
+    },
+    "48": {
+      "id": "minecraft:andesite",
+      "name": "Andesite (Grauer Gebirgsfels & Schichtgestein)",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#7c7e7e",
+      "texture": "/textures/blocks/andesite.png",
+      "roughness": 0.95,
+      "isTerrain": true
     }
   }
 }

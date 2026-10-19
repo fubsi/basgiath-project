@@ -106,7 +106,7 @@ function computeMountainHeight(x, z) {
 
     // Smoothly rising mountain shoulder for the Flight Field far in the NE (Y = 132)
     const flightFieldShoulder =
-      smoothstep(145, 198, x) * smoothstep(-40, -155, z) * 52;
+      smoothstep(118, 162, x) * smoothstep(-10, -140, z) * 52;
 
     const mountainAdd = Math.max(
       peakWest + rNoise * 0.65,
@@ -116,8 +116,8 @@ function computeMountainHeight(x, z) {
       flightFieldShoulder
     );
 
-    if (z < -172 || x > 130) {
-      const blendIn = Math.max(smoothstep(-172, -220, z), smoothstep(130, 185, x));
+    if (z < -172 || x > 126) {
+      const blendIn = Math.max(smoothstep(-172, -220, z), smoothstep(126, 162, x));
       plateauH = 80 + blendIn * mountainAdd;
     }
 
@@ -136,12 +136,13 @@ function computeMountainHeight(x, z) {
     }
 
     // Flatten the Flight Field Plateau on the distant NE mountain shoulder at Y = 132 (Center: X = 242, Z = -218)
-    if (x >= 182 && x <= 305 && z >= -285 && z <= -140) {
+    // Extended westward to X = 142..308 so Violet & Xaden's Tree at (174, -238) and its surrounding grove sit on 100% solid mountain ground!
+    if (x >= 142 && x <= 308 && z >= -292 && z <= -136) {
       const edgeBlend =
-        smoothstep(182, 196, x) *
-        smoothstep(305, 290, x) *
-        smoothstep(-285, -268, z) *
-        smoothstep(-140, -154, z);
+        smoothstep(142, 158, x) *
+        smoothstep(308, 294, x) *
+        smoothstep(-292, -274, z) *
+        smoothstep(-136, -150, z);
       plateauH = plateauH * (1 - edgeBlend) + 132 * edgeBlend;
     }
 
@@ -167,61 +168,158 @@ function getH(x, z) {
 }
 
 // Returns true if (x, z) is within a safety margin of ANY building, tower, courtyard, or bridge
-// so forest trees never clip through walls or roofs!
+// so forest trees never clip through walls, roofs, or the dragon landing pad!
 function isNearAnyBuildingOrBridge(x, z) {
-  // 1. Riders Quadrant, North Citadel, Courtyard & Towers (with 10-block safety buffer)
-  if (x >= -188 && x <= 132 && z >= -182 && z <= 92) return true;
-  // 2. Flight Field Bridge & Flight Field Landing Pad
-  if (x >= 110 && x <= 305 && z >= -285 && z <= -130) return true;
-  // 3. Gauntlet Approach Trail & Gauntlet Canyon
+  // 1. Riders Quadrant, North Citadel, Courtyard & Towers (with safety buffer)
+  if (x >= -186 && x <= 128 && z >= -176 && z <= 92) return true;
+  // 2. Flight Field Viaduct Bridge & Stone Causeway
+  if (x >= 112 && x <= 230 && z >= -190 && z <= -136) return true;
+  // 3. Flight Field Circular Dragon Landing Pad (Center: 242, -218, r = 52 + 5-block buffer)
+  const dxPad = x - 242;
+  const dzPad = z + 218;
+  if (dxPad * dxPad + dzPad * dzPad <= 57 * 57) return true;
+  // 4. Immediate clearing around Violet & Xaden's Hero Tree (174, -238) & Path so the bench/trunk stay clear
+  const dxTree = x - 174;
+  const dzTree = z + 238;
+  if (dxTree * dxTree + dzTree * dzTree <= 11 * 11) return true;
+  if (x >= 172 && x <= 196 && z >= -242 && z <= -222) return true;
+  // 5. Gauntlet Approach Trail & Gauntlet Canyon
   if (x >= -58 && x <= 80 && z >= -400 && z <= -160) return true;
-  // 4. Bridges across the Ravine (Parapet & East Bridge)
+  // 6. Bridges across the Ravine (Parapet & East Bridge)
   if (z >= 70 && z <= 240 && ((x >= -130 && x <= -100) || (x >= 60 && x <= 90))) return true;
-  // 5. South Campus Citadel, Scribe West Projection, Bell Tower & Corner Towers (with 10-block buffer)
+  // 7. South Campus Citadel, Scribe West Projection, Bell Tower & Corner Towers (with 10-block buffer)
   if (x >= -172 && x <= 170 && z >= 202 && z <= 568) return true;
   return false;
 }
 
 // ============================================================================
-// 2. GENERATE FOREST TREES AROUND BASGIATH (WITH STRICT NO-CLIPPING BUFFER)
+// 2. GENERATE CONTINUOUS FOREST TREES AROUND BASGIATH & FLIGHT FIELD
 // ============================================================================
 const forestTrees = [];
-for (let z = MIN_Z + 15; z <= MAX_Z - 15; z += 14) {
-  for (let x = MIN_X + 15; x <= MAX_X - 15; x += 14) {
-    const jx = x + Math.round(Math.sin(z * 0.37) * 4);
-    const jz = z + Math.round(Math.cos(x * 0.41) * 4);
+for (let z = MIN_Z + 12; z <= MAX_Z - 12; z += 11) {
+  for (let x = MIN_X + 12; x <= MAX_X - 12; x += 11) {
+    const jx = x + Math.round(Math.sin(z * 0.37) * 3);
+    const jz = z + Math.round(Math.cos(x * 0.41) * 3);
     if (isNearAnyBuildingOrBridge(jx, jz)) continue;
 
     const h = getH(jx, jz);
-    const slope = Math.abs(h - getH(jx + 3, jz)) + Math.abs(h - getH(jx - 3, jz)) + Math.abs(h - getH(jx, jz + 3));
-    if (slope > 4) continue;
+    const slope =
+      Math.abs(h - getH(jx + 3, jz)) +
+      Math.abs(h - getH(jx - 3, jz)) +
+      Math.abs(h - getH(jx, jz + 3));
+    if (slope > 5) continue;
 
-    // Place trees in the exact wooded zones from basgiath-map.jpg:
-    // 1. East of Riders Quadrant & North of Ravine (x > 132, z in [-75..85])
-    // 2. East & West of South Campus on the Y=55 plateau (x > 172 or x < -174, z in [235..545])
-    // 3. Scattered clumps in the North-Western Fields (x < -195, z < 165)
-    const inEastWoods = jx >= 132 && jx <= 248 && jz >= -75 && jz <= 85 && h >= 75 && h <= 115;
-    const inSouthEastWoods = jx >= 172 && jx <= 252 && jz >= 235 && jz <= 545 && h >= 54 && h <= 82;
-    const inSouthWestWoods = jx >= -248 && jx <= -174 && jz >= 235 && jz <= 535 && h >= 53 && h <= 62;
+    // Continuous wooded zones across Basgiath:
+    // 1. East Woods & Continuous Mountain Slope up to the Flight Field & Cliff Grove (x >= 130, z in [-295..88])
+    // 2. Northern Cliff Woods west of the Gauntlet (x in [-180..-58], z in [-225..-140])
+    // 3. East & West of South Campus on the Y=55 plateau (x > 172 or x < -174, z in [235..545])
+    // 4. Scattered clumps in the North-Western Fields (x < -195, z < 165)
+    const inEastAndFlightFieldWoods =
+      jx >= 130 && jx <= 310 && jz >= -295 && jz <= 88 && h >= 75 && h <= 135;
+    const inNorthWestMountainWoods =
+      jx >= -180 && jx <= -58 && jz >= -225 && jz <= -140 && h >= 75 && h <= 118;
+    const inSouthEastWoods =
+      jx >= 172 && jx <= 252 && jz >= 235 && jz <= 545 && h >= 54 && h <= 82;
+    const inSouthWestWoods =
+      jx >= -248 && jx <= -174 && jz >= 235 && jz <= 535 && h >= 53 && h <= 62;
     const inFieldClumps =
-      jx <= -198 && jz <= 160 && h <= 22 && Math.sin(jx * 0.08) + Math.cos(jz * 0.08) > 0.85;
+      jx <= -198 && jz <= 160 && h <= 22 && Math.sin(jx * 0.08) + Math.cos(jz * 0.08) > 0.75;
 
-    if (inEastWoods || inSouthEastWoods || inSouthWestWoods || inFieldClumps) {
-      const isGolden = (Math.abs(jx + jz) % 5) === 0;
+    if (
+      inEastAndFlightFieldWoods ||
+      inNorthWestMountainWoods ||
+      inSouthEastWoods ||
+      inSouthWestWoods ||
+      inFieldClumps
+    ) {
+      const isGolden = Math.abs(jx + jz) % 4 === 0;
+      const isBroadOak = h >= 120 && Math.abs(jx * 3 + jz) % 3 === 0;
       forestTrees.push({
         x: jx,
         z: jz,
         baseY: h + 1,
-        height: 8 + (Math.abs(jx * jz) % 4),
-        leafMat: isGolden ? 27 : 36
+        height: isBroadOak ? 11 + (Math.abs(jx + jz) % 4) : 8 + (Math.abs(jx * jz) % 5),
+        leafMat: isGolden ? 27 : 36,
+        broadCrown: isBroadOak
       });
     }
   }
 }
 
 // ============================================================================
-// 3. LAYER BUILDER HELPER
+// 3. AESTHETIC 3D BLOCK VARIATION & WEATHERING ENGINE + LAYER BUILDER
 // ============================================================================
+/**
+ * Deterministically mixes cracked, mossy, polished, and weathered stone/brick/tile variants
+ * into walls, towers, courtyards, roofs, pathways, and cliffs using 3D organic clusters + spatial hashing.
+ */
+function applyAestheticVariation(x, y, z, blockId) {
+  // Fast deterministic 3D coordinate hash (0..99)
+  const h = (((x * 73856093) ^ (y * 19349663) ^ (z * 83492791)) >>> 0) % 100;
+  // Smooth 3D organic weathering cluster (-2.0 .. +2.0)
+  const cluster =
+    Math.sin(x * 0.16 + y * 0.22 - z * 0.18) +
+    Math.cos(z * 0.14 - x * 0.19 + y * 0.15);
+
+  switch (blockId) {
+    case 1: // Deepslate Bricks (Courtyards, Foundations, Bridge Piers)
+      if (cluster > 1.05 && h < 35) return 25; // Mossy Deepslate Bricks in damp clusters
+      if (h < 22) return 37; // Cracked Deepslate Bricks
+      if (h >= 22 && h < 36) return 38; // Polished Deepslate slabs/tiles
+      return 1;
+
+    case 2: // Chiseled Blackstone Bricks (Riders Quadrant Fortress Walls & Rotunda)
+      if (h < 20) return 39; // Cracked Polished Blackstone Bricks
+      if (h >= 20 && h < 34) return 3; // Polished Blackstone Bricks
+      if (cluster > 1.25 && h >= 34 && h < 42) return 40; // Subtle Gilded Blackstone veins
+      return 2;
+
+    case 3: // Polished Blackstone Bricks (Towers, Pillars, Parapets, Bridges)
+      if (h < 22) return 39; // Cracked Polished Blackstone Bricks
+      if (h >= 22 && h < 34) return 2; // Chiseled Blackstone Bricks
+      if (cluster > 1.35 && h >= 34 && h < 40) return 28; // Arcane Gold-Darkstone accent
+      return 3;
+
+    case 4: // Chiseled Andesite Bricks (South Campus Citadel Facades)
+      if (cluster > 0.65 && h < 28) return 42; // Mossy Stone Bricks in weathered patches
+      if (h < 22) return 41; // Cracked Stone Bricks between wall stones!
+      if (h >= 22 && h < 36) return 43; // Polished Andesite blocks
+      if (h >= 36 && h < 48) return 5; // Stone Bricks
+      return 4;
+
+    case 5: // Stone Bricks (Infantry Quadrant, Rampart Walls, Bell Tower)
+      if (cluster > 0.55 && h < 32) return 42; // Mossy Stone Bricks along ramparts
+      if (h < 25) return 41; // Cracked Stone Bricks between wall stones!
+      if (h >= 25 && h < 36) return 4; // Chiseled Andesite Bricks
+      if (h >= 36 && h < 44) return 43; // Polished Andesite
+      return 5;
+
+    case 6: // Chiseled Limestone Bricks (Healer Quadrant & Scribe Archive)
+      if (h < 24) return 44; // Weathered / Patterned Limestone
+      if (cluster > 1.1 && h >= 24 && h < 34) return 26; // Calcite veins
+      return 6;
+
+    case 8: // Steep Deepslate Tile Roofs
+      if (h < 26) return 45; // Cracked Deepslate Tiles (weathered roof shingles)
+      if (h >= 26 && h < 35) return 37; // Cracked Deepslate Bricks
+      return 8;
+
+    case 33: // Cobblestone Roads, Courtyards & Mountain Trails
+      if (cluster > 0.45 && h < 38) return 46; // Mossy Cobblestone
+      if (h < 22) return 47; // Gravel wear patches
+      if (h >= 22 && h < 32) return 41; // Cracked Stone Brick paving stones
+      return 33;
+
+    case 22: // Mountain Tuff / Cliff Rock
+      if (cluster > 0.35 && h < 45) return 48; // Andesite rock strata
+      if (cluster < -0.85 && h < 30) return 25; // Mossy Deepslate cliff crevices
+      return 22;
+
+    default:
+      return blockId;
+  }
+}
+
 class LayerBuilder {
   constructor(y, label, zone, description) {
     this.y = y;
@@ -236,7 +334,8 @@ class LayerBuilder {
     const rx = Math.round(x);
     const rz = Math.round(z);
     if (rx < MIN_X || rx > MAX_X || rz < MIN_Z || rz > MAX_Z) return;
-    this.grid.set(`${rx},${rz}`, blockId);
+    const variedBlockId = applyAestheticVariation(rx, this.y, rz, blockId);
+    this.grid.set(`${rx},${rz}`, variedBlockId);
   }
 
   clearBlock(x, z) {
@@ -509,26 +608,43 @@ function stampMountainTerrainAtY(b, y) {
         const slope = h - minNeighborH;
         if (y === -30 && h === -30) {
           b.setBlock(x, z, 21); // Ravine River
-        } else if (y === h && slope <= 1 && (y <= 24 || (y >= 54 && y <= 66) || (y >= 79 && y <= 84 && x > 120))) {
-          b.setBlock(x, z, 23); // Grassland (Fields, South Campus meadows, Eastern forest floor)
-        } else if (y >= 126 && (y >= h - 2 || (x + z + y) % 3 === 0)) {
-          b.setBlock(x, z, 26); // High Alpine Calcite / Snow Peaks
+        } else if (
+          y === h &&
+          slope <= 2 &&
+          (y <= 26 || (y >= 53 && y <= 135 && !(x >= -45 && x <= 70 && z < -200)))
+        ) {
+          // Lush Mountain Meadow Grass across Fields, South Campus, Eastern Slopes & Flight Field Plateau!
+          b.setBlock(x, z, 23);
+        } else if (y >= 137 || (y >= 133 && slope > 2 && (x + z + y) % 2 === 0)) {
+          b.setBlock(x, z, 26); // High Alpine Calcite / Snow Peaks above the tree line
         } else if (y < 18) {
           b.setBlock(x, z, 25); // Deep Ravine Mossy Deepslate
         } else {
-          b.setBlock(x, z, 22); // Mountain Tuff / Cliff Rock
+          b.setBlock(x, z, 22); // Mountain Tuff / Andesite Cliff Rock
         }
       }
     }
   }
 
-  // Stamp 3D Pine & Golden Aurum Trees on the mountain slopes & woods
+  // Stamp 3D Pine, Broad Oak & Golden Aurum Trees across the mountain slopes, Flight Field plateau & woods
   for (const tree of forestTrees) {
     const relT = y - tree.baseY;
     if (relT >= 0 && relT < tree.height) {
-      b.setBlock(tree.x, tree.z, 35); // Spruce Log Trunk
-      if (relT >= 2) {
-        const leafR = Math.max(1, Math.round(((tree.height - relT) / tree.height) * 3.5));
+      b.setBlock(tree.x, tree.z, 35); // Trunk
+      if (tree.broadCrown) {
+        // Broad-crowned mountain oak / aurum tree
+        const crownStart = Math.floor(tree.height * 0.35);
+        if (relT >= crownStart) {
+          const tC = (relT - crownStart) / Math.max(1, tree.height - crownStart);
+          const leafR = Math.max(1, Math.round(Math.sin(tC * Math.PI * 0.92) * 4.5));
+          b.addCircle(tree.x, tree.z, leafR, tree.leafMat, true);
+          if (relT < tree.height - 2) {
+            b.setBlock(tree.x, tree.z, 35);
+          }
+        }
+      } else if (relT >= 2) {
+        // Conifer / Pine tree
+        const leafR = Math.max(1, Math.round(((tree.height - relT) / tree.height) * 3.6));
         b.addCircle(tree.x, tree.z, leafR, tree.leafMat, true);
         if (relT < tree.height - 1) {
           b.setBlock(tree.x, tree.z, 35); // Keep trunk core inside canopy
@@ -1001,6 +1117,122 @@ function stampDragonStatueAtY(layer, relY) {
   }
 }
 
+/**
+ * Sculpts a monumental, ancient 3D Lore Tree (e.g. Violet & Xaden's First Kiss Tree at the Flight Field Cliff
+ * and the Marked Ones' Listening Tree in the Riders Courtyard) with gnarled roots, twisted trunk,
+ * 6 continuous wooden boughs, and a dense, 100% connected multi-lobed golden/green canopy.
+ */
+function stampAncientLoreTreeAtY(layer, relY, cfg) {
+  const {
+    cx,
+    cz,
+    height = 22,
+    trunkMat = 35,
+    primaryLeafMat = 27,
+    secondaryLeafMat = 36,
+    snowDusted = false
+  } = cfg;
+
+  if (relY < 1 || relY > height) return;
+
+  // Slight organic twist of the trunk center with height
+  const twistX = cx + Math.sin(relY * 0.25) * 1.1;
+  const twistZ = cz + Math.cos(relY * 0.25) * 1.1;
+
+  // 1. Sprawling Gnarled Roots (relY = 1..3)
+  if (relY <= 3) {
+    const numRoots = 6;
+    const rootReach = 8 - relY * 2;
+    for (let r = 0; r < numRoots; r++) {
+      const ang = r * ((Math.PI * 2) / numRoots) + 0.25;
+      for (let d = 2; d <= rootReach; d++) {
+        const rx = Math.round(cx + Math.cos(ang + Math.sin(d * 0.5) * 0.2) * d);
+        const rz = Math.round(cz + Math.sin(ang + Math.sin(d * 0.5) * 0.2) * d);
+        layer.setBlock(rx, rz, trunkMat);
+      }
+    }
+  }
+
+  // 2. Massive Gnarled Trunk (relY = 1 .. Math.floor(height * 0.65))
+  const trunkTop = Math.floor(height * 0.65);
+  if (relY <= trunkTop) {
+    const trunkR = relY <= 2 ? 3 : 2;
+    layer.addCircle(Math.round(twistX), Math.round(twistZ), trunkR, trunkMat, true);
+  }
+
+  // 3. 6 Continuous Sweeping Main Boughs & Connected Multi-Lobed Canopy
+  const branchAngles = [0, 1.05, 2.1, 3.14, 4.19, 5.24];
+  const branchStart = Math.floor(height * 0.36);
+
+  if (relY >= branchStart) {
+    const bProgress = Math.min(1, (relY - branchStart) / Math.max(1, height - 3 - branchStart));
+    const maxReach = height >= 20 ? 8.5 : 6.5;
+    const reach = 1.5 + bProgress * maxReach;
+
+    // Central Crown Dome (starts right at branchStart + 1 so all branch lobes fuse into a single solid canopy!)
+    if (relY >= branchStart + 1) {
+      const crownT = (relY - (branchStart + 1)) / Math.max(1, height - (branchStart + 1));
+      const baseCrownR = height >= 20 ? 10.5 : 8.0;
+      const crownR = Math.max(2, Math.round(baseCrownR * Math.sin(crownT * Math.PI * 0.92)));
+      for (let dz = -crownR; dz <= crownR; dz++) {
+        for (let dx = -crownR; dx <= crownR; dx++) {
+          if (dx * dx + dz * dz <= crownR * crownR) {
+            const lx = Math.round(twistX) + dx;
+            const lz = Math.round(twistZ) + dz;
+            const hash = Math.abs((lx * 41 + lz * 67 + relY * 29) % 100);
+            const mat =
+              snowDusted && relY >= height - 1 && hash < 45
+                ? 26
+                : hash < 58
+                ? primaryLeafMat
+                : secondaryLeafMat;
+            layer.setBlock(lx, lz, mat);
+          }
+        }
+      }
+    }
+
+    // 6 Spreading Wooden Branches & Outer Leaf Lobes (relY = branchStart .. height - 2)
+    if (relY <= height - 2) {
+      for (let i = 0; i < branchAngles.length; i++) {
+        const ang = branchAngles[i] + bProgress * 0.2;
+        const bx = Math.round(twistX + Math.cos(ang) * reach);
+        const bz = Math.round(twistZ + Math.sin(ang) * reach);
+
+        // Leaf lobe around each branch
+        if (relY >= branchStart + 1) {
+          const clusterR = Math.max(2, Math.round(5.0 * Math.sin(bProgress * Math.PI * 0.95)));
+          for (let dz = -clusterR; dz <= clusterR; dz++) {
+            for (let dx = -clusterR; dx <= clusterR; dx++) {
+              if (dx * dx + dz * dz <= clusterR * clusterR) {
+                const lx = bx + dx;
+                const lz = bz + dz;
+                const hash = Math.abs((lx * 37 + lz * 53 + relY * 19) % 100);
+                const mat =
+                  snowDusted && relY >= height - 2 && hash < 35
+                    ? 26
+                    : hash < 55
+                    ? primaryLeafMat
+                    : secondaryLeafMat;
+                layer.setBlock(lx, lz, mat);
+              }
+            }
+          }
+        }
+
+        // Continuous wooden branch core from trunk out to (bx, bz) so zero branches disconnect!
+        if (relY <= height - 4) {
+          layer.addLine(Math.round(twistX), Math.round(twistZ), bx, bz, trunkMat, 1);
+        }
+      }
+    }
+
+    if (relY <= trunkTop + 2) {
+      layer.addCircle(Math.round(twistX), Math.round(twistZ), 1, trunkMat, true);
+    }
+  }
+}
+
 // ============================================================================
 // 6. GENERATE ALL 187 LAYERS (Y = -30 TO Y = 156, STEP = 1) WITH FULL INTERIORS!
 // ============================================================================
@@ -1019,10 +1251,14 @@ for (const y of sortedYLevels) {
     label = `Schlucht & Gebirgsfluss (Y=${y})`;
     zone = 'ravine';
     desc = 'Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet';
+  } else if (y >= -15 && y <= 9) {
+    label = `Wardstone-Kammer (Schutzzauber-Obelisk) & Tiefe Kavernen (Y=${y})`;
+    zone = 'wardstone-obelisk';
+    desc = 'Uralte unterirdische Felskaverne mit dem 27 Blöcke hohen Schutzzauber-Obelisken (Wardstone), 7 Drachenfeuer-Kanälen & geheimem Runen-Stollen';
   } else if (y >= 10 && y <= 24) {
-    label = `Scribe Quadrant Katakomben & West-Fields (Y=${y})`;
+    label = `Scribe Quadrant Katakomben, Wardstone-Kuppel & West-Fields (Y=${y})`;
     zone = 'scribe-quadrant';
-    desc = 'Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland';
+    desc = 'Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen, Obelisken-Spitze sowie westliches Tiefland';
   } else if (y >= 55 && y <= 69) {
     label = `Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=${y})`;
     zone = 'south-campus';
@@ -1042,7 +1278,7 @@ for (const y of sortedYLevels) {
   } else if (y >= 131) {
     label = `Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=${y})`;
     zone = 'gauntlet-flight-field';
-    desc = 'Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)';
+    desc = 'Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin, Drachen-Flugfeld & Violet/Xadens Baum';
   }
 
   const b = new LayerBuilder(y, label, zone, desc);
@@ -1051,6 +1287,192 @@ for (const y of sortedYLevels) {
   // A) WATERTIGHT 3D MOUNTAIN LANDSCAPE & FOREST TREES
   // --------------------------------------------------------------------------
   stampMountainTerrainAtY(b, y);
+
+  // --------------------------------------------------------------------------
+  // B.0) THE WARDSTONE CHAMBER & SCHUTZZAUBER-OBELISK (Y = -12..18, Center: X = -25, Z = 378)
+  // Deep inside the mountain massif beneath the South Campus, connected via:
+  //  1) A secret stepped Rune Tunnel (X = -108..-60, Z = 378, Y = 10 down to Y = -11) from the Scribe Underground Archive
+  //  2) A monumental subterranean Dragon Cavern Tunnel (X = -32..-18, Z = 205..342, Y = -12..3) to the Ravine Gorge
+  // --------------------------------------------------------------------------
+  if (y >= -12 && y <= 18) {
+    const wCx = -25;
+    const wCz = 378;
+    const relW = y + 12; // 0..30 (0 = Floor at Y=-12, 30 = Dome Apex at Y=18)
+
+    // Vaulted cavern radius tapers above relW = 14 into a subterranean rock dome
+    const cavOuterR =
+      relW <= 14
+        ? 38
+        : Math.max(10, Math.round(38 * Math.cos(((relW - 14) / 17) * (Math.PI / 2) * 0.88)));
+    const cavInnerR = Math.max(0, cavOuterR - 3);
+
+    // 1. Outer Ancient Blackstone & Rune Cavern Shell
+    b.addCircle(wCx, wCz, cavOuterR, relW % 6 === 0 ? 28 : 2, true);
+
+    // 2. Carve Hollow Cavern Interior (relW = 1..29)
+    if (relW >= 1 && relW <= 29 && cavInnerR > 0) {
+      b.carveCircle(wCx, wCz, cavInnerR);
+    }
+
+    // 3. Cavern Floor, Sunken Dragonfire Basin & 7 Breed Fire Channels (relW = 0..4)
+    if (relW === 0) {
+      b.addCircle(wCx, wCz, 35, 1, true);
+      b.addCircle(wCx, wCz, 32, 28, false, 2);
+      b.addCircle(wCx, wCz, 24, 40, false, 2);
+      // Sunken Dragonfire Basin (r = 15) filled with blazing Dragonfire (#34) & Arcane Crystal (#12)
+      b.addCircle(wCx, wCz, 16, 28, true);
+      b.addCircle(wCx, wCz, 14, 34, true);
+      b.addCircle(wCx, wCz, 10, 12, false, 2);
+    } else if (relW === 1) {
+      // Raised Outer Walkway & Basin Rim around the sunken Dragonfire pit
+      b.addCircle(wCx, wCz, 35, 1, false, 11); // Outer ring walkway (r = 24..35)
+      b.addCircle(wCx, wCz, 16, 40, false, 2); // Gilded Blackstone Basin Rim (r = 14..16)
+      // 7 Radiant Dragonfire Channels & Altars for the 6 Dragon Breeds + Andarna's 7th Golden Breed!
+      const breedMats = [14, 15, 16, 17, 18, 19, 20];
+      for (let i = 0; i < 7; i++) {
+        const ang = (i * ((Math.PI * 2) / 7)) - Math.PI / 2;
+        const ax = Math.round(wCx + Math.cos(ang) * 23);
+        const az = Math.round(wCz + Math.sin(ang) * 23);
+        const bx = Math.round(wCx + Math.cos(ang) * 14);
+        const bz = Math.round(wCz + Math.sin(ang) * 14);
+        // Channel walls in breed dragonscale + blazing fire core (#34)
+        b.addLine(ax, az, bx, bz, breedMats[i], 3);
+        b.addLine(ax, az, bx, bz, 34, 1);
+        b.addCircle(ax, az, 3, breedMats[i], true);
+        b.setBlock(ax, az, 34);
+      }
+    } else if (relW >= 2 && relW <= 4) {
+      // 7 Dragon Breed Brazier Pillars at r = 23
+      const breedMats = [14, 15, 16, 17, 18, 19, 20];
+      for (let i = 0; i < 7; i++) {
+        const ang = (i * ((Math.PI * 2) / 7)) - Math.PI / 2;
+        const ax = Math.round(wCx + Math.cos(ang) * 23);
+        const az = Math.round(wCz + Math.sin(ang) * 23);
+        b.addCircle(ax, az, relW === 4 ? 2 : 1, relW === 4 ? 34 : breedMats[i], true);
+      }
+    }
+
+    // 4. 12 Monumental Rune Pillars around the Cavern Perimeter (relW = 1..20)
+    if (relW >= 1 && relW <= 20) {
+      for (let deg = 15; deg < 360; deg += 30) {
+        const rad = (deg * Math.PI) / 180;
+        const px = Math.round(wCx + Math.cos(rad) * 31);
+        const pz = Math.round(wCz + Math.sin(rad) * 31);
+        if ((px - wCx) * (px - wCx) + (pz - wCz) * (pz - wCz) <= (cavInnerR - 1) * (cavInnerR - 1)) {
+          const pMat = relW % 5 === 0 ? 12 : relW % 3 === 0 ? 40 : 3;
+          b.addCircle(px, pz, 2, pMat, true);
+        }
+      }
+    }
+
+    // 5. THE WARDSTONE OBELISK (Der 27 Blöcke hohe Schutzzauber-Obelisk im Zentrum, relW = 1..29)
+    if (relW >= 1 && relW <= 29) {
+      if (relW <= 4) {
+        // Stepped Runic Pedestal rising out of the Dragonfire Basin
+        const pedR = 8 - relW; // r = 7, 6, 5, 4
+        b.addCircle(wCx, wCz, pedR, relW % 2 === 0 ? 40 : 2, true);
+        b.addCircle(wCx, wCz, pedR, 28, false, 1);
+      } else if (relW <= 24) {
+        // Tapering Monolithic Black Obelisk Shaft (relW = 5..24, 20 blocks tall shaft!)
+        const halfW = relW <= 10 ? 4 : relW <= 17 ? 3 : 2;
+        b.addRect(wCx - halfW, wCz - halfW, wCx + halfW, wCz + halfW, 14, true); // Black Dragonscale / Ironstone Monolith
+        // Chamfer corners on wider lower sections for an octagonal/monolithic profile
+        if (halfW >= 3) {
+          b.setBlock(wCx - halfW, wCz - halfW, 2);
+          b.setBlock(wCx + halfW, wCz - halfW, 2);
+          b.setBlock(wCx - halfW, wCz + halfW, 2);
+          b.setBlock(wCx + halfW, wCz + halfW, 2);
+        }
+        // Glowing Carved Ward-Runes on all 4 Obelisk Faces (#12 Arcane Crystal, #34 Dragonfire, #40 Gilded Blackstone)
+        const runeMat = relW % 4 === 0 ? 12 : relW % 2 === 0 ? 34 : 40;
+        b.setBlock(wCx, wCz - halfW, runeMat);
+        b.setBlock(wCx, wCz + halfW, runeMat);
+        b.setBlock(wCx - halfW, wCz, runeMat);
+        b.setBlock(wCx + halfW, wCz, runeMat);
+        // Spiraling Golden Rune Band around the Obelisk
+        const spiralSide = relW % 4;
+        if (spiralSide === 0) b.addLine(wCx - halfW + 1, wCz - halfW, wCx + halfW - 1, wCz - halfW, 20, 1);
+        if (spiralSide === 1) b.addLine(wCx + halfW, wCz - halfW + 1, wCx + halfW, wCz + halfW - 1, 20, 1);
+        if (spiralSide === 2) b.addLine(wCx - halfW + 1, wCz + halfW, wCx + halfW - 1, wCz + halfW, 20, 1);
+        if (spiralSide === 3) b.addLine(wCx - halfW, wCz - halfW + 1, wCx - halfW, wCz + halfW - 1, 20, 1);
+      } else if (relW <= 27) {
+        // Golden & Arcane Crystal Pyramidion Tip (relW = 25..27)
+        const tipW = 27 - relW; // 2, 1, 0
+        b.addRect(wCx - tipW, wCz - tipW, wCx + tipW, wCz + tipW, relW === 27 ? 12 : 20, true);
+      } else {
+        // Vertical Ward Energy Beam shooting into the Cavern Ceiling Rune Rose (relW = 28..29)
+        b.addCircle(wCx, wCz, 1, 12, true);
+        if (relW === 28) {
+          b.addCircle(wCx, wCz, 10, 12, false, 2);
+          b.addCircle(wCx, wCz, 6, 20, false, 1);
+        }
+      }
+
+      // 3 Floating Magical Ward-Resonance Rings hovering around the Obelisk (relW = 9, 15, 21)
+      if (relW === 9 || relW === 15 || relW === 21) {
+        const ringR = relW === 9 ? 9 : relW === 15 ? 8 : 7;
+        b.addCircle(wCx, wCz, ringR, 12, false, 1);
+        for (let deg = 0; deg < 360; deg += 45) {
+          const rad = (deg * Math.PI) / 180;
+          b.setBlock(wCx + Math.cos(rad) * ringR, wCz + Math.sin(rad) * ringR, 20);
+        }
+      }
+    }
+
+    // 6. Subterranean Dragon Cavern Tunnel North to the Ravine Gorge (X = -32..-18, Z = 195..342, Y = -12..2)
+    if (y >= -12 && y <= 2) {
+      const dRel = y + 12; // 0..14
+      const archInset = dRel > 9 ? dRel - 9 : 0;
+      const leftX = -33 + archInset;
+      const rightX = -17 - archInset;
+      for (let z = 195; z <= 343; z++) {
+        if (dRel === 0) {
+          b.addLine(-33, z, -17, z, 1, 1);
+          b.addLine(-28, z, -22, z, 33, 1);
+        } else if (dRel === 14) {
+          b.addLine(leftX, z, rightX, z, 2, 1);
+        } else {
+          b.setBlock(leftX, z, z % 10 === 0 ? 28 : 2);
+          b.setBlock(rightX, z, z % 10 === 0 ? 28 : 2);
+          if (z % 10 === 0 && dRel === 6) {
+            b.setBlock(leftX + 1, z, 34);
+            b.setBlock(rightX - 1, z, 34);
+          }
+          for (let x = leftX + 1; x <= rightX - 1; x++) {
+            b.clearBlock(x, z);
+          }
+        }
+      }
+    }
+  }
+
+  // 7. Secret Stepped Rune Tunnel connecting Scribe Underground Archive (X=-106, Y=10) to Wardstone Chamber (X=-60, Y=-11)
+  if (y >= -12 && y <= 19) {
+    for (let x = -108; x <= -58; x++) {
+      const tStep = (x + 108) / 50; // 0 at Scribe Archive (-108), 1 at Wardstone Chamber (-58)
+      const stepFloorY = Math.round(10 - tStep * 21); // Descends from Y=10 down to Y=-11
+      const relT = y - stepFloorY;
+      if (relT === 0) {
+        b.addLine(x, 373, x, 383, 6, 1);
+        b.addLine(x, 375, x, 381, 30, 1); // Red carpet runner down the secret stairs
+      } else if (relT >= 1 && relT <= 7) {
+        const inset = relT >= 6 ? relT - 5 : 0;
+        const northZ = 373 + inset;
+        const southZ = 383 - inset;
+        b.setBlock(x, northZ, x % 6 === 0 ? 28 : 6);
+        b.setBlock(x, southZ, x % 6 === 0 ? 28 : 6);
+        for (let z = northZ + 1; z <= southZ - 1; z++) {
+          b.clearBlock(x, z);
+        }
+        if (x % 8 === 0 && relT === 4) {
+          b.setBlock(x, northZ + 1, 12);
+          b.setBlock(x, southZ - 1, 12);
+        }
+      } else if (relT === 8) {
+        b.addLine(x, 375, x, 381, 6, 1);
+      }
+    }
+  }
 
   // --------------------------------------------------------------------------
   // B) SCRIBE QUADRANT UNDERGROUND ARCHIVES (Y = 10..22) + SPIRAL STAIR / ELEVATOR (Y = 10..55)
@@ -1073,6 +1495,10 @@ for (const y of sortedYLevels) {
     // 2. Carve Walkable Hollow Interior on relA = 1..11 (relA=0 is Floor, relA=12 is Vaulted Ceiling)
     if (relA >= 1 && relA <= 11) {
       b.carveCircle(cx, cz, 35);
+      // Carve the East Portal (X = -108..-103, Z = 375..381) leading into the Secret Wardstone Rune Tunnel!
+      if (relA <= 7) {
+        b.carveRect(-109, 375, -103, 381);
+      }
       for (const deg of angles) {
         const rad = (deg * Math.PI) / 180;
         const ex = Math.round(cx + Math.cos(rad) * 99);
@@ -1111,7 +1537,7 @@ for (const y of sortedYLevels) {
           const ez = Math.round(cz + Math.sin(rad) * 98);
           b.addLine(cx, cz, ex, ez, 30, 1); // Red carpet runner down every radial hall
         }
-        b.addLine(cx - 33, cz, cx + 33, cz, 30, 3);
+        b.addLine(cx - 33, cz, cx + 38, cz, 30, 3); // Extends East into the Secret Wardstone Tunnel!
         b.addLine(cx, cz - 33, cx, cz + 33, 30, 3);
         for (let deg = 25; deg < 360; deg += 45) {
           const rad = (deg * Math.PI) / 180;
@@ -1602,6 +2028,23 @@ for (const y of sortedYLevels) {
         // Circular Hand-to-Hand Combat Pit in the NW Courtyard
         b.addCircle(-115, -85, 14, 30, false, 2);
         b.addCircle(-115, -85, 12, 29, true);
+        // Secluded Garden Bed for the Courtyard Listening Tree (Kapitel 6 – Treffen der Gezeichneten)
+        b.addCircle(-146, -102, 8, 32, false, 2);
+        b.addCircle(-146, -102, 6, 23, true);
+      }
+
+      // The Courtyard Listening Tree (Kapitel 6: where Violet hides in the branches during the Marked Ones' secret meeting)
+      if (relY >= 1 && relY <= 18) {
+        stampAncientLoreTreeAtY(b, relY, {
+          cx: -146,
+          cz: -102,
+          height: 18,
+          trunkMat: 35,
+          primaryLeafMat: 36,
+          secondaryLeafMat: 27,
+          blossomMat: 12,
+          snowDusted: false
+        });
       }
 
       if (relY >= 1 && relY <= 4) {
@@ -2078,8 +2521,20 @@ for (const y of sortedYLevels) {
     }
   }
 
-  // 3. Flight Field Landing Rings & 3D Anatomical Dragons on the distant NE Mountain Shoulder (Center: X = 242, Z = -218, Y = 132..154)
-  if (y >= 132 && y <= 154) {
+  // 3. Flight Field Landing Rings, 3D Anatomical Dragons & Violet/Xaden's Cliff Tree + Grove (Y = 115..155)
+  // Ensure solid masonry/cliff foundation beneath the Overlook Terrace (174, -238, r = 14) so zero blocks ever hang in mid-air!
+  if (y >= 115 && y < 132) {
+    for (let z = -252; z <= -224; z++) {
+      for (let x = 160; x <= 188; x++) {
+        const dSq = (x - 174) * (x - 174) + (z + 238) * (z + 238);
+        if (dSq <= 14 * 14 && y >= getH(x, z)) {
+          b.setBlock(x, z, y >= 128 ? 5 : 22);
+        }
+      }
+    }
+  }
+
+  if (y >= 132 && y <= 155) {
     const relF = y - 132;
     if (relF === 0) {
       // Stone Causeway connecting Flight Field Viaduct (X = 196, Z = -146) to the Main Landing Pad (X = 242, Z = -218)
@@ -2089,7 +2544,75 @@ for (const y of sortedYLevels) {
       b.addCircle(242, -218, 48, 20, false, 2);
       b.addCircle(242, -218, 32, 32, false, 2);
       b.addCircle(242, -218, 14, 28, false, 2);
+
+      // Winding Mossy Stone Path from the Flight Field Pad West Rim (194, -225) to Violet & Xaden's Cliff Promontory (174, -238)
+      b.addLine(194, -225, 174, -238, 33, 5);
+
+      // Violet & Xaden's Cliff Overlook Promontory (X = 174, Z = -238, r = 14) overlooking the northern mountain gorge
+      b.addCircle(174, -238, 14, 5, true);
+      b.addCircle(174, -238, 12, 23, true); // High Alpine Meadow Grass
+      // Snow-dusted patches (Kapitel 22: First Kiss in the mountain snow after Violet's lightning strike!)
+      b.addCircle(168, -242, 4, 26, true);
+      b.addCircle(179, -245, 3, 26, true);
+      b.addCircle(166, -233, 3, 26, true);
     }
+
+    // Secluded Bench, Low Cliff Parapet, Lanterns, Violet/Xaden's Monumental Ancient Tree & Surrounding Grove (relF = 1..23)
+    if (relF >= 1 && relF <= 23) {
+      // Low weathered stone parapet along the western cliff drop-off of the promontory
+      if (relF === 1) {
+        for (let deg = 110; deg <= 260; deg += 6) {
+          const rad = (deg * Math.PI) / 180;
+          b.setBlock(174 + Math.cos(rad) * 13, -238 + Math.sin(rad) * 13, 5);
+        }
+        // Carved Dark-Oak Bench with Red Velvet Cushion beneath the western boughs facing the mountain sunset
+        b.addRect(167, -241, 169, -235, 11, true);
+        b.addRect(168, -240, 168, -236, 30, true);
+        // Subtle Lore Details: Xaden's Shadow wisp (#14) & Violet's Lightning Crystal spark (#12) beside the bench
+        b.setBlock(170, -242, 14);
+        b.setBlock(170, -234, 12);
+      }
+      if (relF >= 1 && relF <= 3) {
+        // Two warm stone lanterns flanking the cliff overlook path
+        b.setBlock(183, -231, relF === 3 ? 34 : 3);
+        b.setBlock(180, -245, relF === 3 ? 34 : 3);
+      }
+
+      // Monumental 23-block-tall Gnarled Oak/Aurum Hero Tree ("Violet & Xadens Baum")
+      stampAncientLoreTreeAtY(b, relF, {
+        cx: 174,
+        cz: -238,
+        height: 23,
+        trunkMat: 35,
+        primaryLeafMat: 27,   // Golden Aurum Leaves
+        secondaryLeafMat: 36, // Deep Mountain Leaves
+        snowDusted: true      // Snow-dusted upper crown (Kapitel 22)
+      });
+
+      // Surrounding Grove of 8 Companion Ancient Oak & Mountain Trees framing the Cliff Overlook & Flight Field!
+      const companionGrove = [
+        { cx: 162, cz: -216, height: 16, pMat: 36, sMat: 27 },
+        { cx: 164, cz: -260, height: 17, pMat: 27, sMat: 36 },
+        { cx: 184, cz: -266, height: 15, pMat: 36, sMat: 27 },
+        { cx: 204, cz: -272, height: 14, pMat: 27, sMat: 36 },
+        { cx: 182, cz: -206, height: 15, pMat: 36, sMat: 27 },
+        { cx: 160, cz: -194, height: 14, pMat: 27, sMat: 36 },
+        { cx: 288, cz: -266, height: 16, pMat: 36, sMat: 27 },
+        { cx: 298, cz: -192, height: 15, pMat: 27, sMat: 36 }
+      ];
+      for (const gt of companionGrove) {
+        stampAncientLoreTreeAtY(b, relF, {
+          cx: gt.cx,
+          cz: gt.cz,
+          height: gt.height,
+          trunkMat: 35,
+          primaryLeafMat: gt.pMat,
+          secondaryLeafMat: gt.sMat,
+          snowDusted: false
+        });
+      }
+    }
+
     if (relF >= 1 && relF <= 22) {
       // 1. TAIRN — Colossal Black Morningstail Dragon (Scale 1.0, 21 blocks tall, ~68-block wingspan, facing SW toward Basgiath)
       stampDetailedDragonAtY(b, relF, {
@@ -2209,11 +2732,25 @@ const manifest = {
       description: 'Unterirdisches Zentralarchiv mit Lesetischen, Bücherregal-Ringen und 7 strahlenförmigen Katakomben'
     },
     {
+      id: 'wardstone-obelisk',
+      name: 'Wardstone-Kammer (Schutzzauber-Obelisk)',
+      center: { x: -25, y: 0, z: 378 },
+      yRange: [-12, 16],
+      description: 'Tief im Felsmassiv verborgene Runen-Kaverne (Y = -12..18) mit dem 27 Blöcke hohen Schutzzauber-Obelisken, 7 Drachenfeuer-Kanälen, Runen-Stollen zum Archiv & Drachen-Tunnel zur Schlucht'
+    },
+    {
       id: 'gauntlet-flight-field',
       name: 'The Gauntlet & Flight Field',
-      center: { x: 115, y: 135, z: -265 },
+      center: { x: 215, y: 140, z: -225 },
       yRange: [85, 156],
-      description: 'Weitläufiger Hindernisparcours im nördlichen Hochgebirge und Drachen-Flugfeld im fernen Nordosten'
+      description: 'Weitläufiger Hindernisparcours im nördlichen Hochgebirge und Drachen-Flugfeld (Tairn, Sgaeyl & Andarna) im fernen Nordosten'
+    },
+    {
+      id: 'violet-xaden-tree',
+      name: 'Violet & Xadens Baum (Flight Field Klippe)',
+      center: { x: 174, y: 140, z: -238 },
+      yRange: [130, 156],
+      description: 'Uralter Baum auf dem verschneiten Klippenvorsprung am Rande des Flight Fields (Kapitel 22 – Erster Kuss von Violet & Xaden)'
     }
   ],
   totalLayers: allLayers.length,

@@ -228,6 +228,15 @@ flowchart TD
 6. **Zentraler Innenhof (Main Courtyard)**
    - **Kartenmerkmal:** Langgestreckter, von Arkaden und hohen Mauern eingefasster Hof (`180 × 380 Blöcke`) in der Mitte des Süd-Komplexes.
 
+7. **Die Wardstone-Kammer & Der Schutzzauber-Obelisk (`X = -25, Z = 378, Y = -12..18`)**
+   - **Lore-Hintergrund:** Tief im Felsfundament unterhalb des Süd-Campus liegt die geheime, uralte Felskaverne (`Ø 76 Blöcke`, `30 Blöcke` hoch), in deren Zentrum der **Wardstone (Schutzzauber-Obelisk)** die magische Barriere (*The Wards*) über ganz Navarra aufrechterhält.
+   - **Architektur & Details im 3D-Modell:**
+     - **Der 27 Blöcke hohe Schutzzauber-Obelisk (`Y = -11..15`):** Ein sich nach oben verjüngender Monolith aus schwarzem Eisen-/Drachenschuppen-Gestein (`#14` & `#2`) auf einem vierstufigen Runensockel, durchzogen von vertikalen und spiralförmig umlaufenden leuchtenden Runenadern (`#12` *Arcane Crystal*, `#34` *Dragonfire*, `#40` *Gilded Blackstone*, `#20` *Gold*), gekrönt von einer goldenen Pyramidenspitze (`Pyramidion`), die einen Energiestrahl in die Decken-Runenrose (`Y = 16..17`) sendet, und umkreist von **3 frei schwebenden Resonanz-Ringen** (`Y = -2, 4, 10`).
+     - **Das Drachenfeuer-Becken & die 7 Drachenarten-Kanäle (`Y = -12..-8`):** Der Obelisk erhebt sich aus einem eingelassenen Feuerbecken (`r = 15`), in das **7 strahlenförmige Drachenfeuer-Kanäle und Feuerschalen-Altäre** in den Farben der **6 bekannten Drachenarten plus Andarnas 7. Art** (`#14` Schwarz, `#15` Blau, `#16` Grün, `#17` Rot, `#18` Kupfer/Orange, `#19` Bronze/Braun, `#20` Gold) münden.
+     - **Zwei unterirdische Zugänge:**
+       1. **Geheimer Runen-Stollen zum Schreiber-Archiv (`X = -108..-58, Z = 378, Y = 10` hinab auf `Y = -11`):** Verbindet das Ostportal der unterirdischen *Scribe Quadrant*-Rotunde über eine abgestufte, von Runen beleuchtete Treppe direkt mit der Wardstone-Kammer.
+       2. **Monumentaler Drachen-Felstunnel zur Schlucht (`X = -33..-17, Z = 195..342, Y = -12..2`):** Ein 16 Blöcke breiter und 14 Blöcke hoher Gewölbetunnel nach Norden bis in die tiefste Felswand der Schlucht (*The Ravine*), durch den die Drachen der 7 Arten zum Entzünden des Obelisken in den Berg gelangen können.
+
 ---
 
 ### Zone 2: Die Schlucht (The Ravine) & Die Brücken
@@ -298,9 +307,14 @@ flowchart TD
 3. **Flight Field (Nordöstliches Hochplateau)**
    - **Kartenmerkmal:** Großes, offenes Plateau im Nordosten (`FLIGHT FIELD`), abgegrenzt durch eine gezackte Klippenkante, mit einem fliegenden Drachen-Symbol.
    - **Umsetzung:**
-     - Weite Aufmarschfläche für das *Threshing* (Dreschen) und die Flugübungen.
-     - Gebaute Drachen-Statuen oder organische Builds von landenden/startenden Drachen (z. B. *Tairn* als riesiger schwarzer Morningstail-Drache und *Andarna* als kleiner goldener/schillernder Drache).
+     - Weite Aufmarschfläche (`Ø 104 Blöcke` um `X = 242, Z = -218, Y = 132`) für das *Threshing* (Dreschen) und die Flugübungen.
+     - Vollständig dreidimensional ausmodellierte Drachen auf dem Flugfeld: **Tairn** (kolossaler schwarzer *Morningstail*-Drache), **Sgaeyl** (blauer *Daggertail*-Drache) und **Andarna** (goldener *Feathertail*-Drache).
      - Weiter östlich/nördlich kann ein felsiger Gebirgspass angedeutet werden, der ins **Vale (Das Tal der Drachen)** führt.
+
+4. **Violet & Xadens Baum am Klippenrand des Flight Fields (Kapitel 22 – Der Erste Kuss) & Der Hof-Baum (Kapitel 6)**
+   - **Lore-Hintergrund:**
+     - **Flight Field Klippen-Ausguck (`X = 174, Z = -238, Y = 132..155`):** Am westlichen Klippenrand des Flight Fields – über einen geschwungenen, bemoosten Steinpfad (`X = 194, Z = -225` $\to$ `X = 174, Z = -238`) etwas abseits der Haupt-Landeplattform gelegen – ragt ein kreisrunder, schneebedeckter Felsvorsprung (`Ø 28 Blöcke`) über die tiefe Gebirgsschlucht hinaus. Hier steht der **monumentale, 23 Blöcke hohe uralte Baum** mit knorrigem Wurzelwerk, 6 weit ausladenden Ästen, herabhängenden Laubranken und einer schneebestäubten Krone aus goldenem *Aurum*- und dunklem Gebirgslaub. Unter seinen westlichen Ästen befindet sich eine geschützte *Dark Oak*-Bank mit Blick ins Gebirge sowie subtile Schatten- (`#14`) und Blitzkristall-Akzente (`#12`) als Hommage an Violets Blitzschlag und den ersten Kuss im Schnee (Kapitel 22).
+     - **Der Baum der Gezeichneten im Riders Courtyard (`X = -146, Z = -102, Y = 80..98`):** In der abgeschiedenen Nordwestecke des Reiterhofs steht zudem der 18 Blöcke hohe, dicht verzweigte Kletterbaum aus Kapitel 6, in dessen Krone Violet versteckt das nächtliche Treffen von Xaden und den *Marked Ones* belauscht.
 
 ---
 
