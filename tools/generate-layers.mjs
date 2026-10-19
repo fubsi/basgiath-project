@@ -541,7 +541,7 @@ function stampMountainTerrainAtY(b, y) {
 }
 
 // ============================================================================
-// 5. SCULPTED 3D DRAGON STATUES FOR THE DRAGON ROTUNDA
+// 5. SCULPTED 3D DRAGON STATUES & ANATOMICAL 3D VOXEL DRAGONS
 // ============================================================================
 const dragonStatues = [
   { angleDeg: 0, blockId: 14, name: 'Schwarzer Morningstail (Tairn/Codagh)' },
@@ -551,6 +551,344 @@ const dragonStatues = [
   { angleDeg: 240, blockId: 18, name: 'Oranger Scorpiontail (Baide)' },
   { angleDeg: 300, blockId: 19, name: 'Brauner Feathertail (Deigh)' }
 ];
+
+// Helper: distance from point (px, py, pz) to 3D line segment (ax, ay, az) -> (bx, by, bz)
+function distToSegment3D(px, py, pz, ax, ay, az, bx, by, bz) {
+  const abx = bx - ax;
+  const aby = by - ay;
+  const abz = bz - az;
+  const apx = px - ax;
+  const apy = py - ay;
+  const apz = pz - az;
+  const lenSq = abx * abx + aby * aby + abz * abz;
+  const t = lenSq > 0 ? Math.max(0, Math.min(1, (apx * abx + apy * aby + apz * abz) / lenSq)) : 0;
+  const cx = ax + t * abx - px;
+  const cy = ay + t * aby - py;
+  const cz = az + t * abz - pz;
+  return { dist: Math.sqrt(cx * cx + cy * cy + cz * cz), t };
+}
+
+/**
+ * Renders a full, anatomically detailed 3D Voxel Dragon at layer relY (1..22):
+ * - 4 planted legs (muscular thighs, knees/hocks, shins, and 3 spread front talons per foot)
+ * - Arched 3D ribcage/torso with armored underbelly & jagged dorsal spine spikes
+ * - S-curved muscular neck, sculpted dragon skull, glowing eyes, open jaw with fire/fangs, and swept-back horns
+ * - Sinuous S-curved tail with species-specific tail weapon (Morningstail, Daggertail, Feathertail)
+ * - Huge 3D cambered bat-wings with shoulder->elbow leading spar, thumb claw, 4 radiating finger bones & scalloped membranes
+ */
+function stampDetailedDragonAtY(layer, relY, cfg) {
+  const {
+    cx,
+    cz,
+    facingDeg = 135,
+    scale = 1.0,
+    scaleMat = 14,
+    bellyMat = 28,
+    membraneMat = 2,
+    hornMat = 20,
+    eyeMat = 12,
+    tailType = 'morningstail'
+  } = cfg;
+
+  const h = relY / scale;
+  if (h < 0.5 || h > 21.5) return;
+
+  const rad = (facingDeg * Math.PI) / 180;
+  const fx = Math.cos(rad);
+  const fz = Math.sin(rad);
+  const rx = -fz;
+  const rz = fx;
+
+  const maxExtent = Math.ceil(38 * scale);
+  const minX = Math.floor(cx - maxExtent);
+  const maxX = Math.ceil(cx + maxExtent);
+  const minZ = Math.floor(cz - maxExtent);
+  const maxZ = Math.ceil(cz + maxExtent);
+
+  for (let z = minZ; z <= maxZ; z++) {
+    for (let x = minX; x <= maxX; x++) {
+      const dx = x - cx;
+      const dz = z - cz;
+      // u = longitudinal (+u = forward toward snout, -u = backward toward tail)
+      // v = lateral (+v = right wing, -v = left wing)
+      const u = (dx * fx + dz * fz) / scale;
+      const v = (dx * rx + dz * rz) / scale;
+      const absV = Math.abs(v);
+      const side = v >= 0 ? 1 : -1;
+
+      if (u < -36 || u > 24 || absV > 36) continue;
+
+      let chosenMat = 0;
+
+      // ----------------------------------------------------------------------
+      // 1. FOUR MUSCULAR LEGS & SPREAD TALONS (h = 0.5..9.0)
+      // ----------------------------------------------------------------------
+      if (h <= 9.5 && absV <= 11 && u >= -13 && u <= 12) {
+        // Foreleg: Foot (6.0, 6.2, 1.0) -> Elbow (4.2, 5.8, 4.5) -> Shoulder (5.2, 4.2, 8.2)
+        const foreLow = distToSegment3D(u, absV, h, 6.0, 6.2, 1.0, 4.2, 5.8, 4.5);
+        const foreHigh = distToSegment3D(u, absV, h, 4.2, 5.8, 4.5, 5.2, 4.2, 8.2);
+        if (foreLow.dist <= 1.65 || foreHigh.dist <= 1.85 + foreHigh.t * 0.6) {
+          chosenMat = scaleMat;
+        }
+        // Hindleg: Foot (-7.0, 6.8, 1.0) -> Hock (-9.6, 6.4, 4.8) -> Haunch/Pelvis (-5.8, 4.4, 8.0)
+        const hindLow = distToSegment3D(u, absV, h, -7.0, 6.8, 1.0, -9.6, 6.4, 4.8);
+        const hindHigh = distToSegment3D(u, absV, h, -9.6, 6.4, 4.8, -5.8, 4.4, 8.0);
+        if (hindLow.dist <= 1.75 || hindHigh.dist <= 2.15 + hindHigh.t * 0.7) {
+          chosenMat = scaleMat;
+        }
+
+        // 3 Spread Claws / Talons on each foot (h <= 2.0)
+        if (h <= 2.0) {
+          for (const clawOffset of [-1.2, 0, 1.2]) {
+            // Forefoot talons
+            const fc = distToSegment3D(
+              u,
+              absV,
+              h,
+              6.5,
+              6.2 + clawOffset * 0.7,
+              1.0,
+              9.5,
+              6.4 + clawOffset * 1.3,
+              0.8
+            );
+            // Hindfoot talons
+            const hc = distToSegment3D(
+              u,
+              absV,
+              h,
+              -6.5,
+              6.8 + clawOffset * 0.7,
+              1.0,
+              -3.5,
+              7.0 + clawOffset * 1.3,
+              0.8
+            );
+            if (fc.dist <= 0.75 || hc.dist <= 0.75) {
+              chosenMat = hornMat;
+            }
+          }
+        }
+      }
+
+      // ----------------------------------------------------------------------
+      // 2. ARCHED TORSO, RIBCAGE & ARMORED UNDERBELLY (u = -11..+9, h = 4..13)
+      // ----------------------------------------------------------------------
+      if (u >= -11 && u <= 9 && absV <= 6.5 && h >= 4.0 && h <= 13.5) {
+        const tTorso = (u + 11) / 20; // 0 at hips, 1 at chest
+        const torsoCenterH = 6.8 + Math.sin(tTorso * Math.PI * 0.85) * 2.4 + tTorso * 1.2;
+        const halfWidth = 3.0 + Math.sin(tTorso * Math.PI) * 2.1;
+        const halfHeight = 2.6 + Math.sin(tTorso * Math.PI) * 1.1;
+        const normV = absV / halfWidth;
+        const normH = (h - torsoCenterH) / halfHeight;
+        if (normV * normV + normH * normH <= 1.0) {
+          if (h < torsoCenterH - halfHeight * 0.35 && absV < halfWidth * 0.65) {
+            chosenMat = bellyMat; // Armored chest & belly plates
+          } else {
+            chosenMat = scaleMat;
+          }
+        }
+      }
+
+      // ----------------------------------------------------------------------
+      // 3. S-CURVED NECK, SCULPTED SKULL, OPEN JAWS, HORNS & EYES (u = 6..23)
+      // ----------------------------------------------------------------------
+      if (u >= 6 && u <= 23 && absV <= 6.5 && h >= 7.5 && h <= 21.5) {
+        // S-curved neck from Chest (7.0, 0, 9.2) -> Mid-Neck (11.0, 0, 12.8) -> Skull Base (14.5, 0, 16.5)
+        const neck1 = distToSegment3D(u, absV, h, 7.0, 0, 9.2, 11.0, 0, 12.8);
+        const neck2 = distToSegment3D(u, absV, h, 11.0, 0, 12.8, 14.5, 0, 16.5);
+        const rNeck1 = 3.2 - neck1.t * 0.5;
+        const rNeck2 = 2.7 - neck2.t * 0.4;
+        if (neck1.dist <= rNeck1 || neck2.dist <= rNeck2) {
+          chosenMat = absV <= 1.4 && h < 10.5 + (u - 7) * 0.75 ? bellyMat : scaleMat;
+        }
+
+        // Upper Skull & Snout: (14.5, 0, 16.8) -> (21.5, 0, 16.2)
+        const snout = distToSegment3D(u, absV, h, 14.5, 0, 16.8, 21.5, 0, 16.2);
+        const snoutR = 2.6 - snout.t * 1.15;
+        if (snout.dist <= snoutR && h >= 15.6) {
+          chosenMat = scaleMat;
+        }
+
+        // Lower Open Jaw: (14.8, 0, 15.5) -> (20.2, 0, 13.8)
+        const jaw = distToSegment3D(u, absV, h, 14.8, 0, 15.5, 20.2, 0, 13.8);
+        if (jaw.dist <= 1.8 - jaw.t * 0.7 && h <= 15.6) {
+          chosenMat = bellyMat;
+        }
+
+        // Glowing Fire/Lightning Throat Core & Fangs inside open mouth
+        if (u >= 15.5 && u <= 19.5 && absV <= 1.4 && h >= 14.8 && h <= 15.8) {
+          if (absV >= 0.9 && Math.round(u) % 2 === 0) {
+            chosenMat = 26; // Calcite Fangs
+          } else if (u <= 17.5 && absV <= 0.8) {
+            chosenMat = 34; // Glowing Fire Core in throat
+          }
+        }
+
+        // Glowing Eyes beneath brow ridges
+        if (u >= 15.8 && u <= 17.2 && absV >= 1.8 && absV <= 2.9 && h >= 17.0 && h <= 18.0) {
+          chosenMat = eyeMat;
+        }
+
+        // Sweeping Twin Dragon Horns: Brow (15.0, 2.0, 17.8) -> Horn Tip (8.8, 5.2, 20.6)
+        const horn = distToSegment3D(u, absV, h, 15.0, 2.0, 17.8, 8.8, 5.2, 20.6);
+        if (horn.dist <= 1.25 - horn.t * 0.65) {
+          chosenMat = hornMat;
+        }
+      }
+
+      // ----------------------------------------------------------------------
+      // 4. SINUOUS S-CURVED TAIL & TAIL WEAPON (u = -10..-35, h = 0.8..9.0)
+      // ----------------------------------------------------------------------
+      if (u <= -9.5 && u >= -35 && absV <= 12) {
+        const tTail = Math.min(1, (-9.5 - u) / 23.0); // 0 at pelvis (-9.5), 1 at tip (-32.5)
+        const tailCenterV = Math.sin(tTail * Math.PI * 1.65) * 4.8;
+        const tailCenterH =
+          6.5 * Math.pow(1 - tTail, 1.5) +
+          1.6 * (1 - tTail) +
+          (tTail > 0.65 ? Math.pow((tTail - 0.65) / 0.35, 1.4) * 4.8 : 0);
+        const tailR = Math.max(0.95, 2.9 * (1 - tTail * 0.68));
+        const dTail = Math.sqrt(
+          (v - tailCenterV) * (v - tailCenterV) + (h - tailCenterH) * (h - tailCenterH)
+        );
+        if (dTail <= tailR && u >= -32.5) {
+          chosenMat = scaleMat;
+        }
+
+        // Tail Weapon at the tip (u in [-35..-27])
+        if (tailType === 'morningstail' && u <= -29.0 && u >= -35.0) {
+          const tipV = Math.sin(1.0 * Math.PI * 1.65) * 4.8;
+          const tipH = 4.8;
+          const dClub = Math.sqrt(
+            (u + 32.0) * (u + 32.0) + (v - tipV) * (v - tipV) + (h - tipH) * (h - tipH)
+          );
+          if (dClub <= 2.6) {
+            chosenMat = scaleMat;
+          } else if (
+            dClub <= 3.9 &&
+            (Math.abs(u + 32.0) < 0.9 || Math.abs(v - tipV) < 0.9 || Math.abs(h - tipH) < 0.9)
+          ) {
+            chosenMat = hornMat; // Projecting Morningstail Spikes!
+          }
+        } else if (tailType === 'feathertail' && u <= -25.5 && u >= -34.0) {
+          const tipV = Math.sin(tTail * Math.PI * 1.65) * 4.8;
+          const tipH = tailCenterH;
+          const fanSpread = ( -25.5 - u ) * 0.85;
+          if (Math.abs(v - tipV) <= 1.5 + fanSpread && Math.abs(h - tipH) <= 1.2) {
+            chosenMat = Math.abs(v - tipV) > fanSpread * 0.7 ? eyeMat : hornMat;
+          }
+        } else if (tailType === 'daggertail' && u <= -26.0 && u >= -34.5) {
+          const tipV = Math.sin(tTail * Math.PI * 1.65) * 4.8;
+          const tipH = tailCenterH;
+          if (Math.abs(v - tipV) <= 3.2 && Math.abs(h - tipH) <= 0.95) {
+            chosenMat = Math.abs(v - tipV) > 1.6 ? 9 : scaleMat; // Razor Steel Blades
+          }
+        }
+      }
+
+      // ----------------------------------------------------------------------
+      // 5. JAGGED DORSAL SPINE CREST ALONG NECK, BACK & TAIL
+      // ----------------------------------------------------------------------
+      if (u >= -27 && u <= 14) {
+        let spineV = 0;
+        let spineTopH = 9.5;
+        if (u < -9.5) {
+          const tTail = Math.min(1, (-9.5 - u) / 23.0);
+          spineV = Math.sin(tTail * Math.PI * 1.65) * 4.8;
+          const tailR = Math.max(0.95, 2.9 * (1 - tTail * 0.68));
+          spineTopH =
+            6.5 * Math.pow(1 - tTail, 1.5) +
+            1.6 * (1 - tTail) +
+            (tTail > 0.65 ? Math.pow((tTail - 0.65) / 0.35, 1.4) * 4.8 : 0) +
+            tailR;
+        } else if (u <= 7.0) {
+          const tTorso = (u + 11) / 20;
+          spineTopH =
+            6.8 +
+            Math.sin(tTorso * Math.PI * 0.85) * 2.4 +
+            tTorso * 1.2 +
+            2.6 +
+            Math.sin(tTorso * Math.PI) * 1.1;
+        } else {
+          spineTopH = 11.5 + (u - 7.0) * 0.85;
+        }
+        const spikeWave = Math.cos(u * 1.65);
+        if (
+          spikeWave > 0.15 &&
+          Math.abs(v - spineV) <= 0.85 &&
+          h >= spineTopH - 0.5 &&
+          h <= spineTopH + 1.8 * spikeWave
+        ) {
+          chosenMat = hornMat;
+        }
+      }
+
+      // ----------------------------------------------------------------------
+      // 6. COLOSSAL 3D ARCHED BAT-WINGS WITH 4 FINGER BONES & SCALLOPED MEMBRANES
+      // ----------------------------------------------------------------------
+      if (absV >= 3.2 && absV <= 35.5 && u >= -15 && u <= 14 && h >= 4.0 && h <= 18.5) {
+        // Wing Leading Edge Spar:
+        // Inner Arm: Shoulder (5.0, 4.0, 9.8) -> Wing Elbow / Thumb (10.5, 15.0, 16.2)
+        // Outer Spar: Wing Elbow (10.5, 15.0, 16.2) -> Wingtip (-4.5, 35.0, 11.2)
+        const leadInner = distToSegment3D(u, absV, h, 5.0, 4.0, 9.8, 10.5, 15.0, 16.2);
+        const leadOuter = distToSegment3D(u, absV, h, 10.5, 15.0, 16.2, -4.5, 35.0, 11.2);
+        // Thumb Claw at Wing Elbow (10.5, 15.0, 16.2) -> (13.2, 15.5, 17.2)
+        const thumbClaw = distToSegment3D(u, absV, h, 10.5, 15.0, 16.2, 13.2, 15.5, 17.2);
+
+        // 4 Radiating Wing Finger Bones from Wing Elbow (10.5, 15.0, 16.2):
+        const finger1 = distToSegment3D(u, absV, h, 10.5, 15.0, 16.2, -9.5, 12.0, 6.8);
+        const finger2 = distToSegment3D(u, absV, h, 10.5, 15.0, 16.2, -12.0, 20.5, 7.6);
+        const finger3 = distToSegment3D(u, absV, h, 10.5, 15.0, 16.2, -10.5, 28.0, 9.2);
+
+        if (thumbClaw.dist <= 0.9) {
+          chosenMat = hornMat;
+        } else if (leadInner.dist <= 1.45 || leadOuter.dist <= 1.35 - leadOuter.t * 0.4) {
+          chosenMat = scaleMat;
+        } else if (finger1.dist <= 1.05 || finger2.dist <= 1.05 || finger3.dist <= 1.05) {
+          chosenMat = scaleMat;
+        } else {
+          // 3D Cambered Wing Membrane between Leading Edge and Scalloped Trailing Edge
+          let uLead = 5.0;
+          let hLead = 9.8;
+          let uTrail = -8.0;
+          let hTrail = 6.8;
+
+          if (absV <= 15.0) {
+            const tW = (absV - 4.0) / 11.0;
+            uLead = 5.0 + tW * 5.5;
+            hLead = 9.8 + tW * 6.4;
+            const scallop = Math.sin(tW * Math.PI) * 2.2;
+            uTrail = -7.0 - tW * 2.5 + scallop;
+            hTrail = 7.2 - tW * 0.4;
+          } else {
+            const tW = (absV - 15.0) / 20.0;
+            uLead = 10.5 - tW * 15.0;
+            hLead = 16.2 - tW * 5.0 + Math.sin(tW * Math.PI) * 1.6;
+            // 3 scalloped bays between Finger 1 (v=12), Finger 2 (v=20.5), Finger 3 (v=28), and Wingtip (v=35)
+            const scallop = Math.abs(Math.sin(tW * Math.PI * 3.0)) * 2.8;
+            uTrail = -11.5 + tW * 7.0 + scallop;
+            hTrail = 6.8 + tW * 4.4;
+          }
+
+          if (u <= uLead && u >= uTrail) {
+            const chord = Math.max(1.0, uLead - uTrail);
+            const tChord = (u - uTrail) / chord; // 0 at trailing edge, 1 at leading edge
+            // Vaulted 3D camber arch across the wing chord
+            const camber = Math.sin(tChord * Math.PI) * 1.85;
+            const targetH = hTrail + (hLead - hTrail) * tChord + camber;
+            if (Math.abs(h - targetH) <= 0.95) {
+              chosenMat = tChord < 0.12 ? scaleMat : membraneMat;
+            }
+          }
+        }
+      }
+
+      if (chosenMat !== 0) {
+        layer.setBlock(x, z, chosenMat);
+      }
+    }
+  }
+}
 
 function stampDragonStatueAtY(layer, relY) {
   for (const dragon of dragonStatues) {
@@ -572,15 +910,25 @@ function stampDragonStatueAtY(layer, relY) {
       }
     }
 
-    // Dragon Lower Body, Legs & Sweeping Tail with Weapon (relY = 6..12)
+    // Dragon Lower Body, 4 Muscular Legs/Talons & Sweeping Tail with Weapon (relY = 6..12)
     if (relY >= 6 && relY <= 12) {
       const bodyRadius = relY <= 9 ? 4 : 3;
       layer.addCircle(Math.round(cx), Math.round(cz), bodyRadius, dragon.blockId, true);
 
-      const tailLen = 10 - Math.abs(relY - 8);
+      // 4 distinct legs & golden front talons gripping the pedestal rim
+      for (const side of [-1, 1]) {
+        const flX = cx + inX * 3.5 + perpX * side * 3.5;
+        const flZ = cz + inZ * 3.5 + perpZ * side * 3.5;
+        const hlX = cx - inX * 2.5 + perpX * side * 3.8;
+        const hlZ = cz - inZ * 2.5 + perpZ * side * 3.8;
+        layer.addCircle(Math.round(flX), Math.round(flZ), 1, relY === 6 ? 20 : dragon.blockId, true);
+        layer.addCircle(Math.round(hlX), Math.round(hlZ), 1, relY === 6 ? 20 : dragon.blockId, true);
+      }
+
+      const tailLen = 11 - Math.abs(relY - 8);
       for (let t = 1; t <= tailLen; t++) {
-        const tx = cx - inX * (t * 0.75) + perpX * Math.sin(t * 0.35) * 4;
-        const tz = cz - inZ * (t * 0.75) + perpZ * Math.sin(t * 0.35) * 4;
+        const tx = cx - inX * (t * 0.75) + perpX * Math.sin(t * 0.38) * 4.5;
+        const tz = cz - inZ * (t * 0.75) + perpZ * Math.sin(t * 0.38) * 4.5;
         layer.addCircle(Math.round(tx), Math.round(tz), 1, dragon.blockId, true);
         if (t === tailLen && relY >= 8 && relY <= 10) {
           layer.addCircle(Math.round(tx), Math.round(tz), 2, 20, true);
@@ -588,21 +936,30 @@ function stampDragonStatueAtY(layer, relY) {
       }
     }
 
-    // Chest & Spread Wings (relY = 13..23)
+    // Chest, Dorsal Spine & Ribbed 3D Bat-Wings (relY = 13..23)
     if (relY >= 13 && relY <= 23) {
       const leanIn = (relY - 12) * 0.45;
       const bx = cx + inX * leanIn;
       const bz = cz + inZ * leanIn;
       layer.addCircle(Math.round(bx), Math.round(bz), 3, dragon.blockId, true);
+      // Golden Dorsal Spine Crest
+      if (relY % 2 === 1) {
+        layer.setBlock(bx - inX * 3.5, bz - inZ * 3.5, 20);
+      }
 
-      const wingSpan = 6 + (relY - 12) * 1.15;
+      const wingSpan = 7 + (relY - 12) * 1.25;
       for (const side of [-1, 1]) {
         for (let w = 3; w <= wingSpan; w++) {
-          const archBack = Math.sin((w / wingSpan) * Math.PI) * 3.5;
+          const archBack = Math.sin((w / wingSpan) * Math.PI) * 4.2;
           const wx = bx + perpX * side * w - inX * archBack;
           const wz = bz + perpZ * side * w - inZ * archBack;
           layer.setBlock(wx, wz, dragon.blockId);
           layer.setBlock(wx + inX, wz + inZ, dragon.blockId);
+          // Wing Finger Ribs extending backward
+          if (Math.round(w) % 4 === 0 && relY >= 16) {
+            layer.setBlock(wx - inX * 2, wz - inZ * 2, 20);
+            layer.setBlock(wx - inX * 3, wz - inZ * 3, dragon.blockId);
+          }
           if (relY === 23 || Math.abs(w - wingSpan) < 1.2) {
             layer.setBlock(wx, wz, 20);
           }
@@ -610,16 +967,23 @@ function stampDragonStatueAtY(layer, relY) {
       }
     }
 
-    // Neck, Snout, Glowing Eyes & Horns (relY = 24..30)
+    // Neck, Open Jaws, Glowing Eyes & Swept-Back Horns (relY = 24..30)
     if (relY >= 24 && relY <= 30) {
-      const reachIn = 5 + (relY - 24) * 1.1;
+      const reachIn = 5 + (relY - 24) * 1.15;
       const hx = cx + inX * reachIn;
       const hz = cz + inZ * reachIn;
       const headRadius = relY >= 27 ? 2 : 3;
       layer.addCircle(Math.round(hx), Math.round(hz), headRadius, dragon.blockId, true);
 
-      if (relY === 27 || relY === 28) {
+      if (relY === 26) {
+        // Lower Jaw & Glowing Throat Fire
         for (let s = 1; s <= 4; s++) {
+          layer.setBlock(hx + inX * s, hz + inZ * s, s === 2 ? 34 : dragon.blockId);
+        }
+      }
+      if (relY === 27 || relY === 28) {
+        // Upper Snout & Glowing Eyes
+        for (let s = 1; s <= 5; s++) {
           layer.setBlock(hx + inX * s, hz + inZ * s, dragon.blockId);
         }
         layer.setBlock(hx + perpX * 2, hz + perpZ * 2, 12);
@@ -630,6 +994,7 @@ function stampDragonStatueAtY(layer, relY) {
         for (const side of [-1, 1]) {
           layer.setBlock(hx - inX * 2 + perpX * side * 2, hz - inZ * 2 + perpZ * side * 2, 20);
           layer.setBlock(hx - inX * 3 + perpX * side * 3, hz - inZ * 3 + perpZ * side * 3, 20);
+          layer.setBlock(hx - inX * 4 + perpX * side * 4, hz - inZ * 4 + perpZ * side * 4, 20);
         }
       }
     }
@@ -1713,34 +2078,60 @@ for (const y of sortedYLevels) {
     }
   }
 
-  // 3. Flight Field Landing Rings & 3D Dragons on the distant NE Mountain Shoulder (Center: X = 242, Z = -218, Y = 132..144)
-  if (y >= 132 && y <= 144) {
+  // 3. Flight Field Landing Rings & 3D Anatomical Dragons on the distant NE Mountain Shoulder (Center: X = 242, Z = -218, Y = 132..154)
+  if (y >= 132 && y <= 154) {
     const relF = y - 132;
     if (relF === 0) {
       // Stone Causeway connecting Flight Field Viaduct (X = 196, Z = -146) to the Main Landing Pad (X = 242, Z = -218)
-      b.addLine(196, -146, 224, -184, 33, 10);
-      // Main Dragon Landing Pad
-      b.addCircle(242, -218, 46, 1, true);
-      b.addCircle(242, -218, 42, 20, false, 2);
-      b.addCircle(242, -218, 26, 32, false, 2);
+      b.addLine(196, -146, 224, -184, 33, 12);
+      // Main Dragon Landing Pad (Expanded Ø 104 so Tairn, Sgaeyl & Andarna all stand majestically on the pad!)
+      b.addCircle(242, -218, 52, 1, true);
+      b.addCircle(242, -218, 48, 20, false, 2);
+      b.addCircle(242, -218, 32, 32, false, 2);
+      b.addCircle(242, -218, 14, 28, false, 2);
     }
-    // 3D Sculpted Tairn (Colossal Black Morningstail Dragon) & Golden Andarna
-    if (relF >= 1 && relF <= 10) {
-      // Tairn's Body, Spread Wings, Head & Morningstail
-      if (relF <= 8) {
-        b.addCircle(242, -218, Math.max(3, 9 - relF), 14, true);
-        const wingW = 10 + relF * 4;
-        b.addLine(242 - wingW, -218 + relF, 242 + wingW, -218 + relF, 14, 5);
-        b.addLine(242, -188, 242, -252, 14, Math.max(2, 6 - Math.floor(relF / 2)));
-        if (relF === 3) {
-          b.addCircle(242, -254, 4, 20, true); // Morningstail Spiked Club
-        }
-      }
-      // Golden Andarna next to Tairn
-      if (relF <= 5) {
-        b.addCircle(208, -190, Math.max(2, 5 - relF), 20, true);
-        b.addLine(196, -190, 220, -190, 20, 3);
-      }
+    if (relF >= 1 && relF <= 22) {
+      // 1. TAIRN — Colossal Black Morningstail Dragon (Scale 1.0, 21 blocks tall, ~68-block wingspan, facing SW toward Basgiath)
+      stampDetailedDragonAtY(b, relF, {
+        cx: 256,
+        cz: -222,
+        facingDeg: 132,
+        scale: 1.0,
+        scaleMat: 14,     // Black Dragonscale
+        bellyMat: 28,     // Arcane Gold-Darkstone Underbelly
+        membraneMat: 2,   // Chiseled Blackstone Wing Membranes
+        hornMat: 20,      // Gold Horns, Dorsal Spikes, Talons & Morningstail Spikes
+        eyeMat: 12,       // Glowing Arcane Crystal Eyes
+        tailType: 'morningstail'
+      });
+
+      // 2. SGAEYL — Ruthless Blue Daggertail Dragon (Scale 0.68, perched NW on the pad, facing SSW)
+      stampDetailedDragonAtY(b, relF, {
+        cx: 216,
+        cz: -248,
+        facingDeg: 112,
+        scale: 0.68,
+        scaleMat: 15,     // Blue Dragonscale
+        bellyMat: 3,      // Polished Blackstone Underbelly
+        membraneMat: 8,   // Deepslate Tile Wing Membranes
+        hornMat: 9,       // Bolted Steel Horns, Talons & Daggertail Blades
+        eyeMat: 12,
+        tailType: 'daggertail'
+      });
+
+      // 3. ANDARNA — Golden Feathertail Dragon (Scale 0.52, perched SW near the causeway, looking up toward Tairn)
+      stampDetailedDragonAtY(b, relF, {
+        cx: 214,
+        cz: -190,
+        facingDeg: 38,
+        scale: 0.52,
+        scaleMat: 20,     // Golden Scales
+        bellyMat: 6,      // Chiseled Limestone Underbelly
+        membraneMat: 13,  // Bolted Bronze Wing Membranes
+        hornMat: 12,      // Glowing Crystal Horns, Spikes & Feathertail Tips
+        eyeMat: 34,
+        tailType: 'feathertail'
+      });
     }
   }
 
