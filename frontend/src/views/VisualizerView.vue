@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useLayerStore } from '../composables/useLayerStore';
 import Viewer2DCanvas from '../components/Viewer2DCanvas.vue';
 import Viewer3DVoxel from '../components/Viewer3DVoxel.vue';
 import MaterialListPanel from '../components/MaterialListPanel.vue';
+import BlockEditorBar from '../components/BlockEditorBar.vue';
 
 const {
   state,
@@ -11,7 +12,9 @@ const {
   availableYLevels,
   setCurrentY,
   stepY,
-  currentLayerData
+  currentLayerData,
+  undoEdit,
+  redoEdit
 } = useLayerStore();
 
 // Default to full '3d' view so it occupies 100% of the viewport area (user can switch to '2d' or 'split' anytime)
@@ -19,26 +22,50 @@ const viewMode = ref('3d');
 
 const quickBookmarks = [
   { y: -30, label: 'Y=-30 Schlucht-Fluss' },
+  { y: 0, label: 'Y=0 Wardstone-Obelisk' },
   { y: 10, label: 'Y=10 Scribe Archiv' },
-  { y: 16, label: 'Y=16 West-Fields' },
+  { y: 16, label: 'Y=16 West-Tal (Dreschen)' },
   { y: 55, label: 'Y=55 Süd-Campus' },
   { y: 70, label: 'Y=70 Das Parapet' },
-  { y: 80, label: 'Y=80 Rotunda Boden' },
+  { y: 80, label: 'Y=80 Rotunda & Reiter-EG' },
   { y: 88, label: 'Y=88 Drachenstatuen & Ränge' },
   { y: 98, label: 'Y=98 Drachen-Schwingen' },
-  { y: 107, label: 'Y=107 Drachenköpfe' },
   { y: 118, label: 'Y=118 Rotunda Kuppel' },
+  { y: 140, label: 'Y=140 Violet & Xadens Baum' },
   { y: 150, label: 'Y=150 Gauntlet & Flight Field' }
 ];
 
+function onGlobalKeyDown(e) {
+  if (!state.editMode) return;
+  const tag = e.target?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    if (e.shiftKey) {
+      redoEdit();
+    } else {
+      undoEdit();
+    }
+  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+    e.preventDefault();
+    redoEdit();
+  }
+}
+
 onMounted(() => {
   initStore();
+  window.addEventListener('keydown', onGlobalKeyDown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onGlobalKeyDown);
 });
 </script>
 
 <template>
   <section class="visualizer-page">
-    <!-- Top Control Deck: View Mode + Layer.Y.json Navigator -->
+    <!-- Top Control Deck: View Mode + Edit Mode Toggle + Layer.Y.json Navigator -->
     <div class="control-deck">
       <div class="deck-left">
         <div class="mode-switch">
@@ -65,6 +92,16 @@ onMounted(() => {
           </button>
         </div>
 
+        <!-- Edit Mode Toggle Button -->
+        <button
+          class="btn-tactical btn-edit-toggle"
+          :class="{ active: state.editMode }"
+          @click="state.editMode = !state.editMode"
+          title="Interaktiven Block-Editor aktivieren: Blöcke direkt in 2D/3D hinzufügen, konvertieren oder entfernen (speichert live in layer.Y.json)"
+        >
+          {{ state.editMode ? '🛠️ EDITIER-MODUS AKTIV' : '✏️ EDITIER-MODUS STARTEN' }}
+        </button>
+
         <div class="layer-info-box" v-if="currentLayerData">
           <span class="badge">layer.{{ state.currentY }}.json</span>
           <strong class="layer-title">{{ currentLayerData.label }}</strong>
@@ -72,8 +109,16 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Y-Level Stepper & Slider -->
+      <!-- Y-Level Stepper & Slider + Live Sync Indicator -->
       <div class="deck-right font-mono">
+        <span
+          class="live-sync-badge"
+          :class="{ connected: state.sseConnected }"
+          title="Sessionübergreifender Echtzeit-Sync für alle layer.Y.json Dateien"
+        >
+          <span class="dot"></span>
+          {{ state.sseConnected ? 'LIVE-SYNC' : 'OFFLINE' }}
+        </span>
         <button class="btn-tactical" @click="stepY(-1)" title="Eine Ebene tiefer">▼ Y-</button>
         <select
           class="y-select font-mono"
@@ -87,6 +132,9 @@ onMounted(() => {
         <button class="btn-tactical" @click="stepY(1)" title="Eine Ebene höher">▲ Y+</button>
       </div>
     </div>
+
+    <!-- Collapsible Interactive Block Editor Bar -->
+    <BlockEditorBar v-if="state.editMode" />
 
     <!-- Quick Y-Level Bookmark Bar -->
     <div class="bookmark-bar">
@@ -156,6 +204,19 @@ onMounted(() => {
   gap: 0.4rem;
 }
 
+.btn-edit-toggle {
+  border-color: var(--border-gold);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.btn-edit-toggle.active {
+  background: rgba(229, 169, 60, 0.25);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(229, 169, 60, 0.35);
+}
+
 .layer-info-box {
   display: flex;
   flex-wrap: wrap;
@@ -176,6 +237,35 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+}
+
+.live-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.live-sync-badge.connected {
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #86efac;
+}
+
+.live-sync-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6b7280;
+}
+
+.live-sync-badge.connected .dot {
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
 }
 
 .y-select {

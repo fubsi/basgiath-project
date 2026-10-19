@@ -114,8 +114,11 @@ function copyMaterialList() {
         v-for="item in computedMaterialList"
         :key="item.id"
         class="material-item"
-        :class="{ 'is-checked': item.checked }"
-        @click="toggleMaterialChecked(item.id)"
+        :class="{
+          'is-checked': item.checked,
+          'is-selected-brush': state.editMode && Number(state.selectedBlockId) === Number(item.paletteId)
+        }"
+        @click="state.editMode ? (state.selectedBlockId = Number(item.paletteId)) : toggleMaterialChecked(item.id)"
       >
         <div class="item-top">
           <input
@@ -136,7 +139,7 @@ function copyMaterialList() {
             :style="{ backgroundColor: item.color }"
           ></span>
           <div class="item-info">
-            <div class="item-name">{{ item.name }}</div>
+            <div class="item-name">#{{ item.paletteId }} {{ item.name }}</div>
             <div class="item-tech font-mono">{{ item.id }}</div>
           </div>
           <span class="badge mod-tag">{{ item.mod }}</span>
@@ -316,6 +319,12 @@ function copyMaterialList() {
 .material-item:hover {
   border-color: var(--border-gold);
   background: var(--bg-panel-hover);
+}
+
+.material-item.is-selected-brush {
+  border-color: var(--accent);
+  background: rgba(229, 169, 60, 0.14);
+  box-shadow: 0 0 10px rgba(229, 169, 60, 0.22);
 }
 
 .material-item.is-checked {

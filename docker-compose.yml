@@ -7,4 +7,6 @@ services:
     container_name: basgiath-site
     ports:
       - "4001:80"
+    volumes:
+      - ./frontend/public/data:/app/public/data
     restart: unless-stopped

@@ -7,7 +7,11 @@ const {
   currentLayerData,
   previousLayerData,
   getBlockInfo,
-  isTerrainBlock
+  isTerrainBlock,
+  getBlockAt,
+  isAdjacentCoordinate,
+  mutateBlocks,
+  applyEditAt
 } = useLayerStore();
 
 const canvasRef = ref(null);
@@ -39,7 +43,9 @@ const cam = ref({
 });
 
 const isDragging = ref(false);
-const dragStart = ref({ x: 0, y: 0, cx: 0, cz: 0 });
+const isBrushPainting = ref(false);
+const paintedCoords = new Map(); // "x,z" -> blockId|null
+const dragStart = ref({ x: 0, y: 0, cx: 0, cz: 0, moved: false });
 const mouseWorld = ref({ x: 0, z: 0 });
 const mapImage = new Image();
 let mapLoaded = false;
@@ -60,6 +66,8 @@ function focusZone(zoneId) {
     cam.value = { cx: 0, cz: 390, zoom: 1.6 };
   } else if (zoneId === 'scribe-quadrant') {
     cam.value = { cx: -130, cz: 350, zoom: 2.5 };
+  } else if (zoneId === 'threshing-valley') {
+    cam.value = { cx: -265, cz: -115, zoom: 2.2 };
   } else if (zoneId === 'gauntlet-flight-field') {
     cam.value = { cx: 95, cz: -185, zoom: 1.9 };
   } else {
@@ -85,6 +93,13 @@ function screenToWorld(sx, sy, width, height) {
     wx: Math.floor(cam.value.cx + (sx - width / 2) / cam.value.zoom),
     wz: Math.floor(cam.value.cz + (sy - height / 2) / cam.value.zoom)
   };
+}
+
+function canPlaceAt2D(wx, wz) {
+  const existing = getBlockAt(wx, state.currentY, wz);
+  if (existing !== null) return false;
+  if (!state.enforceAdjacent2D) return true;
+  return isAdjacentCoordinate(wx, state.currentY, wz);
 }
 
 function drawCanvas() {
@@ -232,7 +247,7 @@ function drawCanvas() {
     { x: 0, z: 520, title: 'INFANTRY QUADRANT', sub: 'Südkasernen' },
     { x: -130, z: 350, title: 'SCRIBE ARCHIVE', sub: 'Underground (Y=10)' },
     { x: 200, z: -170, title: 'FLIGHT FIELD', sub: 'Drachen-Plateau (Y=148)' },
-    { x: -215, z: 60, title: 'FIELDS', sub: 'West-Tiefland (Y=16)' }
+    { x: -265, z: -115, title: 'FIELDS / DRESCHEN', sub: 'West-Tal (Y=16)' }
   ];
 
   ctx.font = '600 11px "Space Grotesk", sans-serif';
@@ -252,22 +267,100 @@ function drawCanvas() {
     ctx.font = '600 11px "Space Grotesk", sans-serif';
   }
 
-  // 7. Hovered Block Highlight
-  if (state.hoveredVoxel) {
-    const { sx, sy } = worldToScreen(state.hoveredVoxel.x, state.hoveredVoxel.z, width, height);
+  // 7. Hovered Block / Edit Cursor Highlight
+  const wx = mouseWorld.value.x;
+  const wz = mouseWorld.value.z;
+  const { sx, sy } = worldToScreen(wx, wz, width, height);
+
+  if (state.editMode) {
+    const existingId = getBlockAt(wx, state.currentY, wz);
+    if (state.editTool === 'add') {
+      const allowed = canPlaceAt2D(wx, wz);
+      if (allowed) {
+        // Draw ghost block preview
+        const activeInfo = getBlockInfo(state.selectedBlockId);
+        ctx.save();
+        ctx.globalAlpha = 0.65;
+        ctx.fillStyle = activeInfo ? activeInfo.color : '#22c55e';
+        ctx.fillRect(sx, sy, Math.ceil(blockSize), Math.ceil(blockSize));
+        ctx.restore();
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+      } else {
+        ctx.strokeStyle = existingId !== null ? '#f59e0b' : 'rgba(239, 68, 68, 0.65)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+      }
+    } else if (state.editTool === 'convert') {
+      ctx.strokeStyle = existingId !== null ? '#e5a93c' : 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+    } else if (state.editTool === 'remove') {
+      ctx.strokeStyle = existingId !== null ? '#ef4444' : 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+    } else if (state.editTool === 'pick') {
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+    }
+  } else if (state.hoveredVoxel) {
+    const hPos = worldToScreen(state.hoveredVoxel.x, state.hoveredVoxel.z, width, height);
     ctx.strokeStyle = '#60a5fa';
     ctx.lineWidth = 2;
-    ctx.strokeRect(sx - 1, sy - 1, blockSize + 2, blockSize + 2);
+    ctx.strokeRect(hPos.sx - 1, hPos.sy - 1, blockSize + 2, blockSize + 2);
+  }
+}
+
+function recordBrushStrokeAt(wx, wz) {
+  const key = `${wx},${wz}`;
+  if (paintedCoords.has(key)) return;
+  const existing = getBlockAt(wx, state.currentY, wz);
+
+  if (state.editTool === 'add') {
+    if (canPlaceAt2D(wx, wz)) {
+      paintedCoords.set(key, state.selectedBlockId);
+      mutateBlocks([{ x: wx, y: state.currentY, z: wz, blockId: state.selectedBlockId }]);
+    }
+  } else if (state.editTool === 'convert') {
+    if (existing !== null && existing !== state.selectedBlockId) {
+      paintedCoords.set(key, state.selectedBlockId);
+      mutateBlocks([{ x: wx, y: state.currentY, z: wz, blockId: state.selectedBlockId }]);
+    }
+  } else if (state.editTool === 'remove') {
+    if (existing !== null) {
+      paintedCoords.set(key, null);
+      mutateBlocks([{ x: wx, y: state.currentY, z: wz, blockId: null }]);
+    }
   }
 }
 
 function onMouseDown(e) {
+  if (e.button !== 0) return;
+  const canvas = canvasRef.value;
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+  const { wx, wz } = screenToWorld(sx, sy, canvas.width, canvas.height);
+
+  // Shift + Left-Click in Edit Mode starts continuous brush painting
+  if (state.editMode && e.shiftKey) {
+    isBrushPainting.value = true;
+    paintedCoords.clear();
+    recordBrushStrokeAt(wx, wz);
+    drawCanvas();
+    return;
+  }
+
   isDragging.value = true;
   dragStart.value = {
     x: e.clientX,
     y: e.clientY,
     cx: cam.value.cx,
-    cz: cam.value.cz
+    cz: cam.value.cz,
+    moved: false
   };
 }
 
@@ -278,17 +371,28 @@ function onMouseMove(e) {
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
 
-  if (isDragging.value) {
-    const dx = e.clientX - dragStart.value.x;
-    const dy = e.clientY - dragStart.value.y;
-    cam.value.cx = dragStart.value.cx - dx / cam.value.zoom;
-    cam.value.cz = dragStart.value.cz - dy / cam.value.zoom;
+  const { wx, wz } = screenToWorld(sx, sy, canvas.width, canvas.height);
+  mouseWorld.value = { x: wx, z: wz };
+
+  if (isBrushPainting.value && state.editMode) {
+    recordBrushStrokeAt(wx, wz);
     drawCanvas();
     return;
   }
 
-  const { wx, wz } = screenToWorld(sx, sy, canvas.width, canvas.height);
-  mouseWorld.value = { x: wx, z: wz };
+  if (isDragging.value) {
+    const dx = e.clientX - dragStart.value.x;
+    const dy = e.clientY - dragStart.value.y;
+    if (Math.hypot(dx, dy) > 4) {
+      dragStart.value.moved = true;
+    }
+    if (dragStart.value.moved) {
+      cam.value.cx = dragStart.value.cx - dx / cam.value.zoom;
+      cam.value.cz = dragStart.value.cz - dy / cam.value.zoom;
+      drawCanvas();
+      return;
+    }
+  }
 
   const layer = currentLayerData.value;
   if (layer && layer.coordMap) {
@@ -302,14 +406,45 @@ function onMouseMove(e) {
         blockInfo: getBlockInfo(blockId)
       };
     } else {
-      state.hoveredVoxel = null;
+      state.hoveredVoxel = {
+        x: wx,
+        y: state.currentY,
+        z: wz,
+        blockId: null,
+        blockInfo: null
+      };
     }
   }
   drawCanvas();
 }
 
-function onMouseUp() {
-  isDragging.value = false;
+async function onMouseUp(e) {
+  if (isBrushPainting.value) {
+    isBrushPainting.value = false;
+    paintedCoords.clear();
+    return;
+  }
+
+  if (isDragging.value) {
+    const wasClick = !dragStart.value.moved && e && e.type === 'mouseup' && e.button === 0;
+    isDragging.value = false;
+
+    if (wasClick && state.editMode && canvasRef.value) {
+      const rect = canvasRef.value.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+      const { wx, wz } = screenToWorld(sx, sy, canvasRef.value.width, canvasRef.value.height);
+
+      if (state.editTool === 'add') {
+        if (canPlaceAt2D(wx, wz)) {
+          await applyEditAt(wx, state.currentY, wz, 'add');
+        }
+      } else {
+        await applyEditAt(wx, state.currentY, wz, state.editTool);
+      }
+      drawCanvas();
+    }
+  }
 }
 
 function onWheel(e) {
@@ -332,12 +467,16 @@ watch(
   () => [
     state.palette,
     state.currentY,
+    state.layerRevision,
     currentLayerData.value,
     previousLayerData.value,
     state.onionSkinEnabled,
     state.showTerrain,
     state.mapOverlayOpacity,
-    state.showGridLines
+    state.showGridLines,
+    state.editMode,
+    state.editTool,
+    state.selectedBlockId
   ],
   () => {
     preloadBlockTextures();
@@ -373,6 +512,7 @@ defineExpose({ focusZone });
       <div class="toolbar-group">
         <button class="btn-tactical" @click="focusZone('all')">Gesamtkarte</button>
         <button class="btn-tactical" @click="focusZone('dragon-rotunda')">Dragon Rotunda (Textur-Zoom)</button>
+        <button class="btn-tactical" @click="focusZone('threshing-valley')">West-Tal (Dreschen)</button>
         <button class="btn-tactical" @click="focusZone('parapet')">Parapet</button>
         <button class="btn-tactical" @click="focusZone('south-campus')">Süd-Campus</button>
       </div>
@@ -405,6 +545,7 @@ defineExpose({ focusZone });
     <canvas
       ref="canvasRef"
       class="blueprint-canvas"
+      :class="{ 'edit-cursor': state.editMode }"
       @mousedown="onMouseDown"
       @mousemove="onMouseMove"
       @mouseup="onMouseUp"
@@ -434,9 +575,12 @@ defineExpose({ focusZone });
           class="hud-swatch"
           :style="{ backgroundColor: state.hoveredVoxel.blockInfo.color }"
         ></span>
-        <strong>{{ state.hoveredVoxel.blockInfo.name }}</strong>
+        <strong>#{{ state.hoveredVoxel.blockId }} {{ state.hoveredVoxel.blockInfo.name }}</strong>
         <span class="text-muted">({{ state.hoveredVoxel.blockInfo.id }})</span>
         <span class="badge">{{ state.hoveredVoxel.blockInfo.mod }}</span>
+      </div>
+      <div v-else-if="state.editMode" class="hud-block text-accent">
+        <strong>EDITIER-MODUS:</strong> Klick = {{ state.editTool === 'add' ? 'Block anliegend hinzufügen' : state.editTool === 'convert' ? 'Block konvertieren' : state.editTool === 'remove' ? 'Block entfernen' : 'Pipette' }} · Shift+Ziehen = Pinsel · Ziehen = Karte bewegen
       </div>
       <div v-else class="hud-block text-muted">
         Maus über einen Block bewegen für ATM 11 Block-Inspektor (ab Zoom 4x mit echten Block-Texturen!)
@@ -464,6 +608,10 @@ defineExpose({ focusZone });
   width: 100%;
   height: 100%;
   cursor: grab;
+}
+
+.blueprint-canvas.edit-cursor {
+  cursor: crosshair;
 }
 
 .blueprint-canvas:active {

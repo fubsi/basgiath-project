@@ -9,7 +9,9 @@ const {
   loadAllLayersFor3D,
   availableYLevels,
   getBlockInfo,
-  isTerrainBlock
+  isTerrainBlock,
+  getBlockAt,
+  mutateBlocks
 } = useLayerStore();
 
 const containerRef = ref(null);
@@ -26,9 +28,22 @@ let renderer = null;
 let controls = null;
 let voxelGroup = null;
 let yPlaneMesh = null;
+let targetWireframeMesh = null;
+let ghostBlockMesh = null;
 let animId = null;
 let resizeObserver = null;
 let lastFrameTime = performance.now();
+
+// Raycaster & pointer interaction state for 3D Block Inspector & Editor
+const raycaster = new THREE.Raycaster();
+const pointerNDC = new THREE.Vector2();
+let pointerDownPos = { x: 0, y: 0 };
+let lastRaycastTime = 0;
+
+// Per-layer cached instance transform arrays so single-layer edits rebuild in <10ms
+// y -> { revision, showTerrain, stepH, byBlock: Map<blockId, number[]>, count }
+const layerBucketCache = new Map();
+const sharedBoxGeo = new THREE.BoxGeometry(1, 1, 1);
 
 // WASD / flight key state
 const pressedKeys = new Set();
@@ -44,7 +59,6 @@ function isInputFocused(e) {
   if (tag === 'TEXTAREA' || tag === 'SELECT') return true;
   if (tag === 'INPUT') {
     const type = (e.target.type || '').toLowerCase();
-    // Allow WASD even if a checkbox or range slider was recently clicked
     return type !== 'checkbox' && type !== 'range' && type !== 'button';
   }
   return false;
@@ -60,6 +74,27 @@ function onKeyDown(e) {
     return;
   }
 
+  // Quick tool hotkeys 1..4 when in Edit Mode
+  if (state.editMode && !e.ctrlKey && !e.metaKey) {
+    if (code === 'Digit1') {
+      state.editTool = 'add';
+      update3DCursorVisuals();
+      return;
+    } else if (code === 'Digit2') {
+      state.editTool = 'convert';
+      update3DCursorVisuals();
+      return;
+    } else if (code === 'Digit3') {
+      state.editTool = 'remove';
+      update3DCursorVisuals();
+      return;
+    } else if (code === 'Digit4') {
+      state.editTool = 'pick';
+      update3DCursorVisuals();
+      return;
+    }
+  }
+
   const navCodes = [
     'KeyW', 'KeyA', 'KeyS', 'KeyD',
     'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight',
@@ -68,11 +103,9 @@ function onKeyDown(e) {
   ];
 
   if (navCodes.includes(code)) {
-    // Prevent page scrolling on Space or Arrow keys
     if (code === 'Space' || code.startsWith('Arrow')) {
       e.preventDefault();
     }
-    // Blur range slider if Space/Arrow is pressed so it doesn't scrubbing-change cutawayMaxY accidentally
     if (document.activeElement && document.activeElement.tagName === 'INPUT') {
       document.activeElement.blur();
     }
@@ -110,8 +143,9 @@ function onPointerLockChange() {
   if (locked) {
     controls.enabled = false;
     euler.setFromQuaternion(camera.quaternion);
+    pointerNDC.set(0, 0);
+    perform3DRaycast();
   } else {
-    // Place OrbitControls target cleanly in front of the camera when exiting free-flight
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     controls.target.copy(camera.position).addScaledVector(forward, 80);
     controls.enabled = true;
@@ -128,6 +162,14 @@ function onMouseMoveFreeLook(e) {
   const maxPitch = Math.PI / 2 - 0.04;
   euler.x = Math.max(-maxPitch, Math.min(maxPitch, euler.x));
   camera.quaternion.setFromEuler(euler);
+
+  // In pointer-lock mode, raycast from center crosshair (0, 0)
+  const now = performance.now();
+  if (now - lastRaycastTime > 35) {
+    lastRaycastTime = now;
+    pointerNDC.set(0, 0);
+    perform3DRaycast();
+  }
 }
 
 function updateWASDMovement(dt) {
@@ -136,7 +178,6 @@ function updateWASDMovement(dt) {
   const isSprint = pressedKeys.has('ShiftLeft') || pressedKeys.has('ShiftRight');
   const speed = moveSpeed.value * (isSprint ? 2.8 : 1.0) * dt;
 
-  // Forward direction projected on horizontal XZ plane (Minecraft-style WASD movement)
   const forward = new THREE.Vector3();
   camera.getWorldDirection(forward);
   forward.y = 0;
@@ -146,7 +187,6 @@ function updateWASDMovement(dt) {
     forward.normalize();
   }
 
-  // Right vector on horizontal XZ plane
   const up = new THREE.Vector3(0, 1, 0);
   const right = new THREE.Vector3().crossVectors(forward, up).normalize();
 
@@ -169,7 +209,6 @@ function updateWASDMovement(dt) {
     moveDelta.normalize().multiplyScalar(speed);
   }
 
-  // Vertical movement (Space / E = Up, Q / C = Down)
   let vertical = 0;
   if (pressedKeys.has('Space') || pressedKeys.has('KeyE')) vertical += 1;
   if (pressedKeys.has('KeyQ') || pressedKeys.has('KeyC')) vertical -= 1;
@@ -238,6 +277,164 @@ function applyWorldSpaceVoxelUV(material) {
   };
 }
 
+function update3DCursorVisuals() {
+  if (!targetWireframeMesh || !ghostBlockMesh) return;
+  const hv = state.hoveredVoxel;
+
+  if (!hv || hv.blockId === null || hv.blockId === undefined) {
+    targetWireframeMesh.visible = false;
+    ghostBlockMesh.visible = false;
+    return;
+  }
+
+  targetWireframeMesh.position.set(hv.x, hv.y, hv.z);
+  targetWireframeMesh.visible = true;
+
+  if (!state.editMode) {
+    targetWireframeMesh.material.color.setHex(0x60a5fa);
+    ghostBlockMesh.visible = false;
+    return;
+  }
+
+  if (state.editTool === 'remove') {
+    targetWireframeMesh.material.color.setHex(0xef4444);
+    ghostBlockMesh.visible = false;
+  } else if (state.editTool === 'convert') {
+    targetWireframeMesh.material.color.setHex(0xe5a93c);
+    ghostBlockMesh.visible = false;
+  } else if (state.editTool === 'pick') {
+    targetWireframeMesh.material.color.setHex(0x38bdf8);
+    ghostBlockMesh.visible = false;
+  } else if (state.editTool === 'add') {
+    targetWireframeMesh.material.color.setHex(0xe5a93c);
+    if (hv.adjacent && hv.adjacent.y >= -30 && hv.adjacent.y <= 156) {
+      ghostBlockMesh.position.set(hv.adjacent.x, hv.adjacent.y, hv.adjacent.z);
+      const selInfo = getBlockInfo(state.selectedBlockId);
+      ghostBlockMesh.material.color.set(selInfo ? selInfo.color : '#22c55e');
+      ghostBlockMesh.visible = true;
+    } else {
+      ghostBlockMesh.visible = false;
+    }
+  }
+}
+
+function perform3DRaycast() {
+  if (!camera || !voxelGroup || voxelGroup.children.length === 0) return;
+
+  raycaster.setFromCamera(pointerNDC, camera);
+  const hits = raycaster.intersectObjects(voxelGroup.children, false);
+
+  if (hits.length === 0) {
+    state.hoveredVoxel = null;
+    update3DCursorVisuals();
+    return;
+  }
+
+  const hit = hits[0];
+  const normal = hit.face ? hit.face.normal.clone() : new THREE.Vector3(0, 1, 0);
+  // Step slightly inside the hit block along -normal to get exact integer block coordinates (even inside scaled RLE runs!)
+  const insidePt = hit.point.clone().addScaledVector(normal, -0.04);
+  const vx = Math.round(insidePt.x);
+  const vy = Math.max(-30, Math.min(156, Math.round(insidePt.y)));
+  const vz = Math.round(insidePt.z);
+
+  const nx = Math.round(normal.x);
+  const ny = Math.round(normal.y);
+  const nz = Math.round(normal.z);
+  const ax = vx + nx;
+  const ay = vy + ny;
+  const az = vz + nz;
+
+  const actualBlockId = getBlockAt(vx, vy, vz) ?? hit.object.userData?.blockId ?? null;
+
+  state.hoveredVoxel = {
+    x: vx,
+    y: vy,
+    z: vz,
+    blockId: actualBlockId,
+    blockInfo: actualBlockId ? getBlockInfo(actualBlockId) : null,
+    adjacent: { x: ax, y: ay, z: az },
+    faceNormal: { x: nx, y: ny, z: nz }
+  };
+
+  update3DCursorVisuals();
+}
+
+function onCanvasPointerMove(e) {
+  if (isPointerLocked.value || !renderer?.domElement) return;
+  const now = performance.now();
+  if (now - lastRaycastTime < 28) return;
+  lastRaycastTime = now;
+
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  perform3DRaycast();
+}
+
+function onCanvasPointerDown(e) {
+  pointerDownPos = { x: e.clientX, y: e.clientY };
+}
+
+async function onCanvasPointerUp(e) {
+  if (!state.editMode) return;
+  if (e.button !== 0) return;
+
+  // Ignore if user dragged camera in Orbit mode
+  if (!isPointerLocked.value) {
+    const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+    if (dist > 5) return;
+
+    // Ensure raycast is up-to-date at exact click point
+    if (renderer?.domElement) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+  } else {
+    pointerNDC.set(0, 0);
+  }
+
+  perform3DRaycast();
+  const hv = state.hoveredVoxel;
+  if (!hv || hv.blockId === null) return;
+
+  if (state.editTool === 'pick') {
+    state.selectedBlockId = Number(hv.blockId);
+    update3DCursorVisuals();
+    return;
+  }
+
+  if (state.editTool === 'remove') {
+    await mutateBlocks([{ x: hv.x, y: hv.y, z: hv.z, blockId: null }]);
+    perform3DRaycast();
+    return;
+  }
+
+  if (state.editTool === 'convert') {
+    if (Number(hv.blockId) !== Number(state.selectedBlockId)) {
+      await mutateBlocks([{ x: hv.x, y: hv.y, z: hv.z, blockId: state.selectedBlockId }]);
+      perform3DRaycast();
+    }
+    return;
+  }
+
+  if (state.editTool === 'add' && hv.adjacent) {
+    const { x: ax, y: ay, z: az } = hv.adjacent;
+    if (ay >= -30 && ay <= 156) {
+      // Automatically expand cutawayMaxY if user builds on top of the current cutaway slice
+      if (ay > state.cutawayMaxY) {
+        state.cutawayMaxY = ay;
+      }
+      if (ay < state.cutawayMinY) {
+        state.cutawayMinY = ay;
+      }
+      await mutateBlocks([{ x: ax, y: ay, z: az, blockId: state.selectedBlockId }]);
+      perform3DRaycast();
+    }
+  }
+}
+
 function initThree() {
   const container = containerRef.value;
   if (!container) return;
@@ -257,12 +454,15 @@ function initThree() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
+  renderer.domElement.addEventListener('pointermove', onCanvasPointerMove);
+  renderer.domElement.addEventListener('pointerdown', onCanvasPointerDown);
+  renderer.domElement.addEventListener('pointerup', onCanvasPointerUp);
+
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.07;
   controls.target.set(0, 65, 140);
 
-  // Balanced lighting so real block textures look vibrant and true to in-game ATM 11
   const ambientLight = new THREE.AmbientLight(0xffffff, 1.05);
   scene.add(ambientLight);
 
@@ -287,6 +487,25 @@ function initThree() {
   yPlaneMesh.position.set(0, state.currentY + 0.6, 0);
   scene.add(yPlaneMesh);
 
+  // 3D Target Block Highlight Wireframe
+  const wireGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(1.04, 1.04, 1.04));
+  const wireMat = new THREE.LineBasicMaterial({ color: 0xe5a93c, linewidth: 2 });
+  targetWireframeMesh = new THREE.LineSegments(wireGeo, wireMat);
+  targetWireframeMesh.visible = false;
+  scene.add(targetWireframeMesh);
+
+  // 3D Adjacent Ghost Preview Cube (for 'add' tool)
+  const ghostGeo = new THREE.BoxGeometry(0.98, 0.98, 0.98);
+  const ghostMat = new THREE.MeshStandardMaterial({
+    color: 0x22c55e,
+    transparent: true,
+    opacity: 0.58,
+    roughness: 0.4
+  });
+  ghostBlockMesh = new THREE.Mesh(ghostGeo, ghostMat);
+  ghostBlockMesh.visible = false;
+  scene.add(ghostBlockMesh);
+
   voxelGroup = new THREE.Group();
   scene.add(voxelGroup);
 
@@ -305,55 +524,103 @@ function initThree() {
   animate(performance.now());
 }
 
+function getOrComputeLayerBuckets(y, stepH, showTerrain) {
+  const layer = state.loadedLayers.get(y);
+  if (!layer) return null;
+
+  const cached = layerBucketCache.get(y);
+  if (
+    cached &&
+    cached.revision === layer.revision &&
+    cached.showTerrain === showTerrain &&
+    cached.stepH === stepH
+  ) {
+    return cached;
+  }
+
+  const byBlock = new Map();
+  let count = 0;
+  const yCenter = y + (stepH - 1) * 0.5;
+
+  for (const [z, startX, len, blockId] of layer.runs) {
+    if (!showTerrain && isTerrainBlock(blockId)) continue;
+    let arr = byBlock.get(blockId);
+    if (!arr) {
+      arr = [];
+      byBlock.set(blockId, arr);
+    }
+    const centerX = startX + (len - 1) * 0.5;
+    arr.push(centerX, yCenter, z, len, stepH, 1);
+    count += len;
+  }
+
+  for (const [x, z, blockId] of layer.blocks) {
+    if (!showTerrain && isTerrainBlock(blockId)) continue;
+    let arr = byBlock.get(blockId);
+    if (!arr) {
+      arr = [];
+      byBlock.set(blockId, arr);
+    }
+    arr.push(x, yCenter, z, 1, stepH, 1);
+    count += 1;
+  }
+
+  const entry = {
+    revision: layer.revision,
+    showTerrain,
+    stepH,
+    byBlock,
+    count
+  };
+  layerBucketCache.set(y, entry);
+  return entry;
+}
+
 function rebuildVoxelMeshes() {
   if (!scene || !voxelGroup || !state.palette) return;
 
   while (voxelGroup.children.length > 0) {
     const child = voxelGroup.children.pop();
-    if (child.geometry) child.geometry.dispose();
     if (child.material) child.material.dispose();
   }
 
-  // buckets: blockId -> Array of [x, yCenter, z, scaleX, scaleY, scaleZ]
   const buckets = new Map();
   let totalRepresentedBlocks = 0;
 
   const minY = state.cutawayMinY;
   const maxY = state.cutawayMaxY;
+  const showTerrain = state.showTerrain;
   const yList = availableYLevels.value;
 
   for (let idx = 0; idx < yList.length; idx++) {
     const y = yList[idx];
     if (y < minY || y > maxY) continue;
-    const layer = state.loadedLayers.get(y);
-    if (!layer) continue;
 
-    // Vertical thickness so stepped mountain/cliff layers form a 100% gapless 3D solid
     const nextY = idx < yList.length - 1 ? yList[idx + 1] : y + 1;
     const stepH = Math.max(1, Math.min(4, nextY - y));
-    const yCenter = y + (stepH - 1) * 0.5;
 
-    for (const [z, startX, len, blockId] of layer.runs) {
-      if (!state.showTerrain && isTerrainBlock(blockId)) continue;
-      if (!buckets.has(blockId)) buckets.set(blockId, []);
-      const centerX = startX + (len - 1) * 0.5;
-      buckets.get(blockId).push(centerX, yCenter, z, len, stepH, 1);
-      totalRepresentedBlocks += len;
-    }
+    const layerEntry = getOrComputeLayerBuckets(y, stepH, showTerrain);
+    if (!layerEntry) continue;
 
-    for (const [x, z, blockId] of layer.blocks) {
-      if (!state.showTerrain && isTerrainBlock(blockId)) continue;
-      if (!buckets.has(blockId)) buckets.set(blockId, []);
-      buckets.get(blockId).push(x, yCenter, z, 1, stepH, 1);
-      totalRepresentedBlocks += 1;
+    totalRepresentedBlocks += layerEntry.count;
+    for (const [blockId, arr] of layerEntry.byBlock.entries()) {
+      let bucket = buckets.get(blockId);
+      if (!bucket) {
+        bucket = [];
+        buckets.set(blockId, bucket);
+      }
+      bucket.push(arr);
     }
   }
 
-  const boxGeo = new THREE.BoxGeometry(1, 1, 1);
   const dummy = new THREE.Object3D();
 
-  for (const [blockId, transforms] of buckets.entries()) {
-    const instanceCount = transforms.length / 6;
+  for (const [blockId, chunkList] of buckets.entries()) {
+    let totalFloats = 0;
+    for (let c = 0; c < chunkList.length; c++) {
+      totalFloats += chunkList[c].length;
+    }
+    const instanceCount = totalFloats / 6;
     if (instanceCount === 0) continue;
 
     const info = getBlockInfo(blockId) || { color: '#888888', roughness: 0.7 };
@@ -374,15 +641,20 @@ function rebuildVoxelMeshes() {
       applyWorldSpaceVoxelUV(mat);
     }
 
-    const instanced = new THREE.InstancedMesh(boxGeo, mat, instanceCount);
+    const instanced = new THREE.InstancedMesh(sharedBoxGeo, mat, instanceCount);
+    instanced.userData = { blockId };
     let mIdx = 0;
-    for (let i = 0; i < transforms.length; i += 6) {
-      dummy.position.set(transforms[i], transforms[i + 1], transforms[i + 2]);
-      dummy.scale.set(transforms[i + 3], transforms[i + 4], transforms[i + 5]);
-      dummy.updateMatrix();
-      instanced.setMatrixAt(mIdx++, dummy.matrix);
+    for (let c = 0; c < chunkList.length; c++) {
+      const transforms = chunkList[c];
+      for (let i = 0; i < transforms.length; i += 6) {
+        dummy.position.set(transforms[i], transforms[i + 1], transforms[i + 2]);
+        dummy.scale.set(transforms[i + 3], transforms[i + 4], transforms[i + 5]);
+        dummy.updateMatrix();
+        instanced.setMatrixAt(mIdx++, dummy.matrix);
+      }
     }
     instanced.instanceMatrix.needsUpdate = true;
+    instanced.computeBoundingSphere();
     voxelGroup.add(instanced);
   }
 
@@ -397,13 +669,11 @@ function jumpCamera(preset) {
     camera.position.set(-440, 310, 490);
     controls.target.set(0, 65, 130);
   } else if (preset === 'rotunda-inside') {
-    // Slice off dome above Y=108 so all 6 colored Dragon Statues, Chandelier & Interiors are visible!
     state.cutawayMinY = 76;
     state.cutawayMaxY = 108;
     camera.position.set(0, 152, 92);
     controls.target.set(0, 92, 0);
   } else if (preset === 'riders-interiors') {
-    // Slice at Y=86 (1st Floor Cutaway): Shows Rotunda stage, 3 Sparring Mats in Academic Wing, Gathering Hall banquet tables, Dorm rooms & First-Year bunks!
     state.cutawayMinY = 78;
     state.cutawayMaxY = 86;
     camera.position.set(15, 185, 130);
@@ -418,6 +688,11 @@ function jumpCamera(preset) {
     state.cutawayMaxY = 156;
     camera.position.set(-245, 125, 195);
     controls.target.set(-60, 45, 155);
+  } else if (preset === 'threshing-valley') {
+    state.cutawayMinY = 10;
+    state.cutawayMaxY = 88;
+    camera.position.set(-385, 95, -45);
+    controls.target.set(-255, 22, -105);
   } else if (preset === 'south-campus') {
     state.cutawayMinY = 50;
     state.cutawayMaxY = 63;
@@ -450,10 +725,18 @@ watch(
     state.cutawayMaxY,
     state.isLoading3D,
     state.showTerrain,
-    useRealTextures.value
+    useRealTextures.value,
+    state.layerRevision
   ],
   () => {
     rebuildVoxelMeshes();
+  }
+);
+
+watch(
+  () => [state.editMode, state.editTool, state.selectedBlockId],
+  () => {
+    update3DCursorVisuals();
   }
 );
 
@@ -496,6 +779,11 @@ onBeforeUnmount(() => {
   window.removeEventListener('blur', clearKeys);
   document.removeEventListener('pointerlockchange', onPointerLockChange);
   document.removeEventListener('mousemove', onMouseMoveFreeLook);
+  if (renderer?.domElement) {
+    renderer.domElement.removeEventListener('pointermove', onCanvasPointerMove);
+    renderer.domElement.removeEventListener('pointerdown', onCanvasPointerDown);
+    renderer.domElement.removeEventListener('pointerup', onCanvasPointerUp);
+  }
   if (document.pointerLockElement) {
     document.exitPointerLock();
   }
@@ -506,7 +794,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="viewer-3d-wrap" ref="containerRef">
+  <div class="viewer-3d-wrap" :class="{ 'edit-mode-cursor': state.editMode }" ref="containerRef">
     <!-- Top 3D Camera & Cutaway Controls -->
     <div class="canvas-toolbar">
       <div class="toolbar-group">
@@ -517,13 +805,13 @@ onBeforeUnmount(() => {
           🐉 Rotunda &amp; 6 Statuen
         </button>
         <button class="btn-tactical" @click="jumpCamera('riders-interiors')">
-          🏠 Reiter-Innenräume &amp; Höfe (Y=86)
+          🏠 Reiter-Innenräume (Y=86)
         </button>
-        <button class="btn-tactical" @click="jumpCamera('rotunda-full')">
-          Riders Zitadelle (Außen)
+        <button class="btn-tactical" @click="jumpCamera('threshing-valley')">
+          🌲 West-Tal &amp; Dreschen
         </button>
         <button class="btn-tactical" @click="jumpCamera('south-campus')">
-          🏛️ Süd-Campus Innen &amp; Hof (Y=63)
+          🏛️ Süd-Campus Innen (Y=63)
         </button>
         <button class="btn-tactical" @click="jumpCamera('scribe')">
           📚 Scribe Archiv (Y=10)
@@ -641,16 +929,35 @@ onBeforeUnmount(() => {
       Lade alle {{ state.manifest?.totalLayers || 187 }} layer.Y.json Ebenen &amp; echte ATM 11 Block-Texturen...
     </div>
 
-    <!-- Bottom 3D Info HUD -->
+    <!-- Bottom 3D Info & Live Block Inspector HUD -->
     <div class="canvas-hud font-mono">
       <div>
-        <span class="text-accent">3D VOXEL ENGINE (REAL ATM11 TEXTURES)</span>
-        <span class="text-muted"> | Dargestellte Blöcke: </span>
+        <span class="text-accent">3D VOXEL ENGINE</span>
+        <span class="text-muted"> | Blöcke: </span>
         <strong>{{ renderedVoxelCount.toLocaleString('de-DE') }}</strong>
-        <span class="text-muted"> | Y-Schnitt: {{ state.cutawayMinY }} bis {{ state.cutawayMaxY }}</span>
+        <template v-if="state.hoveredVoxel && state.hoveredVoxel.blockId !== null">
+          <span class="text-muted"> | Ziel: </span>
+          <strong class="text-blue">
+            ({{ state.hoveredVoxel.x }}, {{ state.hoveredVoxel.y }}, {{ state.hoveredVoxel.z }})
+          </strong>
+          <span class="text-accent">
+            #{{ state.hoveredVoxel.blockId }} {{ state.hoveredVoxel.blockInfo?.name }}
+          </span>
+          <template v-if="state.editMode && state.editTool === 'add' && state.hoveredVoxel.adjacent">
+            <span class="text-muted"> → Anliegend+: </span>
+            <strong style="color: #86efac">
+              ({{ state.hoveredVoxel.adjacent.x }}, {{ state.hoveredVoxel.adjacent.y }}, {{ state.hoveredVoxel.adjacent.z }})
+            </strong>
+          </template>
+        </template>
       </div>
       <div class="text-muted">
-        <strong>WASD</strong>: Bewegen · <strong>Space/E</strong>: Hoch · <strong>Q/C</strong>: Runter · <strong>Shift</strong>: Sprint · <strong>F</strong>: Freiflug · <strong>Maus</strong>: Orbit/Zoom
+        <template v-if="state.editMode">
+          <strong class="text-accent">3D-EDITOR:</strong> Klick auf Block = {{ state.editTool === 'add' ? 'Anliegend platzieren' : state.editTool === 'convert' ? 'Block konvertieren' : state.editTool === 'remove' ? 'Block entfernen' : 'Pipette' }} · Tasten <strong>1–4</strong> = Werkzeug · <strong>Strg+Z</strong> = Undo
+        </template>
+        <template v-else>
+          <strong>WASD</strong>: Bewegen · <strong>Space/E</strong>: Hoch · <strong>Q/C</strong>: Runter · <strong>Shift</strong>: Sprint · <strong>F</strong>: Freiflug · <strong>Maus</strong>: Orbit/Zoom
+        </template>
       </div>
     </div>
   </div>
@@ -668,6 +975,10 @@ onBeforeUnmount(() => {
   border-radius: 6px;
   overflow: hidden;
   display: flex;
+}
+
+.viewer-3d-wrap.edit-mode-cursor :deep(canvas) {
+  cursor: crosshair;
 }
 
 .viewer-3d-wrap :deep(canvas) {

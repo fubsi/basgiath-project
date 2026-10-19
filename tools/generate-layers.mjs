@@ -1532,27 +1532,88 @@ for (const y of sortedYLevels) {
         b.carveRect(cx - 2, cz - 34, cx + 2, cz + 34);
       }
 
-      // Upper Gallery Walkway at relA === 6
+      // Upper Gallery Walkway (relA === 6) & Upper Gallery Reading Carrels / Lecterns (relA = 7..8)
       if (relA === 6) {
         b.addCircle(cx, cz, 34, 29, false, 5);
+        b.addCircle(cx, cz, 30, 11, false, 1); // Carved dark-oak gallery balustrade
+      } else if (relA === 7 || relA === 8) {
+        for (let deg = 15; deg < 360; deg += 30) {
+          if (deg % 90 === 0) continue;
+          const rad = (deg * Math.PI) / 180;
+          const lx = Math.round(cx + Math.cos(rad) * 32);
+          const lz = Math.round(cz + Math.sin(rad) * 32);
+          b.setBlock(lx, lz, relA === 7 ? 11 : 31); // Upper gallery lectern & open scroll
+          if (relA === 8 && deg % 60 === 15) {
+            b.setBlock(Math.round(cx + Math.cos(rad) * 30), Math.round(cz + Math.sin(rad) * 30), 12);
+          }
+        }
       }
 
-      // Reading Desks (#11), Red Carpets (#30) & Magelights (#12) on Ground Floor (relA === 1)
+      // 3D Scholar Reading Stations (#11), Cushioned Chairs (#30), Open Codices (#31), Curator Counter & Chandelier (relA = 1..11)
       if (relA === 1) {
         for (const deg of angles) {
           const rad = (deg * Math.PI) / 180;
           const ex = Math.round(cx + Math.cos(rad) * 98);
           const ez = Math.round(cz + Math.sin(rad) * 98);
           b.addLine(cx, cz, ex, ez, 30, 1); // Red carpet runner down every radial hall
+          // Reading tables & benches inside the 7 radial archive halls (at r = 52 and r = 76)
+          for (const rHall of [52, 76]) {
+            const hx = Math.round(cx + Math.cos(rad) * rHall);
+            const hz = Math.round(cz + Math.sin(rad) * rHall);
+            b.addRect(hx - 1, hz - 1, hx + 1, hz + 1, 11, true);
+          }
         }
         b.addLine(cx - 33, cz, cx + 38, cz, 30, 3); // Extends East into the Secret Wardstone Tunnel!
         b.addLine(cx, cz - 33, cx, cz + 33, 30, 3);
-        for (let deg = 25; deg < 360; deg += 45) {
+        // Central Curator Index Counter Ring (r = 13) around the Book Elevator Shaft
+        b.addCircle(cx, cz, 13, 11, false, 2);
+        b.carveRect(cx - 14, cz - 2, cx + 14, cz + 2);
+        b.carveRect(cx - 2, cz - 14, cx + 2, cz + 14);
+        // 8 Scholar Reading Desks & 4 Cushioned Chairs per Desk at r = 23.5
+        for (let deg = 22.5; deg < 360; deg += 45) {
           const rad = (deg * Math.PI) / 180;
-          const dx = Math.round(cx + Math.cos(rad) * 23);
-          const dz = Math.round(cz + Math.sin(rad) * 23);
-          b.addRect(dx - 1, dz - 1, dx + 1, dz + 1, 11, true);
-          b.setBlock(dx, dz, 12);
+          const dx = Math.round(cx + Math.cos(rad) * 23.5);
+          const dz = Math.round(cz + Math.sin(rad) * 23.5);
+          b.addRect(dx - 1, dz - 1, dx + 1, dz + 1, 11, true); // Desk base
+          // 4 Scholar chairs around each desk
+          b.setBlock(dx - 2, dz, 30);
+          b.setBlock(dx + 2, dz, 30);
+          b.setBlock(dx, dz - 2, 30);
+          b.setBlock(dx, dz + 2, 30);
+        }
+      } else if (relA === 2) {
+        // Open parchment codices (#31), golden astrolabes (#20) & reading Magelights (#12) on tabletops!
+        b.addCircle(cx, cz, 13, 28, false, 1);
+        b.carveRect(cx - 14, cz - 2, cx + 14, cz + 2);
+        b.carveRect(cx - 2, cz - 14, cx + 2, cz + 14);
+        for (let deg = 22.5; deg < 360; deg += 45) {
+          const rad = (deg * Math.PI) / 180;
+          const dx = Math.round(cx + Math.cos(rad) * 23.5);
+          const dz = Math.round(cz + Math.sin(rad) * 23.5);
+          b.setBlock(dx, dz, 12);       // Central reading Magelight
+          b.setBlock(dx - 1, dz - 1, 31); // Open parchment codex
+          b.setBlock(dx + 1, dz + 1, 31); // Open scroll
+          b.setBlock(dx + 1, dz - 1, 20); // Brass inkwell & astrolabe
+        }
+        for (const deg of angles) {
+          const rad = (deg * Math.PI) / 180;
+          for (const rHall of [52, 76]) {
+            const hx = Math.round(cx + Math.cos(rad) * rHall);
+            const hz = Math.round(cz + Math.sin(rad) * rHall);
+            b.setBlock(hx, hz, 12);
+            b.setBlock(hx - 1, hz, 31);
+          }
+        }
+      } else if (relA >= 9 && relA <= 11) {
+        // Hanging Bronze & Crystal Archive Chandelier Rings at r = 14 and r = 24
+        if (relA === 10) {
+          b.addCircle(cx, cz, 14, 13, false, 1);
+          b.addCircle(cx, cz, 24, 13, false, 1);
+          for (let deg = 0; deg < 360; deg += 30) {
+            const rad = (deg * Math.PI) / 180;
+            b.setBlock(Math.round(cx + Math.cos(rad) * 14), Math.round(cz + Math.sin(rad) * 14), 12);
+            b.setBlock(Math.round(cx + Math.cos(rad) * 24), Math.round(cz + Math.sin(rad) * 24), 12);
+          }
         }
       }
     }
@@ -2063,16 +2124,86 @@ for (const y of sortedYLevels) {
           b.addRect(-50, z, -48, z + 4, 10, true);
         }
       }
-      // Interior Furnishings: Hospital Beds (White Wool #31) & Herb Greenhouse
-      if (relS === 1 || relS === 10) {
-        b.addRect(-96, 240, -88, 322, 32, true);
-        b.addRect(-130, 254, -50, 262, 32, true);
-        for (let z = 268; z <= 312; z += 8) {
-          b.addRect(-128, z, -118, z + 3, 31, true);
-          b.addRect(-118, z, -116, z + 3, 11, true);
-          b.addRect(-72, z, -62, z + 3, 31, true);
-          b.addRect(-62, z, -60, z + 3, 11, true);
+      // 3D Interior Furnishings across Ground Floor (relS = 1..7) & 2nd Floor (relS = 10..16):
+      // 24 Hospital Beds with Headboards/Pillows/Privacy Screens, Apothecary Potion Shelves, Mending Tables & Herb Planters!
+      if ((relS >= 1 && relS <= 7) || (relS >= 10 && relS <= 16)) {
+        const floorRel = relS >= 10 ? relS - 9 : relS; // 1..7
+        if (floorRel === 1) {
+          // Central white-marble aisles
+          b.addRect(-96, 240, -88, 322, 32, true);
+          b.addRect(-130, 254, -50, 262, 32, true);
+          // 12 Hospital Beds per floor (West Ward & East Ward) + Bedside Medicine Cabinets (#11) & Visitor Stools (#29)
+          for (let z = 266; z <= 314; z += 8) {
+            // West Ward Bed
+            b.addRect(-130, z, -121, z + 3, 31, true);     // White Mattress
+            b.addRect(-121, z, -119, z + 3, 30, true);     // Crimson Blanket Foot
+            b.addRect(-130, z - 2, -128, z - 1, 11, true); // Bedside Medicine Stand
+            b.setBlock(-124, z - 2, 29);                   // Healer Stool
+            // East Ward Bed
+            b.addRect(-62, z, -53, z + 3, 31, true);       // White Mattress
+            b.addRect(-64, z, -62, z + 3, 30, true);       // Crimson Blanket Foot
+            b.addRect(-55, z - 2, -53, z - 1, 11, true);   // Bedside Medicine Stand
+            b.setBlock(-59, z - 2, 29);                    // Healer Stool
+          }
+          // North Apothecary, Alchemy & Mending Bay (X = -104..-54, Z = 239..252):
+          // 3 Surgical / Mending Tables (where Brennan & Nolon mend cadets) + Indoor Herb Planters!
+          for (const mx of [-100, -84, -68]) {
+            b.addRect(mx - 2, 245, mx + 2, 250, 6, true);
+          }
+          b.addRect(-130, 240, -108, 250, 23, true); // Herb Greenhouse Soil Bed
+          b.addRect(-130, 240, -108, 250, 6, false, 1);
+        } else if (floorRel === 2) {
+          // Bed Headboards (#11), Raised White Pillows (#31), Potion Vials (#12/#34) & Privacy Screens!
+          for (let z = 266; z <= 314; z += 8) {
+            b.addRect(-131, z, -131, z + 3, 11, true); // West Headboard
+            b.addRect(-130, z, -129, z + 3, 31, true); // West Pillow
+            b.setBlock(-129, z - 2, 12);               // Healing Tonics on Nightstand
+            b.addRect(-52, z, -52, z + 3, 11, true);   // East Headboard
+            b.addRect(-54, z, -53, z + 3, 31, true);   // East Pillow
+            b.setBlock(-54, z - 2, 12);                // Healing Tonics on Nightstand
+            if (z < 314) {
+              b.addLine(-130, z + 5, -120, z + 5, 31, 1); // White Linen Privacy Screen
+              b.addLine(-63, z + 5, -53, z + 5, 31, 1);
+            }
+          }
+          // Surgical Table Tops (#32) & Alchemical Stills (#13 / #12) + Medicinal Herbs (#36 / #27)
+          for (const mx of [-100, -84, -68]) {
+            b.addRect(mx - 2, 245, mx + 2, 250, 32, true);
+            b.setBlock(mx, 247, 12);
+            b.setBlock(mx, 245, 13);
+          }
+          for (let hx = -128; hx <= -110; hx += 3) {
+            b.setBlock(hx, 242, 36);
+            b.setBlock(hx, 245, 27);
+            b.setBlock(hx, 248, 36);
+          }
+        } else if (floorRel === 3) {
+          // Top of Privacy Screens
+          for (let z = 266; z < 314; z += 8) {
+            b.addLine(-130, z + 5, -120, z + 5, 31, 1);
+            b.addLine(-63, z + 5, -53, z + 5, 31, 1);
+          }
         }
+        // Floor-to-Ceiling Apothecary Potion & Medical Scroll Shelves along North Wall (Z = 238..240) & Center Dividers (floorRel = 1..5)
+        if (floorRel <= 5) {
+          b.addRect(-104, 238, -54, 240, floorRel === 5 ? 11 : 7, true);
+          b.addRect(-102, 266, -98, 316, floorRel === 5 ? 11 : 7, true);
+          b.addRect(-86, 266, -82, 316, floorRel === 5 ? 11 : 7, true);
+        }
+        // Hanging Crystal Healing Lamps over the Ward Aisles (floorRel = 6..7)
+        if (floorRel === 6 || floorRel === 7) {
+          for (let z = 250; z <= 314; z += 16) {
+            b.setBlock(-112, z, floorRel === 6 ? 12 : 13);
+            b.setBlock(-92, z, floorRel === 6 ? 12 : 13);
+            b.setBlock(-72, z, floorRel === 6 ? 12 : 13);
+          }
+        }
+      }
+      // Internal Staircase connecting Healer 1st Floor to 2nd Floor (X = -80..-74, Z = 252..262, relS = 1..9)
+      if (relS >= 1 && relS <= 9) {
+        if (relS === 9) b.carveRect(-80, 253, -74, 261);
+        const stZ = 252 + relS;
+        b.addRect(-80, stZ, -74, Math.min(262, stZ + 2), 29, true);
       }
       b.carveArchway(-51, 252, -47, 264, relS, 7, 'x', 28, 32);
       b.carveArchway(-98, 322, -86, 328, relS, 7, 'z', 28, 32);
@@ -2089,32 +2220,88 @@ for (const y of sortedYLevels) {
         b.carveRect(-132, 328, -58, 477);
         b.carveRect(-159, 351, -58, 405);
       }
-      // Preserve the Book Elevator & Continuous Spiral Staircase Landing at (-142, 378) on the Ground Floor (Y = 55)!
-      if (relS <= 6) {
-        b.addCircle(-142, 378, 10, 6, false, 2);
-        b.carveCircle(-142, 378, 8);
-        if (relS === 0) {
-          // Solid Stone & Timber Landing Platform on the East side of the shaft (X = -140..-132, Z = 374..382, Y = 55)
-          // connecting the top spiral step (-136, 378, Y = 55) flush into the Scribe Overground Hall!
-          b.addRect(-140, 374, -132, 382, 29, true);
-          b.addLine(-139, 376, -130, 378, 30, 3);
-        }
-        b.addCircle(-142, 378, 2, 13, true);
-        // Open East Archway from the Elevator Rotunda into the Scribe Hall
-        b.carveArchway(-135, 372, -130, 384, relS, 6, 'x', 28, relS === 0 ? 30 : null);
-      }
       // Windows on West Cross-Gable Facade
       if ((relS >= 3 && relS <= 6) || (relS >= 12 && relS <= 15)) {
         for (let z = 356; z <= 400; z += 12) {
           b.addRect(-162, z, -160, z + 4, 10, true);
         }
       }
-      if (relS === 1 || relS === 10) {
-        b.addRect(-130, 361, -58, 369, 30, true); // Central Red Carpet Runner to Courtyard Portal
-        for (let z = 335; z <= 468; z += 12) {
-          if (z >= 354 && z <= 386) continue;
-          b.addRect(-125, z, -102, z + 2, 7, true);
-          b.addRect(-88, z, -68, z + 3, 11, true);
+      // 3D Furnishings across Ground Floor (relS = 1..7) & 2nd Floor (relS = 10..16):
+      // 6-Block-Tall Library Book Stacks, 3D Scriptorium Study Tables & Chairs, Treaty Display Cases & Chandeliers!
+      if ((relS >= 1 && relS <= 7) || (relS >= 10 && relS <= 16)) {
+        const floorRel = relS >= 10 ? relS - 9 : relS; // 1..7
+        if (floorRel === 1) {
+          b.addRect(-130, 361, -58, 369, 30, true); // Central Red Carpet Runner to Courtyard Portal
+          b.addRect(-96, 330, -88, 475, 30, true);  // North-South Red Carpet Aisle
+        }
+        // 6-Block-Tall Monumental Library Bookshelves (#7 with #11 Dark Oak Cornice at floorRel = 6)
+        if (floorRel <= 6) {
+          const shelfMat = floorRel === 6 ? 11 : 7;
+          for (let z = 334; z <= 468; z += 12) {
+            if (z >= 352 && z <= 392) continue; // Keep central Elevator & Cross-Gable Hall open
+            b.addRect(-128, z, -102, z + 2, shelfMat, true);
+            // Sliding library ladders (#29) attached to the stacks
+            b.setBlock(-115, z + 3, 29);
+          }
+          // Wall-mounted Bookshelves along East Wall (X = -60..-58) & West Cross-Gable Walls (Z = 351..353, Z = 403..405)
+          b.addRect(-156, 351, -110, 353, shelfMat, true);
+          b.addRect(-156, 403, -110, 405, shelfMat, true);
+        }
+        // 3D Scriptorium Reading Tables (#11), Cushioned Scholar Chairs (#30) & Open Codices (#31) (floorRel = 1..2)
+        if (floorRel === 1 || floorRel === 2) {
+          for (let z = 335; z <= 468; z += 12) {
+            if (z >= 352 && z <= 388) continue;
+            if (floorRel === 1) {
+              b.addRect(-85, z, -64, z + 3, 11, true); // Table base
+              for (let cxT = -83; cxT <= -66; cxT += 4) {
+                b.setBlock(cxT, z - 2, 30); // North chairs
+                b.setBlock(cxT, z + 5, 30); // South chairs
+              }
+            } else {
+              b.addRect(-85, z, -64, z + 3, 11, true); // Tabletop
+              b.setBlock(-81, z + 1, 31); // Open codex
+              b.setBlock(-75, z + 1, 12); // Reading Magelight
+              b.setBlock(-69, z + 2, 31); // Open scroll
+              b.setBlock(-72, z + 1, 20); // Inkwell
+            }
+          }
+          // Illuminated Glass Display Cases for Ancient Navarrian Treaties & Dragon Scrolls in the West Cross-Gable Hall (X = -124..-102, Z = 358..396)
+          for (const dzCase of [360, 376, 392]) {
+            if (floorRel === 1) {
+              b.addRect(-122, dzCase, -106, dzCase + 4, 28, true);
+              b.setBlock(-125, dzCase + 2, 30); // Armchair
+              b.setBlock(-103, dzCase + 2, 30);
+            } else {
+              b.addRect(-122, dzCase, -106, dzCase + 4, 10, false, 1); // Glass vitrine
+              b.addRect(-121, dzCase + 1, -107, dzCase + 3, 31, true); // Displayed scroll
+              b.setBlock(-114, dzCase + 2, 20); // Royal Gold Seal
+            }
+          }
+        }
+        // Hanging Brass & Magelight Chandeliers (floorRel = 6..7)
+        if (floorRel === 6 || floorRel === 7) {
+          for (let z = 340; z <= 460; z += 24) {
+            b.addCircle(-92, z, 3, floorRel === 6 ? 13 : 12, false, 1);
+          }
+        }
+      }
+      // Internal Staircase connecting Scribe Overground 1st Floor to 2nd Floor (X = -68..-60, Z = 330..340, relS = 1..9)
+      if (relS >= 1 && relS <= 9) {
+        if (relS === 9) b.carveRect(-68, 331, -60, 339);
+        const stZ = 330 + relS;
+        b.addRect(-68, stZ, -60, Math.min(340, stZ + 2), 29, true);
+      }
+      // Preserve the Book Elevator & Continuous Spiral Staircase Landing at (-142, 378) on the Ground Floor & 2nd Floor!
+      if (relS <= 15) {
+        b.addCircle(-142, 378, 10, 6, false, 2);
+        b.carveCircle(-142, 378, 8);
+        if (relS === 0) {
+          b.addRect(-140, 374, -132, 382, 29, true);
+          b.addLine(-139, 376, -130, 378, 30, 3);
+        }
+        b.addCircle(-142, 378, 2, 13, true);
+        if (relS <= 6) {
+          b.carveArchway(-135, 372, -130, 384, relS, 6, 'x', 28, relS === 0 ? 30 : null);
         }
       }
       // OPEN ARCHWAYS IN SCRIBE QUADRANT:
@@ -2125,7 +2312,6 @@ for (const y of sortedYLevels) {
       const rY = relS - 18;
       b.addGableRoof(-135, 325, -55, 480, rY, 9, true, 8, 5);
       b.addGableRoof(-162, 348, -55, 408, rY, 9, false, 8, 6);
-      // Cleanly hollow the cross-gable intersection so neither roof slices through the other's attic!
       const crossInset = Math.min(28, Math.ceil((rY / 9) * 28));
       if (351 + crossInset <= 405 - crossInset) {
         b.carveRect(-158, 351 + crossInset, -60, 405 - crossInset);
@@ -2146,25 +2332,85 @@ for (const y of sortedYLevels) {
           b.addRect(133, z, 135, z + 4, 10, true);
         }
       }
-      // Interior: Red Carpet Grand Corridor, Partition Walls & Officer Room Doors!
+      // Interior: Red Carpet Grand Corridor, Partition Walls & 14 Richly Furnished Officer Suites / Strategy Rooms!
       if ((relS >= 1 && relS <= 7) || (relS >= 10 && relS <= 16)) {
-        const floorRel = relS >= 10 ? relS - 9 : relS;
+        const floorRel = relS >= 10 ? relS - 9 : relS; // 1..7
         b.addLine(82, 290, 82, 476, 4, 1);
         b.addLine(98, 290, 98, 476, 4, 1);
+        if (floorRel === 1) {
+          b.addRect(85, 290, 95, 476, 30, true);
+          b.addRect(48, 360, 95, 370, 30, true);
+        }
         for (let z = 310; z <= 460; z += 22) {
           b.addLine(48, z, 82, z, 4, 2);
           b.addLine(98, z, 132, z, 4, 2);
           b.carveArchway(81, z - 12, 83, z - 6, floorRel, 5, 'x', 11, 29);
           b.carveArchway(97, z - 12, 99, z - 6, floorRel, 5, 'x', 11, 29);
+
+          const rCenterZ = z - 10;
+          const isLobbyRoom = z === 376; // Keep West Portal Corridor open at Z = 358..372!
+
+          // 5-Block-Tall Bookshelves & Archive Cabinets along Partition Walls (floorRel = 1..5)
+          if (floorRel <= 5) {
+            const bkMat = floorRel === 5 ? 11 : 7;
+            if (!isLobbyRoom) {
+              b.addRect(51, z - 19, 77, z - 18, bkMat, true);
+              b.addRect(51, z - 3, 77, z - 2, bkMat, true);
+            }
+            b.addRect(103, z - 19, 129, z - 18, bkMat, true);
+            b.addRect(103, z - 3, 129, z - 2, bkMat, true);
+          }
+
+          // 3D Command Desks, Officer Thrones, Visitor Chairs, War Maps & Armor Stands (floorRel = 1..3)
+          if (floorRel === 1) {
+            if (!isLobbyRoom) {
+              b.addRect(54, rCenterZ - 4, 74, rCenterZ + 4, 30, false, 1); // Rug border
+              b.addRect(58, rCenterZ - 3, 70, rCenterZ + 3, 11, true);     // Command Table base
+              b.addRect(54, rCenterZ - 1, 56, rCenterZ + 1, 30, true);     // Commander's Throne
+              b.setBlock(72, rCenterZ - 2, 29);                            // Visitor Chairs
+              b.setBlock(72, rCenterZ + 2, 29);
+              b.setBlock(50, z - 17, 9);                                   // Corner Armor Stand
+              b.setBlock(50, z - 4, 9);
+            }
+            b.addRect(106, rCenterZ - 4, 126, rCenterZ + 4, 30, false, 1);
+            b.addRect(110, rCenterZ - 3, 122, rCenterZ + 3, 11, true);     // East Strategy Table base
+            b.addRect(124, rCenterZ - 1, 126, rCenterZ + 1, 30, true);     // Commander's Throne
+            b.setBlock(108, rCenterZ - 2, 29);                             // Visitor Chairs
+            b.setBlock(108, rCenterZ + 2, 29);
+            b.setBlock(130, z - 17, 9);                                    // Corner Armor Stand
+            b.setBlock(130, z - 4, 9);
+          } else if (floorRel === 2) {
+            if (!isLobbyRoom) {
+              b.addRect(58, rCenterZ - 3, 70, rCenterZ + 3, 11, true);     // Tabletop
+              b.addRect(61, rCenterZ - 1, 67, rCenterZ + 1, 23, true);     // Tactical Map on Desk
+              b.setBlock(59, rCenterZ - 2, 34);                            // Brass Candelabra
+              b.setBlock(69, rCenterZ + 2, 31);                            // Ledgers
+              b.addRect(54, rCenterZ - 1, 54, rCenterZ + 1, 11, true);     // Chair Backrest
+              b.setBlock(50, z - 17, 20);                                  // Gilded Armor Breastplate
+              b.setBlock(50, z - 4, 20);
+            }
+            b.addRect(110, rCenterZ - 3, 122, rCenterZ + 3, 11, true);     // East Tabletop
+            b.addRect(113, rCenterZ - 1, 119, rCenterZ + 1, 23, true);   // Tactical Map on Desk
+            b.setBlock(121, rCenterZ - 2, 34);
+            b.setBlock(111, rCenterZ + 2, 31);
+            b.addRect(126, rCenterZ - 1, 126, rCenterZ + 1, 11, true);   // Chair Backrest
+            b.setBlock(130, z - 17, 20);
+            b.setBlock(130, z - 4, 20);
+          } else if (floorRel === 6) {
+            if (!isLobbyRoom) b.addCircle(64, rCenterZ, 2, 13, false, 1);
+            b.addCircle(116, rCenterZ, 2, 13, false, 1);
+            b.setBlock(90, rCenterZ, 12); // Corridor Magelight
+          } else if (floorRel === 7) {
+            if (!isLobbyRoom) b.setBlock(64, rCenterZ, 12);
+            b.setBlock(116, rCenterZ, 12);
+          }
         }
       }
-      if (relS === 1 || relS === 10) {
-        b.addRect(85, 290, 95, 476, 30, true);
-        b.addRect(48, 360, 95, 370, 30, true);
-        for (let z = 320; z <= 455; z += 22) {
-          b.addRect(58, z - 3, 72, z + 3, 11, true);
-          b.addRect(108, z - 3, 122, z + 3, 11, true);
-        }
+      // Internal Staircase in Admin Corridor connecting 1st Floor to 2nd Floor (X = 87..93, Z = 446..456, relS = 1..9)
+      if (relS >= 1 && relS <= 9) {
+        if (relS === 9) b.carveRect(87, 447, 93, 455);
+        const stZ = 446 + relS;
+        b.addRect(87, stZ, 93, Math.min(456, stZ + 2), 29, true);
       }
       b.carveArchway(44, 358, 49, 372, relS, 8, 'x', 28, 30);
       b.carveArchway(68, 283, 82, 290, relS, 8, 'z', 28, 32);
@@ -2179,15 +2425,71 @@ for (const y of sortedYLevels) {
       if (!isGround && !isFloor2 && !isFloor3) {
         b.carveRect(-131, 484, 131, 554);
       }
-      if (relS === 1 || relS === 10) {
-        for (let x = -112; x <= -25; x += 10) {
-          b.addRect(x, 492, x + 4, 504, 30, true);
-          b.addRect(x, 535, x + 4, 547, 30, true);
+      // 3D Infantry Barracks Furnishings across Ground Floor (relS = 1..7) & 2nd Floor (relS = 10..16):
+      // Double-Deck Bunk Beds (floorRel = 1..4), Footlockers (#13), Weapon Racks (#9) & Mess/Briefing Tables!
+      if ((relS >= 1 && relS <= 7) || (relS >= 10 && relS <= 16)) {
+        const floorRel = relS >= 10 ? relS - 9 : relS; // 1..7
+        const stampInfantryBunks = (startX, endX) => {
+          for (let x = startX; x <= endX; x += 10) {
+            for (const bz of [488, 536]) {
+              if (floorRel === 1) {
+                // Lower Bunk Mattress (#30/#31) + Footlocker Chest (#13/#29)
+                b.addRect(x, bz, x + 4, bz + 9, 30, true);
+                b.addRect(x, bz, x + 4, bz + 1, 31, true);
+                b.addRect(x + 1, bz + 11, x + 3, bz + 12, 13, true); // Footlocker
+              } else if (floorRel === 2) {
+                // Bunk Timber Corner Posts (#35) + Lower Headboard (#11)
+                b.addRect(x, bz, x + 4, bz, 11, true);
+                b.setBlock(x, bz + 9, 35);
+                b.setBlock(x + 4, bz + 9, 35);
+              } else if (floorRel === 3) {
+                // Upper Bunk Frame & Mattress (#29 / #30 / #31)
+                b.addRect(x, bz, x + 4, bz + 9, 30, true);
+                b.addRect(x, bz, x + 4, bz + 1, 31, true);
+              } else if (floorRel === 4) {
+                // Upper Bunk Headboard & Posts
+                b.addRect(x, bz, x + 4, bz, 11, true);
+                b.setBlock(x, bz + 9, 35);
+                b.setBlock(x + 4, bz + 9, 35);
+              }
+            }
+          }
+        };
+        stampInfantryBunks(-112, -25);
+        stampInfantryBunks(20, 108);
+
+        // Central Infantry Mess & Tactical Briefing Tables + Benches + Weapon Racks along Z = 514..524
+        if (floorRel === 1 || floorRel === 2) {
+          for (const tx of [-95, -65, -35, 35, 65, 95]) {
+            b.addRect(tx - 8, 516, tx + 8, 521, 11, true); // Briefing / Mess Table
+            if (floorRel === 1) {
+              b.addRect(tx - 8, 513, tx + 8, 514, 29, true); // North Bench
+              b.addRect(tx - 8, 523, tx + 8, 524, 29, true); // South Bench
+            } else {
+              b.setBlock(tx - 4, 518, 34); // Tabletop Lantern
+              b.setBlock(tx + 4, 518, 31); // Duty Roster
+            }
+          }
         }
-        for (let x = 25; x <= 112; x += 10) {
-          b.addRect(x, 492, x + 4, 504, 30, true);
-          b.addRect(x, 535, x + 4, 547, 30, true);
+        // Wall Weapon Racks (#9 / #11, floorRel = 1..4) & Hanging Iron Braziers (floorRel = 6..7)
+        if (floorRel <= 4) {
+          b.addRect(-20, 488, -16, 510, floorRel === 4 ? 11 : 9, true);
+          b.addRect(10, 488, 14, 510, floorRel === 4 ? 11 : 9, true);
+        } else if (floorRel === 6 || floorRel === 7) {
+          for (const bx of [-95, -55, 55, 95]) {
+            b.addCircle(bx, 518, 2, floorRel === 6 ? 9 : 34, false, 1);
+          }
         }
+      }
+      // Internal Staircases in West & East Infantry Wings (relS = 1..9)
+      if (relS >= 1 && relS <= 9) {
+        if (relS === 9) {
+          b.carveRect(-26, 528, -20, 536);
+          b.carveRect(14, 528, 20, 536);
+        }
+        const stZ = 527 + relS;
+        b.addRect(-26, stZ, -20, Math.min(537, stZ + 2), 29, true);
+        b.addRect(14, stZ, 20, Math.min(537, stZ + 2), 29, true);
       }
       // GRAND SOUTH GATEHOUSE ARCHWAY (Walkable Tunnel from Z = 478 to Z = 560!)
       b.carveArchway(-13, 478, 7, 560, relS, 12, 'z', 28, 33);
@@ -2206,13 +2508,11 @@ for (const y of sortedYLevels) {
       const tMat = isSpire ? 8 : 4;
 
       // --- A) NW Healer Parapet Tower (X = -115, Z = 235) ---
-      // Open stairwell from Ground (relS = 0, Y = 55) up to Parapet Exit Level (relS = 17, Y = 72) so stairs are NEVER buried under a tower floor!
       if (!isSpire && !isGround) {
-        b.carveCircle(-115, 235, rT - 3); // Clear any Healer wall/roof clipping inside the tower!
+        b.carveCircle(-115, 235, rT - 3);
       }
       b.addCircle(-115, 235, rT, tMat, isGround || rT <= 4, 3);
       if (!isSpire && relS <= 17) {
-        // Continuous helical staircase from South Entrance (90° at relS=0, Z=249) winding 1.5 turns to North Parapet Exit (270° at relS=17, Z=221)!
         const stairAngle = ((90 + (relS / 17) * 540) * Math.PI) / 180;
         const prevAngle = ((90 + (Math.max(0, relS - 1) / 17) * 540) * Math.PI) / 180;
         const sx = Math.round(-115 + Math.cos(stairAngle) * 14);
@@ -2221,9 +2521,8 @@ for (const y of sortedYLevels) {
         const prevSz = Math.round(235 + Math.sin(prevAngle) * 14);
         b.addLine(prevSx, prevSz, sx, sz, 29, 5);
         b.addCircle(sx, sz, 4, 29, true);
-        b.addCircle(-115, 235, 5, 4, true); // Central masonry column supporting the spiral stairs
+        b.addCircle(-115, 235, 5, 4, true);
         if (relS === 17) {
-          // Upper Parapet Landing Platform on the North side of the tower (Z = 212..226, Y = 72) leading directly onto the Parapet!
           b.addRect(-123, 212, -107, 226, 32, true);
           b.addRect(-118, 212, -112, 224, 24, true);
         }
@@ -2234,24 +2533,129 @@ for (const y of sortedYLevels) {
       }
 
       // --- B) SE Gen. Sorrengail's Office Tower (X = 135, Z = 485) ---
+      // Fully Furnished across all 3 Stories (1st Floor: War Map Room, 2nd Floor: General's Private Quarters, 3rd Floor: Command Sanctum)!
       if (!isSpire && !isGround && !isFloor2 && !isFloor3) {
-        b.carveCircle(135, 485, rT - 3); // Clear any Admin/Infantry wall or gable roof clipping inside!
+        b.carveCircle(135, 485, rT - 3);
       }
       b.addCircle(135, 485, rT, tMat, isGround || isFloor2 || isFloor3 || rT <= 4, 3);
-      if (relS === 1 || relS === 19) {
-        b.addCircle(135, 485, 13, 20, true);
-        b.addCircle(135, 485, 10, 23, true);
-        b.addCircle(135, 485, 4, 26, true);
-        b.addRect(129, 468, 141, 473, 11, true);
-        b.addCircle(135, 502, 4, 34, true);
+      if (!isSpire && relS >= 1 && relS <= 25) {
+        const floorRel = relS >= 18 ? relS - 18 : relS >= 9 ? relS - 9 : relS; // 1..8
+        const isPrivateQuarters = relS >= 10 && relS <= 17;
+
+        // Curved Wall Bookshelves & Trophy Cases along East & South-East Arc (floorRel = 1..5)
+        if (floorRel >= 1 && floorRel <= 5) {
+          for (let deg = -50; deg <= 70; deg += 6) {
+            const rad = (deg * Math.PI) / 180;
+            b.setBlock(
+              Math.round(135 + Math.cos(rad) * 19),
+              Math.round(485 + Math.sin(rad) * 19),
+              floorRel === 5 ? 11 : 7
+            );
+          }
+          // Roaring Stone Fireplace & Chimney on the South Wall (X = 131..139, Z = 502..505)
+          b.addRect(131, 502, 139, 505, 3, true);
+          if (floorRel <= 3) {
+            b.addRect(133, 502, 137, 504, floorRel === 1 ? 34 : 1, true);
+          }
+        }
+
+        if (!isPrivateQuarters) {
+          // 1st & 3rd Floors: General Lilith Sorrengail's 3D Relief Map Table, Command Desk & Throne!
+          if (floorRel === 1) {
+            b.addCircle(135, 485, 13, 11, true); // Raised Dark-Oak Map Table Base
+            b.addRect(128, 467, 142, 472, 11, true); // General's Massive Command Desk
+            b.addRect(133, 464, 137, 466, 30, true); // General's Crimson Throne
+            // Plush Armchairs in front of the South Fireplace
+            b.addRect(129, 498, 131, 500, 30, true);
+            b.addRect(139, 498, 141, 500, 30, true);
+          } else if (floorRel === 2) {
+            // 3D Continental Relief Map of Navarre & Poromiel on top of the Map Table!
+            b.addCircle(135, 485, 13, 20, false, 1); // Gold Rim
+            b.addCircle(135, 485, 11, 21, true);     // Ocean & Rivers
+            b.addCircle(135, 485, 9, 23, true);      // Navarre & Poromiel Green Continent
+            b.addCircle(135, 485, 4, 26, true);      // Snow-Capped Esben Mountains (Basgiath!)
+            b.setBlock(135, 485, 12);                // Basgiath Wardstone Marker
+            b.setBlock(141, 483, 30);                // Attacked Border Outpost Pin (Athebyne / Samara)
+            b.setBlock(140, 489, 30);
+            // General's Command Desk Top (#11) with Storm-Crystal (#12), Scrolls (#31) & Candelabra (#34)
+            b.addRect(128, 467, 142, 472, 11, true);
+            b.setBlock(135, 469, 31);
+            b.setBlock(131, 469, 12);
+            b.setBlock(139, 469, 34);
+            b.addRect(133, 464, 137, 464, 20, true); // Throne Gold Crest
+          } else if (floorRel === 3) {
+            b.setBlock(135, 485, 26); // Highest Mountain Peak on 3D Relief Map
+          }
+        } else {
+          // 2nd Floor (relS = 10..17): General's Private Quarters (Four-Poster Canopy Bed & War-Council Lounge)
+          if (floorRel === 1) {
+            b.addCircle(135, 485, 9, 30, true); // Circular Crimson Carpet
+            b.addCircle(135, 485, 5, 11, true); // War-Council Round Table Base
+            for (let deg = 0; deg < 360; deg += 45) {
+              const rad = (deg * Math.PI) / 180;
+              b.setBlock(Math.round(135 + Math.cos(rad) * 7), Math.round(485 + Math.sin(rad) * 7), 29);
+            }
+            // Four-Poster Canopy Bed on North Side (X = 130..140, Z = 466..474)
+            b.addRect(130, 466, 140, 474, 30, true);
+            b.addRect(130, 466, 140, 468, 31, true);
+          } else if (floorRel === 2) {
+            b.addCircle(135, 485, 5, 11, true);
+            b.setBlock(135, 485, 34);
+            b.addRect(130, 466, 140, 466, 11, true); // Headboard
+            b.setBlock(130, 474, 35);
+            b.setBlock(140, 474, 35);
+          } else if (floorRel === 3) {
+            b.setBlock(130, 466, 35);
+            b.setBlock(140, 466, 35);
+            b.setBlock(130, 474, 35);
+            b.setBlock(140, 474, 35);
+          } else if (floorRel === 4) {
+            b.addRect(130, 466, 140, 474, 30, true); // Crimson Bed Canopy
+          }
+        }
+
+        // Hanging Golden Chandelier on every floor of Sorrengail's Tower (floorRel = 6..7)
+        if (floorRel === 6 || floorRel === 7) {
+          b.addCircle(135, 485, 4, floorRel === 6 ? 20 : 12, false, 1);
+        }
       }
       b.carveArchway(109, 478, 118, 488, relS, 7, 'x', 28, 30);
 
-      // --- C) SW Infantry Corner Tower (X = -135, Z = 485) ---
+      // --- C) SW Infantry Corner Tower (X = -135, Z = 485) – Grand Armory & Blacksmith Forge ---
       if (!isSpire && !isGround && !isFloor2 && !isFloor3) {
-        b.carveCircle(-135, 485, rT - 3); // Clear any Scribe/Infantry wall or gable roof clipping inside!
+        b.carveCircle(-135, 485, rT - 3);
       }
       b.addCircle(-135, 485, rT, isSpire ? 8 : 5, isGround || isFloor2 || isFloor3 || rT <= 4, 3);
+      if (!isSpire && relS >= 1 && relS <= 25) {
+        const floorRel = relS >= 18 ? relS - 18 : relS >= 9 ? relS - 9 : relS;
+        // Central Blacksmith Forge Furnace & Chimney (-135, 485, r = 4)
+        if (floorRel <= 7) {
+          b.addCircle(-135, 485, 4, 2, true);
+          if (floorRel <= 2) {
+            b.addCircle(-135, 485, 2, 34, true); // Roaring Forge Fire
+          }
+        }
+        // Circular Weapon Racks (#9 / #13), Anvils (#3), Quenching Troughs (#21) & Armor Displays (floorRel = 1..4)
+        if (floorRel <= 4) {
+          for (let deg = 30; deg < 330; deg += 45) {
+            const rad = (deg * Math.PI) / 180;
+            const wx = Math.round(-135 + Math.cos(rad) * 18);
+            const wz = Math.round(485 + Math.sin(rad) * 18);
+            b.addRect(wx - 1, wz - 1, wx + 1, wz + 1, floorRel === 4 ? 11 : 9, true);
+          }
+          if (floorRel === 1) {
+            // Anvils (#3) & Water Quenching Troughs (#5 / #21) around the central forge
+            b.addRect(-145, 483, -143, 487, 3, true); // West Anvil
+            b.addRect(-138, 493, -132, 496, 5, true); // South Quenching Trough
+            b.addRect(-137, 494, -133, 495, 21, true);
+            b.addRect(-138, 474, -132, 477, 11, true); // Weapon Inspection Workbench
+          } else if (floorRel === 2) {
+            b.setBlock(-144, 485, 9);
+            b.setBlock(-135, 475, 13);
+            b.setBlock(-133, 475, 34);
+          }
+        }
+      }
       b.carveArchway(-118, 478, -109, 488, relS, 7, 'x', 28, 32);
     }
   }
@@ -2586,15 +2990,74 @@ for (const y of sortedYLevels) {
         if (!isGround && !isFloor2 && !isFloor3) {
           b.carveRect(-142, 43, -75, 81);
         }
-        if (relY === 1 || relY === 10) {
-          b.addRect(-141, 43, -76, 80, 29, true);
-          b.addRect(-102, 43, -94, 80, 30, true);
-          for (let z = 46; z <= 75; z += 7) {
-            b.addRect(-138, z, -126, z + 3, 30, true);
-            b.addRect(-126, z, -124, z + 3, 31, true);
-            b.addRect(-88, z, -78, z + 3, 30, true);
-            b.addRect(-78, z, -76, z + 3, 31, true);
+        // Rich 2-Story 3D First-Year Cadet Barracks Interior (relY = 1..7 & 10..16):
+        // Double-deck bunk beds, timber posts, personal footlockers, flight-leather racks, washroom benches & chandeliers
+        if ((relY >= 1 && relY <= 7) || (relY >= 10 && relY <= 16)) {
+          const floorRel = relY >= 10 ? relY - 9 : relY;
+          if (floorRel === 1) {
+            b.addRect(-141, 43, -76, 80, 29, true); // Dark oak plank flooring
+            b.addRect(-102, 43, -94, 80, 30, true); // Crimson squad runner
           }
+          // 10 rows of 3D Double-Deck Cadet Bunk Beds along West (-140..-124) & East (-88..-76) Bays
+          for (let z = 45; z <= 75; z += 6) {
+            if (floorRel === 1 || floorRel === 3) {
+              // Lower bunk (floorRel=1) & Upper bunk (floorRel=3): mattress + white pillow
+              b.addRect(-139, z, -128, z + 2, 30, true);
+              b.addRect(-127, z, -126, z + 2, 31, true);
+              b.addRect(-89, z, -79, z + 2, 30, true);
+              b.addRect(-78, z, -77, z + 2, 31, true);
+            }
+            if (floorRel >= 1 && floorRel <= 4) {
+              // 4-block-tall dark-oak bunk bed corner posts
+              b.setBlock(-139, z, 35);
+              b.setBlock(-139, z + 2, 35);
+              b.setBlock(-126, z, 35);
+              b.setBlock(-126, z + 2, 35);
+              b.setBlock(-89, z, 35);
+              b.setBlock(-89, z + 2, 35);
+              b.setBlock(-77, z, 35);
+              b.setBlock(-77, z + 2, 35);
+            }
+            if (floorRel === 1) {
+              // Cadet footlockers & benches at the foot of each bunk
+              b.addRect(-125, z, -124, z + 2, 13, true);
+              b.addRect(-91, z, -90, z + 2, 13, true);
+            }
+          }
+          // Central Squad Tables, Washroom Basins & Flight-Leather Racks (X = -108..-93)
+          if (floorRel >= 1 && floorRel <= 2) {
+            for (let z = 48; z <= 72; z += 12) {
+              b.addRect(-106, z, -96, z + 4, 11, true);
+              if (floorRel === 1) {
+                b.addLine(-106, z - 1, -96, z - 1, 29, 1);
+                b.addLine(-106, z + 5, -96, z + 5, 29, 1);
+              } else {
+                b.setBlock(-103, z + 2, 34); // Tabletop lantern
+                b.setBlock(-99, z + 2, 31);  // Squad roster scroll
+              }
+            }
+          }
+          // Wall-mounted flight leather & dagger racks along North/South walls (floorRel = 1..4)
+          if (floorRel >= 1 && floorRel <= 4) {
+            for (let x = -138; x <= -80; x += 8) {
+              if (x >= -123 && x <= -91) continue;
+              b.setBlock(x, 43, floorRel === 2 ? 13 : 9);
+              b.setBlock(x, 80, floorRel === 2 ? 13 : 9);
+            }
+          }
+          // Overhead iron & crystal chandeliers (floorRel = 6..7)
+          if (floorRel >= 6 && floorRel <= 7) {
+            for (const cx of [-132, -100, -84]) {
+              for (const cz of [54, 70]) {
+                b.addCircle(cx, cz, floorRel === 6 ? 2 : 1, floorRel === 6 ? 12 : 9, false, 1);
+              }
+            }
+          }
+        }
+        // Internal Staircase connecting First-Years 1st & 2nd Floors (X = -91..-84, Z = 44..48)
+        if (relY >= 1 && relY <= 9) {
+          if (relY === 9) b.carveRect(-91, 44, -83, 48);
+          b.addLine(-91 + (relY - 1), 44, -91 + (relY - 1), 48, 29, 2);
         }
         b.carveArchway(-121, 39, -109, 85, relY, 9, 'z', 28, 33);
         b.carveArchway(-123, 55, -119, 65, relY, 6, 'x', 28, 29);
@@ -2606,6 +3069,7 @@ for (const y of sortedYLevels) {
       }
 
       // --- B) UPPER-CLASS DORMS (X = -70..34, Z = 58..84 — starts at Z=58 so it never clips Rotunda r=55!) ---
+      // 28 Furnished Private Cadet Quarters (2nd & 3rd Years, incl. Violet's warded room & Xaden's Wingleader suite!)
       if (relY <= 18) {
         b.addRect(-70, 58, 34, 84, 3, isGround || isFloor2 || isFloor3, 3);
         if (!isGround && !isFloor2 && !isFloor3) {
@@ -2613,25 +3077,85 @@ for (const y of sortedYLevels) {
         }
         if ((relY >= 1 && relY <= 7) || (relY >= 10 && relY <= 16)) {
           const floorRel = relY >= 10 ? relY - 9 : relY;
+          // Corridor walls & room partition walls
           b.addLine(-67, 67, 31, 67, 3, 1);
           b.addLine(-67, 75, 31, 75, 3, 1);
           for (let x = -54; x <= 20; x += 14) {
             b.addLine(x, 61, x, 67, 3, 1);
             b.addLine(x, 75, x, 81, 3, 1);
           }
+          if (floorRel === 1) {
+            // Central corridor crimson carpet & warm oak room floors
+            b.addRect(-67, 61, 31, 81, 29, true);
+            b.addRect(-67, 68, 31, 74, 30, true);
+          }
+          // 3D Furniture inside every single Private Dorm Room (North Row Z=61..66 & South Row Z=76..81):
+          for (let x = -65; x <= 19; x += 14) {
+            // 1. 3D Bed with Dark-Oak Headboard (floorRel=1..2), Crimson Blanket (#30) & Raised Pillow (#31)
+            if (floorRel === 1) {
+              // North room bed
+              b.addRect(x, 61, x + 3, 65, 30, true);
+              b.addRect(x, 61, x + 3, 62, 31, true);
+              b.setBlock(x + 4, 61, 13); // Personal dagger/gear chest
+              // South room bed
+              b.addRect(x, 77, x + 3, 81, 30, true);
+              b.addRect(x, 80, x + 3, 81, 31, true);
+              b.setBlock(x + 4, 81, 13); // Personal dagger/gear chest
+            } else if (floorRel === 2) {
+              b.addLine(x, 61, x + 3, 61, 29, 1); // Headboard + raised pillow
+              b.setBlock(x + 1, 62, 31);
+              b.addLine(x, 81, x + 3, 81, 29, 1);
+              b.setBlock(x + 1, 80, 31);
+            }
+            // 2. Writing Desk & Chair (floorRel=1..2) with Magelight Reading Lamp (#12) & Open Codex (#31)
+            if (floorRel >= 1 && floorRel <= 2) {
+              b.addRect(x + 6, 61, x + 8, 62, 11, true);
+              b.addRect(x + 6, 80, x + 8, 81, 11, true);
+              if (floorRel === 1) {
+                b.setBlock(x + 7, 63, 30); // Desk chair
+                b.setBlock(x + 7, 79, 30);
+              } else {
+                b.setBlock(x + 6, 61, 12); // Magelight lamp
+                b.setBlock(x + 8, 61, 31); // Open codex / journal
+                b.setBlock(x + 6, 81, 12);
+                b.setBlock(x + 8, 81, 31);
+              }
+            }
+            // 3. Wall-mounted Bookshelves above the Desk (floorRel=3..4)
+            if (floorRel >= 3 && floorRel <= 4) {
+              b.addLine(x + 5, 61, x + 8, 61, 7, 1);
+              b.addLine(x + 5, 81, x + 8, 81, 7, 1);
+            }
+            // 4. 4-Block-Tall Oak Wardrobe & Armor/Flight-Leather Stand (floorRel=1..4)
+            if (floorRel >= 1 && floorRel <= 4) {
+              b.addRect(x + 9, 61, x + 10, 62, floorRel === 4 ? 29 : 11, true);
+              b.addRect(x + 9, 80, x + 10, 81, floorRel === 4 ? 29 : 11, true);
+              b.setBlock(x + 10, 64, floorRel === 2 ? 13 : 9); // Dagger target / weapon rack
+              b.setBlock(x + 10, 78, floorRel === 2 ? 13 : 9);
+            }
+            // 5. Arcane Warded Door Lock (Gold/Obsidian Rune #20/#28 at floorRel=2 next to each doorway)
+            if (floorRel === 2) {
+              b.setBlock(x + 1, 67, 20);
+              b.setBlock(x + 1, 75, 20);
+            }
+          }
+          // Hallway Wall Sconces & Chandeliers (floorRel=5..6)
+          if (floorRel === 5) {
+            for (let x = -60; x <= 24; x += 14) {
+              b.setBlock(x, 68, 12);
+              b.setBlock(x, 74, 12);
+            }
+          }
+          // Carve doorways into each private dorm room AFTER walls/furniture so doors are 100% passable!
           for (let x = -64; x <= 18; x += 14) {
-            b.carveArchway(x + 2, 66, x + 7, 68, floorRel, 5, 'z', 11, 29);
-            b.carveArchway(x + 2, 74, x + 7, 76, floorRel, 5, 'z', 11, 29);
+            b.carveArchway(x + 2, 66, x + 5, 68, floorRel, 5, 'z', 11, 29);
+            b.carveArchway(x + 2, 74, x + 5, 76, floorRel, 5, 'z', 11, 29);
           }
         }
-        if (relY === 1 || relY === 10) {
-          b.addRect(-67, 68, 31, 74, 30, true);
-          for (let x = -64; x <= 18; x += 14) {
-            b.addRect(x, 61, x + 4, 65, 30, true);
-            b.addRect(x + 6, 61, x + 9, 63, 11, true);
-            b.addRect(x, 77, x + 4, 81, 30, true);
-            b.addRect(x + 6, 78, x + 9, 81, 7, true);
-          }
+        // Internal Staircase connecting Dorms 1st & 2nd Floors (X = 21..29, Z = 69..73)
+        if (relY >= 1 && relY <= 9) {
+          if (relY === 9) b.carveRect(21, 69, 29, 73);
+          b.addLine(21 + (relY - 1), 69, 21 + (relY - 1), 73, 29, 2);
         }
         // Vaulted South Vestibule connecting Rotunda South Portal (Z=53) to Dorms North Portal (Z=58)
         if (relY <= 10) {
@@ -2653,18 +3177,83 @@ for (const y of sortedYLevels) {
         if (isGround) {
           b.addRect(39, 49, 115, 81, 29, true);
         }
-        if (relY === 1 || relY === 2) {
-          for (let z = 51; z <= 76; z += 8) {
-            b.addRect(42, z, 65, z + 3, 11, true);
-            b.addRect(84, z, 102, z + 3, 11, true);
+        // 1. 8 Long 3D Banquet Tables (relY = 1..2) with Cadet Benches (#29) & Feast Goblets/Candelabras (relY = 3)
+        if (relY >= 1 && relY <= 3) {
+          for (let z = 51; z <= 75; z += 8) {
+            if (relY <= 2) {
+              b.addRect(42, z + 1, 64, z + 2, 11, true);
+              b.addRect(85, z + 1, 101, z + 2, 11, true);
+            }
+            if (relY === 1) {
+              // Long oak benches flanking both sides of every banquet table
+              b.addLine(42, z, 64, z, 29, 1);
+              b.addLine(42, z + 3, 64, z + 3, 29, 1);
+              b.addLine(85, z, 101, z, 29, 1);
+              b.addLine(85, z + 3, 101, z + 3, 29, 1);
+            }
+            if (relY === 3) {
+              // Feast platters (#18), gold goblets (#20) & candelabras (#34) along the tabletops
+              for (let x = 44; x <= 62; x += 4) {
+                b.setBlock(x, z + 1, x % 8 === 0 ? 34 : 20);
+                b.setBlock(x + 1, z + 2, 18);
+              }
+              for (let x = 87; x <= 99; x += 4) {
+                b.setBlock(x, z + 1, x % 8 === 0 ? 34 : 20);
+                b.setBlock(x + 1, z + 2, 18);
+              }
+            }
           }
-          b.addRect(105, 50, 114, 79, 30, true);
-          b.addRect(108, 52, 111, 77, 11, true);
-          b.addRect(113, 60, 117, 68, 34, true);
         }
-        if (relY === 13) {
-          b.addCircle(54, 65, 5, 12, false, 2);
-          b.addCircle(92, 65, 5, 12, false, 2);
+        // 2. Raised Wingleader High Table Dais (X = 104..114, Z = 50..79) with 7 High-Backed Thrones (relY = 1..4)
+        if (relY >= 1 && relY <= 4) {
+          if (relY === 1) {
+            b.addRect(104, 50, 114, 79, 30, true); // Crimson carpeted dais platform
+          }
+          if (relY >= 2 && relY <= 3) {
+            b.addRect(106, 52, 108, 77, 11, true); // Elevated Wingleader High Table
+          }
+          if (relY === 4) {
+            for (let z = 54; z <= 75; z += 4) {
+              b.setBlock(107, z, z === 62 || z === 66 ? 34 : 20); // Golden goblets & candelabras
+            }
+          }
+          // 7 High-Backed Wingleader Thrones along X = 110..111
+          for (let z = 53; z <= 77; z += 4) {
+            if (relY === 2) {
+              b.setBlock(110, z, 30); // Cushioned seat
+            }
+            if (relY >= 2 && relY <= 4) {
+              b.setBlock(111, z, relY === 4 ? 20 : 28); // Carved obsidian & gold throne back
+            }
+          }
+        }
+        // 3. Monumental Great Hall Hearth & Chimney (X = 112..115, Z = 61..67, relY = 1..17)
+        if (relY >= 1 && relY <= 17) {
+          b.addRect(112, 61, 115, 67, 28, true);
+          if (relY <= 4) {
+            b.addRect(112, 62, 114, 66, relY <= 2 ? 34 : 1, true); // Roaring hearth fire
+          }
+        }
+        // 4. Upper Timber Gallery Balcony overlooking the Gathering Hall (relY = 9..10) & Squadron Banners (relY = 8..14)
+        if (relY === 9 || relY === 10) {
+          b.addRect(39, 49, 65, 53, relY === 10 ? 11 : 29, true);
+          b.addRect(39, 77, 65, 81, relY === 10 ? 11 : 29, true);
+        }
+        if (relY >= 8 && relY <= 14) {
+          for (const bx of [45, 55, 88, 98]) {
+            b.setBlock(bx, 49, relY === 11 ? 20 : 30);
+            b.setBlock(bx, 81, relY === 11 ? 20 : 30);
+          }
+        }
+        // 5. Multi-Tier Hanging Chandeliers (relY = 12..16)
+        if (relY >= 12 && relY <= 16) {
+          for (const [cx, cz] of [[53, 58], [53, 72], [93, 58], [93, 72]]) {
+            if (relY >= 14) {
+              b.setBlock(cx, cz, 9); // Iron suspension chain
+            } else {
+              b.addCircle(cx, cz, relY === 13 ? 4 : 2, relY === 13 ? 12 : 20, false, 1);
+            }
+          }
         }
         b.carveArchway(68, 45, 82, 85, relY, 10, 'z', 28, 33);
         b.carveArchway(66, 58, 70, 70, relY, 7, 'x', 28, 29);
@@ -2685,28 +3274,129 @@ for (const y of sortedYLevels) {
         if (!isGround && !isFloor2 && !isFloor3) {
           b.carveRect(63, -55, 115, 33);
         }
-        if (relY === 1) {
-          b.addRect(63, -55, 115, 33, 29, true);
-          const matCentersZ = [-38, -11, 16];
-          for (const mz of matCentersZ) {
-            b.addCircle(89, mz, 10, 20, true);
-            b.addCircle(89, mz, 8, 30, true);
-            b.addCircle(89, mz, 2, 28, true);
-          }
-          b.addRect(64, -52, 68, -12, 11, true);
-          b.addRect(64, 12, 68, 30, 11, true);
-          b.addRect(110, -52, 114, 30, 11, true);
-        }
-        if (relY >= 10 && relY <= 16) {
-          const floorRel = relY - 9;
-          for (let z = -48; z <= 18; z += 22) {
-            b.addLine(63, z, 115, z, 3, 2);
-            b.carveArchway(65, z - 2, 73, z + 2, floorRel, 5, 'z', 11, 29);
-            if (relY === 10) {
-              b.addRect(75, z + 5, 108, z + 8, 11, true);
-              b.addRect(75, z + 11, 108, z + 14, 11, true);
-              b.addRect(84, z + 17, 98, z + 19, 7, true);
+        // --- A) GROUND FLOOR: THE CHALLENGES SPARRING HALL / MATTENRAUM (relY = 1..7) ---
+        if (relY >= 1 && relY <= 7) {
+          if (relY === 1) {
+            b.addRect(63, -55, 115, 33, 29, true);
+            // 3 Circular Padded Combat Mats (North, Center Challenge Mat, South)
+            const matCentersZ = [-38, -11, 16];
+            for (const mz of matCentersZ) {
+              b.addCircle(89, mz, 10, 20, true); // Gold outer ring
+              b.addCircle(89, mz, 8, 30, true);  // Crimson padded combat mat
+              b.addCircle(89, mz, 2, 28, true);  // Obsidian center duel circle
             }
+          }
+          // 1. 3-Tier Stepped Spectator Bleachers (relY = 1..3) flanking the Sparring Mats
+          if (relY >= 1 && relY <= 3) {
+            const bStep = relY - 1; // 0, 1, 2
+            // West Bleachers (leaving X=63..68, Z=-8..8 open for the Rotunda East Vestibule Portal!)
+            b.addRect(63, -50, 67 - bStep * 2, -14, relY % 2 === 1 ? 11 : 29, true);
+            b.addRect(63, 12, 67 - bStep * 2, 28, relY % 2 === 1 ? 11 : 29, true);
+            // East Bleachers (full length along East Wall X = 111..115)
+            b.addRect(111 + bStep * 2, -50, 115, 28, relY % 2 === 1 ? 11 : 29, true);
+            // Judges' & Professor Emetterio's Scoring Table (X = 69..72, Z = -14..-8)
+            if (relY <= 2) {
+              b.addRect(69, -14, 71, -8, 11, true);
+              if (relY === 2) {
+                b.setBlock(70, -11, 20); // Challenge gong / bell
+                b.setBlock(70, -9, 31);  // Challenge ledger
+              }
+            }
+          }
+          // 2. 4-Block-Tall Armory Weapon Racks, Dagger Targets & Sparring Dummies (relY = 1..4)
+          if (relY >= 1 && relY <= 4) {
+            for (let x = 84; x <= 104; x += 5) {
+              b.setBlock(x, -55, relY === 2 ? 13 : 9); // North wall weapon racks
+              b.setBlock(x, 33, relY === 2 ? 13 : 9);  // South wall weapon racks
+            }
+            // 4 Sculpted Wooden Sparring Dummies between the combat mats
+            for (const [dx, dz] of [[76, -25], [102, -25], [76, 3], [102, 3]]) {
+              if (relY === 1) b.setBlock(dx, dz, 3);
+              else if (relY === 2 || relY === 3) {
+                b.setBlock(dx, dz, 30); // Padded torso
+                if (relY === 3) {
+                  b.setBlock(dx - 1, dz, 11); // Outstretched wooden training arms
+                  b.setBlock(dx + 1, dz, 11);
+                }
+              } else if (relY === 4) b.setBlock(dx, dz, 20); // Dummy head
+            }
+          }
+          // 3. Overhead Sparring Hall Chandeliers above each combat mat (relY = 6..7)
+          if (relY >= 6 && relY <= 7) {
+            for (const mz of [-38, -11, 16]) {
+              b.addCircle(89, mz, relY === 6 ? 4 : 1, relY === 6 ? 12 : 9, false, 1);
+            }
+          }
+        }
+        // Internal Staircase connecting Sparring Hall (1st Floor) to Classrooms (2nd Floor) at X = 104..113, Z = -54..-50
+        if (relY >= 1 && relY <= 9) {
+          if (relY === 9) b.carveRect(104, -54, 113, -50);
+          b.addLine(104 + (relY - 1), -54, 104 + (relY - 1), -50, 29, 2);
+        }
+        // --- B) 2ND FLOOR: 3 AMPHITHEATER LECTURE CLASSROOMS (relY = 10..16, Battle Brief, Dragonkind, History) ---
+        if (relY >= 10 && relY <= 16) {
+          const floorRel = relY - 9; // 1..7
+          if (floorRel === 1) {
+            b.addRect(63, -55, 115, 33, 29, true); // Polished oak floor
+            b.addRect(64, -55, 72, 33, 30, true);  // West corridor carpet runner
+          }
+          // West Corridor partition wall (X = 73) & Classroom cross-walls
+          b.addLine(73, -55, 73, 33, 3, 1);
+          for (let z = -30; z <= 10; z += 30) {
+            b.addLine(73, z, 115, z, 3, 2);
+          }
+          // Furnish each of the 3 Lecture Classrooms (Z = -54..-32, Z = -28..-2, Z = 2..32)
+          const classRanges = [
+            [-53, -32],
+            [-28, -2],
+            [2, 31]
+          ];
+          for (const [zStart, zEnd] of classRanges) {
+            const zMid = Math.round((zStart + zEnd) / 2);
+            // 1. Stepped Cadet Desk & Bench Tiers (floorRel = 1..3) facing East toward the Professor's Podium
+            for (let tier = 0; tier < 3; tier++) {
+              const tx = 78 + tier * 7;
+              if (floorRel <= tier + 1) {
+                b.addRect(tx, zStart + 3, tx + 4, zEnd - 3, 29, true); // Stepped platform
+              }
+              if (floorRel === tier + 2) {
+                b.addRect(tx, zStart + 3, tx + 1, zEnd - 3, 30, true); // Cushioned bench row
+                b.addRect(tx + 3, zStart + 3, tx + 4, zEnd - 3, 11, true); // Continuous oak writing desk
+              }
+              if (floorRel === tier + 3) {
+                for (let sz = zStart + 5; sz <= zEnd - 5; sz += 4) {
+                  b.setBlock(tx + 3, sz, sz % 8 === 0 ? 12 : 31); // Open scrolls & reading lamps
+                }
+              }
+            }
+            // 2. Professor's Raised Podium, Lectern, Globe/Dragon Model & Slate Blackboard along East Wall (X = 104..114)
+            if (floorRel === 1) {
+              b.addRect(104, zStart + 4, 113, zEnd - 4, 30, true); // Podium dais
+            }
+            if (floorRel >= 1 && floorRel <= 2) {
+              b.addRect(106, zMid - 4, 108, zMid + 4, 11, true); // Professor's lecture table
+              if (floorRel === 2) {
+                b.setBlock(107, zMid, 31);     // Lecture codex
+                b.setBlock(107, zMid - 3, 20); // Brass astrolabe / dragon scale model
+                b.setBlock(107, zMid + 3, 12); // Arcane projection crystal
+                b.setBlock(110, zMid, 30);     // Professor's chair
+              }
+            }
+            // Slate Blackboard on East Wall (X = 114, floorRel = 2..5)
+            if (floorRel >= 2 && floorRel <= 5) {
+              b.addLine(114, zMid - 6, 114, zMid + 6, floorRel === 5 ? 20 : 28, 1);
+            }
+            // 5-Block-Tall Reference Bookshelves along North & South classroom walls (floorRel = 1..5)
+            if (floorRel >= 1 && floorRel <= 5) {
+              b.addLine(76, zStart + 1, 112, zStart + 1, floorRel === 5 ? 29 : 7, 1);
+              b.addLine(76, zEnd - 1, 112, zEnd - 1, floorRel === 5 ? 29 : 7, 1);
+            }
+            // Overhead Classroom Chandeliers (floorRel = 6..7)
+            if (floorRel >= 6 && floorRel <= 7) {
+              b.addCircle(94, zMid, floorRel === 6 ? 3 : 1, floorRel === 6 ? 12 : 9, false, 1);
+            }
+            // Carve doorway from West Corridor (X = 64..72) into each Classroom
+            b.carveArchway(72, zMid - 2, 75, zMid + 2, floorRel, 5, 'x', 11, 29);
           }
         }
         // Vaulted East Vestibule connecting Rotunda East Portal (X=53) to Academic Wing West Portal (X=60)
@@ -2743,42 +3433,226 @@ for (const y of sortedYLevels) {
           }
         }
 
-        if (relY >= 1 && relY <= 8) {
+        // --- A) 1ST FLOOR (relY = 1..10): INTERROGATION CELLS, GREAT PILLARED HALL & DRAGON-SADDLE ARMORY ---
+        if (relY >= 1 && relY <= 10) {
           if (relY === 1) {
             b.addRect(-24, -158, 84, -90, 1, true);
             b.addRect(18, -158, 32, -90, 30, true);
             b.addRect(-24, -128, 84, -120, 30, true);
-            for (let z = -148; z <= -100; z += 16) {
-              b.addCircle(8, z, 2, 3, true);
-              b.addCircle(42, z, 2, 3, true);
-              b.setBlock(12, z, 34);
-              b.setBlock(38, z, 34);
+          }
+          // Stone columns & flaming braziers flanking the central cross-hall
+          for (let z = -148; z <= -100; z += 16) {
+            b.addCircle(8, z, 2, 3, true);
+            b.addCircle(42, z, 2, 3, true);
+            if (relY <= 3) {
+              b.setBlock(12, z, relY === 3 ? 34 : 28);
+              b.setBlock(38, z, relY === 3 ? 34 : 28);
             }
           }
-          for (let z = -152; z <= -102; z += 14) {
+          // West Wing: 4 Iron-Barred Interrogation & Holding Cells (X = -24..-4) — Iron Flame Lore!
+          for (let z = -152; z <= -98; z += 14) {
             if (z >= -132 && z <= -114) continue;
             b.addLine(-24, z, -4, z, 3, 2);
-            b.addLine(-4, z, -4, z + 12, 9, 1);
+            if (relY <= 8) {
+              b.addLine(-4, z, -4, z + 12, 9, 1); // Floor-to-ceiling iron prison bars
+            }
+            // Furnish each cell: stone prisoner cot (#3/#30), iron shackles (#9), interrogation table & serum brazier
+            if (relY === 1) {
+              b.addRect(-22, z + 2, -18, z + 5, 3, true);  // Prisoner stone slab bed
+              b.addRect(-14, z + 5, -10, z + 8, 11, true); // Interrogation table
+              b.setBlock(-12, z + 3, 28); // Interrogation chair
+              b.setBlock(-12, z + 10, 28);
+            } else if (relY === 2) {
+              b.setBlock(-21, z + 2, 31); // Thin pillow
+              b.setBlock(-12, z + 6, 34); // Truth-serum / interrogation brazier
+              b.setBlock(-23, z + 8, 9);  // Wall shackles
+            }
             if (relY <= 5) {
               b.carveRect(-5, z + 4, -3, z + 7);
             }
           }
-        }
-
-        if (relY === 12) {
-          b.addRect(-24, -158, 84, -90, 29, true);
-          b.addCircle(25, -124, 12, 30, true);
-          b.addCircle(25, -124, 9, 23, true);
-          for (let x = -18; x <= 72; x += 20) {
-            b.addRect(x, -154, x + 12, -151, 7, true);
-            b.addRect(x + 2, -100, x + 10, -96, 11, true);
+          // East Wing: Dragon-Saddle & Flight-Harness Armory (X = 46..83, Z = -156..-92)
+          for (let z = -150; z <= -98; z += 16) {
+            if (z >= -132 && z <= -114) continue;
+            // 3D Sculpted Dragon-Saddle Stands (relY = 1..4) with obsidian harnesses & gold buckles
+            if (relY >= 1 && relY <= 4) {
+              b.addRect(52, z, 58, z + 3, relY <= 2 ? 11 : 28, true);
+              if (relY === 3) b.addRect(53, z + 1, 57, z + 2, 30, true); // Padded leather flight seat
+              if (relY === 4) {
+                b.setBlock(53, z + 1, 20); // Pommel & harness horns
+                b.setBlock(57, z + 1, 20);
+              }
+              // Heavy Weapon & Crossbow Racks along East Wall (X = 80..83)
+              b.addRect(81, z, 83, z + 5, relY === 2 ? 13 : 9, true);
+            }
+            // Quartermaster's Workbenches (X = 66..74)
+            if (relY >= 1 && relY <= 2) {
+              b.addRect(66, z, 72, z + 3, 11, true);
+              if (relY === 2) {
+                b.setBlock(68, z + 1, 13); // Flight-gear chest
+                b.setBlock(70, z + 2, 20); // Brass buckle anvil
+              }
+            }
+          }
+          // Roaring Armory Fireplace on the East Wall (X = 80..83, Z = -127..-121)
+          if (relY <= 9) {
+            b.addRect(80, -127, 83, -121, 28, true);
+            if (relY <= 3) b.addRect(80, -126, 82, -122, relY <= 2 ? 34 : 1, true);
+          }
+          // Overhead Iron & Crystal Chandeliers (relY = 8..9)
+          if (relY >= 8 && relY <= 9) {
+            for (const cz of [-144, -124, -104]) {
+              b.addCircle(25, cz, relY === 8 ? 4 : 1, relY === 8 ? 12 : 9, false, 1);
+              b.addCircle(64, cz, relY === 8 ? 3 : 1, relY === 8 ? 12 : 9, false, 1);
+            }
           }
         }
 
-        if (relY === 23) {
-          b.addRect(-24, -158, 84, -90, 32, true);
-          b.addCircle(25, -124, 14, 11, false, 3);
-          b.addCircle(25, -124, 4, 12, true);
+        // --- B) 2ND FLOOR (relY = 12..21): SENIOR PROFESSORS' SUITES (KAORI, DEVERA, CARR) & MAP ROTUNDA ---
+        if (relY >= 12 && relY <= 21) {
+          const floorRel = relY - 11; // 1..10
+          if (floorRel === 1) {
+            b.addRect(-24, -158, 84, -90, 29, true);
+            b.addRect(18, -158, 32, -90, 30, true); // Central carpet hall
+          }
+          // Central 3D Continental Map Table of Navarre (Center 25, -124, r = 12, floorRel = 1..3)
+          if (floorRel >= 1 && floorRel <= 2) {
+            b.addCircle(25, -124, 12, 20, true); // Gilded outer map rim
+            b.addCircle(25, -124, 10, 26, true); // Ocean waters
+            b.addCircle(25, -124, 7, 23, true);  // Continent of Navarre
+          }
+          if (floorRel === 3) {
+            b.addLine(20, -126, 30, -122, 1, 2);  // Esben mountain range
+            b.setBlock(25, -124, 12);             // Basgiath Wardstone beacon crystal
+            b.setBlock(29, -121, 30);             // Samara / Athebyne frontier markers
+          }
+          // 8 Command Chairs around the Map Table (floorRel = 1..2)
+          if (floorRel >= 1 && floorRel <= 2) {
+            for (let deg = 0; deg < 360; deg += 45) {
+              const rad = (deg * Math.PI) / 180;
+              b.setBlock(Math.round(25 + Math.cos(rad) * 14), Math.round(-124 + Math.sin(rad) * 14), floorRel === 2 ? 28 : 30);
+            }
+          }
+          // Partitioned Senior Professors' Suites on West Side (X = -24..6) & East Side (X = 48..84)
+          if (floorRel <= 8) {
+            b.addLine(6, -158, 6, -90, 3, 1);
+            b.addLine(48, -158, 48, -90, 3, 1);
+            for (const pz of [-136, -112]) {
+              b.addLine(-24, pz, 6, pz, 3, 1);
+              b.addLine(48, pz, 84, pz, 3, 1);
+            }
+          }
+          // Furnish all 6 Professor Suites (3 West, 3 East) with Four-Poster Canopy Beds, Bookshelves & Desks!
+          const profZ = [-154, -132, -108];
+          for (const pz of profZ) {
+            // 1. 4-Block-Tall Four-Poster Canopy Bed (floorRel = 1..4)
+            if (floorRel === 1) {
+              b.addRect(-22, pz, -15, pz + 4, 30, true);
+              b.addRect(-22, pz, -20, pz + 4, 31, true);
+              b.addRect(75, pz, 82, pz + 4, 30, true);
+              b.addRect(80, pz, 82, pz + 4, 31, true);
+            }
+            if (floorRel >= 1 && floorRel <= 4) {
+              for (const [bx, bz] of [[-22, pz], [-22, pz + 4], [-15, pz], [-15, pz + 4], [75, pz], [75, pz + 4], [82, pz], [82, pz + 4]]) {
+                b.setBlock(bx, bz, 35); // Canopy posts
+              }
+            }
+            if (floorRel === 4) {
+              b.addRect(-22, pz, -15, pz + 4, 30, false, 1); // Overhead crimson bed canopy
+              b.addRect(75, pz, 82, pz + 4, 30, false, 1);
+            }
+            // 2. 6-Block-Tall Floor-to-Ceiling Scholarly Bookcases (floorRel = 1..6)
+            if (floorRel >= 1 && floorRel <= 6) {
+              b.addLine(-22, pz + 12, -8, pz + 12, floorRel === 6 ? 29 : 7, 1);
+              b.addLine(54, pz + 12, 72, pz + 12, floorRel === 6 ? 29 : 7, 1);
+            }
+            // 3. Professor's Writing Desk, Armchair & Candelabra (floorRel = 1..2)
+            if (floorRel >= 1 && floorRel <= 2) {
+              b.addRect(-10, pz + 3, -6, pz + 7, 11, true);
+              b.addRect(56, pz + 3, 60, pz + 7, 11, true);
+              if (floorRel === 1) {
+                b.setBlock(-12, pz + 5, 30);
+                b.setBlock(62, pz + 5, 30);
+              } else {
+                b.setBlock(-8, pz + 4, 12);
+                b.setBlock(-8, pz + 6, 31);
+                b.setBlock(58, pz + 4, 12);
+                b.setBlock(58, pz + 6, 31);
+              }
+            }
+            // Carve doorways into each Professor Suite
+            b.carveArchway(5, pz + 5, 7, pz + 9, floorRel, 6, 'x', 11, 29);
+            b.carveArchway(47, pz + 5, 49, pz + 9, floorRel, 6, 'x', 11, 29);
+          }
+          if (floorRel >= 8 && floorRel <= 9) {
+            b.addCircle(25, -124, floorRel === 8 ? 6 : 2, floorRel === 8 ? 12 : 20, false, 2);
+          }
+        }
+
+        // --- C) 3RD FLOOR (relY = 23..33): WINGLEADER WAR COUNCIL & SIGNET SANCTUM ---
+        if (relY >= 23 && relY <= 33) {
+          const floorRel = relY - 22; // 1..11
+          if (floorRel === 1) {
+            b.addRect(-24, -158, 84, -90, 32, true);
+            b.addCircle(25, -124, 18, 30, true); // Grand crimson council carpet
+          }
+          // 1. 3D Circular Wingleader War Council Table (Center 25, -124, r = 14, floorRel = 1..3)
+          if (floorRel >= 1 && floorRel <= 2) {
+            b.addCircle(25, -124, 14, 11, false, 3); // Massive carved dark-oak ring table
+            b.addCircle(25, -124, 4, 28, true);      // Central obsidian pedestal
+          }
+          if (floorRel === 3) {
+            for (let deg = 0; deg < 360; deg += 30) {
+              const rad = (deg * Math.PI) / 180;
+              b.setBlock(Math.round(25 + Math.cos(rad) * 13), Math.round(-124 + Math.sin(rad) * 13), deg % 60 === 0 ? 34 : 31);
+            }
+          }
+          // Central Arcane Signet Conduit Column (floorRel = 3..8)
+          if (floorRel >= 3 && floorRel <= 8) {
+            b.addCircle(25, -124, floorRel % 2 === 0 ? 2 : 3, floorRel % 2 === 0 ? 20 : 12, true);
+          }
+          // 2. 12 High-Backed Obsidian & Gold Wingleader Thrones around the Ring Table (floorRel = 1..4)
+          if (floorRel >= 1 && floorRel <= 4) {
+            for (let deg = 0; deg < 360; deg += 30) {
+              const rad = (deg * Math.PI) / 180;
+              const sx = Math.round(25 + Math.cos(rad) * 16);
+              const sz = Math.round(-124 + Math.sin(rad) * 16);
+              const bx = Math.round(25 + Math.cos(rad) * 17);
+              const bz = Math.round(-124 + Math.sin(rad) * 17);
+              if (floorRel === 1) b.setBlock(sx, sz, 30); // Throne seat
+              if (floorRel <= 4) b.setBlock(bx, bz, floorRel === 4 ? 20 : 28); // High throne back
+            }
+          }
+          // 3. 6-Block-Tall Classified War Archives & Strategy Tables in West & East Alcoves (floorRel = 1..6)
+          if (floorRel >= 1 && floorRel <= 6) {
+            for (let z = -152; z <= -96; z += 14) {
+              b.addRect(-22, z, -16, z + 2, floorRel === 6 ? 29 : 7, true);
+              b.addRect(72, z, 78, z + 2, floorRel === 6 ? 29 : 7, true);
+              if (floorRel <= 2) {
+                b.addRect(-12, z + 3, -6, z + 7, 11, true);
+                b.addRect(62, z + 3, 68, z + 7, 11, true);
+                if (floorRel === 2) {
+                  b.setBlock(-9, z + 5, 12);
+                  b.setBlock(65, z + 5, 12);
+                }
+              }
+            }
+          }
+          // 4. Grand Council Chandeliers (floorRel = 9..10)
+          if (floorRel >= 9 && floorRel <= 10) {
+            for (const cx of [-6, 25, 56]) {
+              b.addCircle(cx, -124, floorRel === 9 ? 5 : 2, floorRel === 9 ? 12 : 20, false, 1);
+            }
+          }
+        }
+
+        // Grand Continuous Internal Staircase connecting all 3 Floors of the North Citadel (X = 36..45, Z = -156..-151)
+        if (relY >= 1 && relY <= 33) {
+          if (relY === 11 || relY === 22) {
+            b.carveRect(36, -156, 46, -151);
+          }
+          const stairFloorRel = (relY - 1) % 11; // 0..10
+          b.addLine(36 + stairFloorRel, -156, 36 + stairFloorRel, -151, 29, 2);
         }
 
         // Vaulted North Vestibule Gallery connecting Rotunda North Portal (Z=-53) to Citadel South Portal (Z=-86)
@@ -2794,7 +3668,7 @@ for (const y of sortedYLevels) {
         b.addGableRoof(-28, -162, 88, -86, relY - 34, 14, false, 8, 2);
       }
 
-      // 4 Towering Corner Fortress Towers on the North Citadel (Drawn AFTER Keep walls/roof with cleared interiors!)
+      // 4 Towering Corner Fortress Towers on the North Citadel (Drawn AFTER Keep walls/roof with cleared interiors & full furnishings!)
       const keepTowers = [
         [-28, -162, 15],
         [88, -162, 15],
@@ -2808,6 +3682,38 @@ for (const y of sortedYLevels) {
           }
           const isBattlement = relY === 47 || relY === 48;
           b.addCircle(tx, tz, baseR, isBattlement ? 28 : 3, relY % 12 === 0, 3);
+          // Furnish each of the 4 Tower Stories (relY = 1..47): Spiral Staircase, Guard Tables, Bunks & Weapon Racks
+          if (relY >= 1 && relY <= 46) {
+            const tFloorRel = relY % 12;
+            if (tFloorRel === 0) {
+              b.carveCircle(tx, tz, 6); // Staircase opening in tower floor slab
+            }
+            // Continuous Spiral Staircase around central masonry core (r = 2..5)
+            const tAng = ((relY * 25) * Math.PI) / 180;
+            const prevTAng = (((relY - 1) * 25) * Math.PI) / 180;
+            b.addLine(
+              Math.round(tx + Math.cos(prevTAng) * 4),
+              Math.round(tz + Math.sin(prevTAng) * 4),
+              Math.round(tx + Math.cos(tAng) * 4),
+              Math.round(tz + Math.sin(tAng) * 4),
+              29,
+              3
+            );
+            b.addCircle(tx, tz, 2, 3, true);
+            // Tower Guard Room Furniture along outer perimeter ring (r = baseR - 5)
+            if (tFloorRel >= 1 && tFloorRel <= 2) {
+              b.addRect(tx - 8, tz - 2, tx - 6, tz + 2, 11, true); // Guard table
+              b.addRect(tx + 6, tz - 2, tx + 8, tz + 2, 30, true); // Guard bunk
+              if (tFloorRel === 2) {
+                b.setBlock(tx - 7, tz, 34); // Lantern
+                b.setBlock(tx + 7, tz - 2, 31); // Pillow
+              }
+            }
+            if (tFloorRel >= 1 && tFloorRel <= 4) {
+              b.setBlock(tx, tz - (baseR - 4), 9); // North weapon rack
+              b.setBlock(tx, tz + (baseR - 4), 9); // South weapon rack
+            }
+          }
         } else {
           const spireR = Math.max(1, Math.round(baseR * (1 - (relY - 48) / 18)));
           b.addCircle(tx, tz, spireR, relY >= 64 ? 20 : 8, true);
@@ -2845,8 +3751,29 @@ for (const y of sortedYLevels) {
         b.addCircle(Math.round(Math.cos(rad) * 54), Math.round(Math.sin(rad) * 54), 3, 3, true);
       }
 
+      // Upper Gallery Ring (relY = 14..18): Gilded balustrade, Wingleader viewing boxes, chronicle lecterns & bookshelves
       if (relY === 14) {
         b.addCircle(0, 0, 52, 29, false, 7);
+        b.addCircle(0, 0, 48, 30, false, 2); // Crimson gallery carpet ring
+      }
+      if (relY === 15) {
+        b.addCircle(0, 0, 45, 20, false, 1); // Gilded gallery inner railing
+      }
+      if (relY >= 15 && relY <= 18) {
+        for (let deg = 0; deg < 360; deg += 30) {
+          const rad = (deg * Math.PI) / 180;
+          const gx = Math.round(Math.cos(rad) * 47);
+          const gz = Math.round(Math.sin(rad) * 47);
+          const wx = Math.round(Math.cos(rad) * 50);
+          const wz = Math.round(Math.sin(rad) * 50);
+          if (relY === 15) {
+            b.setBlock(gx, gz, 11); // Gallery lectern / table
+            b.setBlock(wx, wz, 30); // Cushioned viewing throne
+          } else if (relY === 16) {
+            b.setBlock(gx, gz, deg % 60 === 0 ? 12 : 31); // Open codex or Magelight
+            b.setBlock(wx, wz, 28); // High throne back
+          }
+        }
       }
 
       if (relY <= 2) {
