@@ -1,0 +1,15 @@
+/* Globale Scrollbar- und Basis-Stile */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1014;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b303c;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e5a93c;
+}

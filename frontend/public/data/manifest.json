@@ -1,0 +1,3673 @@
+{
+  "project": "Basgiath War College – Minecraft ATM 11 Visualizer",
+  "updatedAt": "2026-10-19T19:00:21.063Z",
+  "bounds": {
+    "minX": -260,
+    "maxX": 320,
+    "minZ": -410,
+    "maxZ": 570,
+    "minY": -30,
+    "maxY": 156
+  },
+  "zones": [
+    {
+      "id": "all",
+      "name": "Gesamtes Basgiath & Bergmassiv",
+      "center": {
+        "x": 0,
+        "y": 85,
+        "z": 120
+      },
+      "yRange": [
+        -30,
+        156
+      ],
+      "description": "Komplettes 3D-Gebirge inkl. Wäldern, Schlucht, Süd-Campus, Reiter-Zitadelle, Gauntlet & Flight Field"
+    },
+    {
+      "id": "dragon-rotunda",
+      "name": "Dragon Rotunda & Riders Quadrant",
+      "center": {
+        "x": 0,
+        "y": 95,
+        "z": 0
+      },
+      "yRange": [
+        80,
+        146
+      ],
+      "description": "Kuppelbau (Ø 111 Blöcke) mit 6 Drachenstatuen, Kronleuchter, Mattenraum, Gathering Hall, Dorms & Nordzitadelle"
+    },
+    {
+      "id": "parapet",
+      "name": "Das Parapet & Die Schlucht",
+      "center": {
+        "x": -20,
+        "y": 70,
+        "z": 155
+      },
+      "yRange": [
+        -30,
+        85
+      ],
+      "description": "Todesbrücke über die 100 Blöcke tiefe Felsschlucht"
+    },
+    {
+      "id": "south-campus",
+      "name": "Süd-Campus (Healer, Infantry, Admin)",
+      "center": {
+        "x": 0,
+        "y": 60,
+        "z": 390
+      },
+      "yRange": [
+        55,
+        114
+      ],
+      "description": "Monumentale Hauptzitadelle inkl. Hofgärten, Drachenbrunnen, Krankensälen, Bell Tower & Sorrengails Büro"
+    },
+    {
+      "id": "scribe-quadrant",
+      "name": "Scribe Quadrant (Underground)",
+      "center": {
+        "x": -130,
+        "y": 12,
+        "z": 350
+      },
+      "yRange": [
+        10,
+        22
+      ],
+      "description": "Unterirdisches Zentralarchiv mit Lesetischen, Bücherregal-Ringen und 7 strahlenförmigen Katakomben"
+    },
+    {
+      "id": "gauntlet-flight-field",
+      "name": "The Gauntlet & Flight Field",
+      "center": {
+        "x": 115,
+        "y": 135,
+        "z": -265
+      },
+      "yRange": [
+        85,
+        156
+      ],
+      "description": "Weitläufiger Hindernisparcours im nördlichen Hochgebirge und Drachen-Flugfeld im fernen Nordosten"
+    }
+  ],
+  "totalLayers": 187,
+  "totalBlocksAllLayers": 2416659,
+  "globalMaterials": {
+    "1": 36482,
+    "2": 159739,
+    "3": 169897,
+    "4": 156287,
+    "5": 143496,
+    "6": 125234,
+    "7": 17624,
+    "8": 185479,
+    "9": 4039,
+    "10": 19392,
+    "11": 14484,
+    "12": 272,
+    "13": 4294,
+    "14": 5880,
+    "15": 1228,
+    "16": 1221,
+    "17": 971,
+    "18": 1228,
+    "19": 1221,
+    "20": 3400,
+    "21": 17748,
+    "22": 759604,
+    "23": 167163,
+    "24": 2279,
+    "25": 138769,
+    "26": 132173,
+    "27": 7484,
+    "28": 24862,
+    "29": 20356,
+    "30": 25504,
+    "31": 1200,
+    "32": 22857,
+    "33": 17601,
+    "34": 311,
+    "35": 3080,
+    "36": 23800
+  },
+  "layers": [
+    {
+      "y": -30,
+      "label": "Schlucht & Gebirgsfluss (Y=-30)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 18340,
+      "materials": {
+        "21": 16401,
+        "25": 1939
+      },
+      "file": "/data/layers/layer.-30.json"
+    },
+    {
+      "y": -29,
+      "label": "Schlucht & Gebirgsfluss (Y=-29)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2913,
+      "materials": {
+        "23": 770,
+        "25": 2143
+      },
+      "file": "/data/layers/layer.-29.json"
+    },
+    {
+      "y": -28,
+      "label": "Schlucht & Gebirgsfluss (Y=-28)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 3190,
+      "materials": {
+        "23": 746,
+        "25": 2444
+      },
+      "file": "/data/layers/layer.-28.json"
+    },
+    {
+      "y": -27,
+      "label": "Schlucht & Gebirgsfluss (Y=-27)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 3176,
+      "materials": {
+        "23": 863,
+        "25": 2313
+      },
+      "file": "/data/layers/layer.-27.json"
+    },
+    {
+      "y": -26,
+      "label": "Schlucht & Gebirgsfluss (Y=-26)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 3015,
+      "materials": {
+        "23": 799,
+        "25": 2216
+      },
+      "file": "/data/layers/layer.-26.json"
+    },
+    {
+      "y": -25,
+      "label": "Schlucht & Gebirgsfluss (Y=-25)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2859,
+      "materials": {
+        "23": 694,
+        "25": 2165
+      },
+      "file": "/data/layers/layer.-25.json"
+    },
+    {
+      "y": -24,
+      "label": "Schlucht & Gebirgsfluss (Y=-24)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2685,
+      "materials": {
+        "23": 598,
+        "25": 2087
+      },
+      "file": "/data/layers/layer.-24.json"
+    },
+    {
+      "y": -23,
+      "label": "Schlucht & Gebirgsfluss (Y=-23)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2610,
+      "materials": {
+        "23": 450,
+        "25": 2160
+      },
+      "file": "/data/layers/layer.-23.json"
+    },
+    {
+      "y": -22,
+      "label": "Schlucht & Gebirgsfluss (Y=-22)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2589,
+      "materials": {
+        "23": 377,
+        "25": 2212
+      },
+      "file": "/data/layers/layer.-22.json"
+    },
+    {
+      "y": -21,
+      "label": "Schlucht & Gebirgsfluss (Y=-21)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2486,
+      "materials": {
+        "23": 355,
+        "25": 2131
+      },
+      "file": "/data/layers/layer.-21.json"
+    },
+    {
+      "y": -20,
+      "label": "Schlucht & Gebirgsfluss (Y=-20)",
+      "zone": "ravine",
+      "description": "Tief eingeschnittene Felsschlucht (The Ravine) unter dem Parapet",
+      "totalBlocks": 2580,
+      "materials": {
+        "3": 117,
+        "23": 253,
+        "25": 2210
+      },
+      "file": "/data/layers/layer.-20.json"
+    },
+    {
+      "y": -19,
+      "label": "Gebirgsebene (Y=-19)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2539,
+      "materials": {
+        "3": 117,
+        "23": 227,
+        "25": 2195
+      },
+      "file": "/data/layers/layer.-19.json"
+    },
+    {
+      "y": -18,
+      "label": "Gebirgsebene (Y=-18)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2498,
+      "materials": {
+        "3": 117,
+        "23": 179,
+        "25": 2202
+      },
+      "file": "/data/layers/layer.-18.json"
+    },
+    {
+      "y": -17,
+      "label": "Gebirgsebene (Y=-17)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2505,
+      "materials": {
+        "3": 117,
+        "23": 149,
+        "25": 2239
+      },
+      "file": "/data/layers/layer.-17.json"
+    },
+    {
+      "y": -16,
+      "label": "Gebirgsebene (Y=-16)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2466,
+      "materials": {
+        "3": 130,
+        "23": 144,
+        "25": 2192
+      },
+      "file": "/data/layers/layer.-16.json"
+    },
+    {
+      "y": -15,
+      "label": "Gebirgsebene (Y=-15)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2448,
+      "materials": {
+        "3": 143,
+        "23": 109,
+        "25": 2196
+      },
+      "file": "/data/layers/layer.-15.json"
+    },
+    {
+      "y": -14,
+      "label": "Gebirgsebene (Y=-14)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2429,
+      "materials": {
+        "3": 143,
+        "23": 93,
+        "25": 2193
+      },
+      "file": "/data/layers/layer.-14.json"
+    },
+    {
+      "y": -13,
+      "label": "Gebirgsebene (Y=-13)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2428,
+      "materials": {
+        "3": 156,
+        "23": 74,
+        "25": 2198
+      },
+      "file": "/data/layers/layer.-13.json"
+    },
+    {
+      "y": -12,
+      "label": "Gebirgsebene (Y=-12)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2447,
+      "materials": {
+        "3": 169,
+        "23": 72,
+        "25": 2206
+      },
+      "file": "/data/layers/layer.-12.json"
+    },
+    {
+      "y": -11,
+      "label": "Gebirgsebene (Y=-11)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2422,
+      "materials": {
+        "3": 169,
+        "23": 66,
+        "25": 2187
+      },
+      "file": "/data/layers/layer.-11.json"
+    },
+    {
+      "y": -10,
+      "label": "Gebirgsebene (Y=-10)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2429,
+      "materials": {
+        "3": 182,
+        "23": 55,
+        "25": 2192
+      },
+      "file": "/data/layers/layer.-10.json"
+    },
+    {
+      "y": -9,
+      "label": "Gebirgsebene (Y=-9)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2432,
+      "materials": {
+        "3": 182,
+        "23": 44,
+        "25": 2206
+      },
+      "file": "/data/layers/layer.-9.json"
+    },
+    {
+      "y": -8,
+      "label": "Gebirgsebene (Y=-8)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2438,
+      "materials": {
+        "3": 195,
+        "23": 41,
+        "25": 2202
+      },
+      "file": "/data/layers/layer.-8.json"
+    },
+    {
+      "y": -7,
+      "label": "Gebirgsebene (Y=-7)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2446,
+      "materials": {
+        "3": 195,
+        "23": 43,
+        "25": 2208
+      },
+      "file": "/data/layers/layer.-7.json"
+    },
+    {
+      "y": -6,
+      "label": "Gebirgsebene (Y=-6)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2427,
+      "materials": {
+        "3": 208,
+        "23": 40,
+        "25": 2179
+      },
+      "file": "/data/layers/layer.-6.json"
+    },
+    {
+      "y": -5,
+      "label": "Gebirgsebene (Y=-5)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2447,
+      "materials": {
+        "3": 208,
+        "23": 22,
+        "25": 2217
+      },
+      "file": "/data/layers/layer.-5.json"
+    },
+    {
+      "y": -4,
+      "label": "Gebirgsebene (Y=-4)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2426,
+      "materials": {
+        "3": 221,
+        "23": 23,
+        "25": 2182
+      },
+      "file": "/data/layers/layer.-4.json"
+    },
+    {
+      "y": -3,
+      "label": "Gebirgsebene (Y=-3)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2447,
+      "materials": {
+        "3": 221,
+        "23": 27,
+        "25": 2199
+      },
+      "file": "/data/layers/layer.-3.json"
+    },
+    {
+      "y": -2,
+      "label": "Gebirgsebene (Y=-2)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2464,
+      "materials": {
+        "3": 234,
+        "23": 28,
+        "25": 2202
+      },
+      "file": "/data/layers/layer.-2.json"
+    },
+    {
+      "y": -1,
+      "label": "Gebirgsebene (Y=-1)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2456,
+      "materials": {
+        "3": 234,
+        "23": 23,
+        "25": 2199
+      },
+      "file": "/data/layers/layer.-1.json"
+    },
+    {
+      "y": 0,
+      "label": "Gebirgsebene (Y=0)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2470,
+      "materials": {
+        "3": 234,
+        "23": 19,
+        "25": 2217
+      },
+      "file": "/data/layers/layer.0.json"
+    },
+    {
+      "y": 1,
+      "label": "Gebirgsebene (Y=1)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2459,
+      "materials": {
+        "3": 234,
+        "23": 23,
+        "25": 2202
+      },
+      "file": "/data/layers/layer.1.json"
+    },
+    {
+      "y": 2,
+      "label": "Gebirgsebene (Y=2)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2476,
+      "materials": {
+        "3": 234,
+        "23": 17,
+        "25": 2225
+      },
+      "file": "/data/layers/layer.2.json"
+    },
+    {
+      "y": 3,
+      "label": "Gebirgsebene (Y=3)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2468,
+      "materials": {
+        "3": 234,
+        "23": 19,
+        "25": 2215
+      },
+      "file": "/data/layers/layer.3.json"
+    },
+    {
+      "y": 4,
+      "label": "Gebirgsebene (Y=4)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2468,
+      "materials": {
+        "3": 234,
+        "23": 23,
+        "25": 2211
+      },
+      "file": "/data/layers/layer.4.json"
+    },
+    {
+      "y": 5,
+      "label": "Gebirgsebene (Y=5)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2497,
+      "materials": {
+        "3": 234,
+        "23": 24,
+        "25": 2239
+      },
+      "file": "/data/layers/layer.5.json"
+    },
+    {
+      "y": 6,
+      "label": "Gebirgsebene (Y=6)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2508,
+      "materials": {
+        "3": 234,
+        "23": 27,
+        "25": 2247
+      },
+      "file": "/data/layers/layer.6.json"
+    },
+    {
+      "y": 7,
+      "label": "Gebirgsebene (Y=7)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2501,
+      "materials": {
+        "3": 234,
+        "23": 30,
+        "25": 2237
+      },
+      "file": "/data/layers/layer.7.json"
+    },
+    {
+      "y": 8,
+      "label": "Gebirgsebene (Y=8)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2490,
+      "materials": {
+        "3": 234,
+        "23": 30,
+        "25": 2226
+      },
+      "file": "/data/layers/layer.8.json"
+    },
+    {
+      "y": 9,
+      "label": "Gebirgsebene (Y=9)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 2522,
+      "materials": {
+        "3": 234,
+        "23": 28,
+        "25": 2260
+      },
+      "file": "/data/layers/layer.9.json"
+    },
+    {
+      "y": 10,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=10)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 11971,
+      "materials": {
+        "3": 234,
+        "6": 9407,
+        "13": 13,
+        "23": 29,
+        "25": 2275,
+        "29": 13
+      },
+      "file": "/data/layers/layer.10.json"
+    },
+    {
+      "y": 11,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=11)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 8236,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1675,
+        "11": 64,
+        "12": 8,
+        "13": 13,
+        "23": 46,
+        "25": 2294,
+        "29": 9,
+        "30": 810
+      },
+      "file": "/data/layers/layer.11.json"
+    },
+    {
+      "y": 12,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=12)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 7410,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 57,
+        "25": 2317,
+        "29": 9
+      },
+      "file": "/data/layers/layer.12.json"
+    },
+    {
+      "y": 13,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=13)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 16230,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 82,
+        "25": 11121
+      },
+      "file": "/data/layers/layer.13.json"
+    },
+    {
+      "y": 14,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=14)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 20546,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 8508,
+        "25": 7002,
+        "29": 9
+      },
+      "file": "/data/layers/layer.14.json"
+    },
+    {
+      "y": 15,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=15)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 16087,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 4306,
+        "25": 6734,
+        "29": 9,
+        "35": 11
+      },
+      "file": "/data/layers/layer.15.json"
+    },
+    {
+      "y": 16,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=16)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 17360,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 4056,
+        "25": 7256,
+        "29": 1008,
+        "35": 13
+      },
+      "file": "/data/layers/layer.16.json"
+    },
+    {
+      "y": 17,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=17)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 21504,
+      "materials": {
+        "3": 234,
+        "6": 3083,
+        "7": 1697,
+        "13": 13,
+        "23": 4466,
+        "25": 11677,
+        "27": 112,
+        "29": 9,
+        "35": 17,
+        "36": 196
+      },
+      "file": "/data/layers/layer.17.json"
+    },
+    {
+      "y": 18,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=18)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 17405,
+      "materials": {
+        "3": 234,
+        "6": 3123,
+        "7": 1697,
+        "13": 13,
+        "22": 3137,
+        "23": 8943,
+        "27": 76,
+        "29": 13,
+        "35": 25,
+        "36": 144
+      },
+      "file": "/data/layers/layer.18.json"
+    },
+    {
+      "y": 19,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=19)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 8941,
+      "materials": {
+        "3": 234,
+        "6": 3123,
+        "7": 1697,
+        "13": 13,
+        "22": 3152,
+        "23": 375,
+        "27": 76,
+        "29": 13,
+        "35": 34,
+        "36": 224
+      },
+      "file": "/data/layers/layer.19.json"
+    },
+    {
+      "y": 20,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=20)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 8961,
+      "materials": {
+        "3": 234,
+        "6": 4306,
+        "7": 496,
+        "13": 13,
+        "22": 3140,
+        "23": 265,
+        "27": 100,
+        "29": 13,
+        "35": 34,
+        "36": 360
+      },
+      "file": "/data/layers/layer.20.json"
+    },
+    {
+      "y": 21,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=21)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 8509,
+      "materials": {
+        "3": 234,
+        "6": 4306,
+        "13": 13,
+        "22": 3103,
+        "23": 214,
+        "27": 168,
+        "29": 13,
+        "35": 34,
+        "36": 424
+      },
+      "file": "/data/layers/layer.21.json"
+    },
+    {
+      "y": 22,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=22)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 13352,
+      "materials": {
+        "3": 234,
+        "6": 9407,
+        "13": 13,
+        "22": 3158,
+        "23": 125,
+        "27": 106,
+        "29": 13,
+        "35": 30,
+        "36": 266
+      },
+      "file": "/data/layers/layer.22.json"
+    },
+    {
+      "y": 23,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=23)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 3935,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3144,
+        "23": 89,
+        "27": 75,
+        "29": 13,
+        "35": 27,
+        "36": 220
+      },
+      "file": "/data/layers/layer.23.json"
+    },
+    {
+      "y": 24,
+      "label": "Scribe Quadrant Katakomben & West-Fields (Y=24)",
+      "zone": "scribe-quadrant",
+      "description": "Unterirdische Archiv-Hallen mit Lesetischen & Bücherregalen sowie westliches Tiefland",
+      "totalBlocks": 3861,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3184,
+        "23": 55,
+        "27": 62,
+        "29": 13,
+        "35": 25,
+        "36": 155
+      },
+      "file": "/data/layers/layer.24.json"
+    },
+    {
+      "y": 25,
+      "label": "Gebirgsebene (Y=25)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3724,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3193,
+        "27": 33,
+        "29": 13,
+        "35": 23,
+        "36": 95
+      },
+      "file": "/data/layers/layer.25.json"
+    },
+    {
+      "y": 26,
+      "label": "Gebirgsebene (Y=26)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3667,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3170,
+        "27": 26,
+        "29": 13,
+        "35": 18,
+        "36": 73
+      },
+      "file": "/data/layers/layer.26.json"
+    },
+    {
+      "y": 27,
+      "label": "Gebirgsebene (Y=27)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3665,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3190,
+        "27": 19,
+        "29": 13,
+        "35": 11,
+        "36": 65
+      },
+      "file": "/data/layers/layer.27.json"
+    },
+    {
+      "y": 28,
+      "label": "Gebirgsebene (Y=28)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3610,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3168,
+        "27": 15,
+        "29": 13,
+        "35": 3,
+        "36": 44
+      },
+      "file": "/data/layers/layer.28.json"
+    },
+    {
+      "y": 29,
+      "label": "Gebirgsebene (Y=29)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3559,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3156,
+        "27": 7,
+        "29": 13,
+        "36": 16
+      },
+      "file": "/data/layers/layer.29.json"
+    },
+    {
+      "y": 30,
+      "label": "Gebirgsebene (Y=30)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3538,
+      "materials": {
+        "3": 234,
+        "6": 120,
+        "13": 13,
+        "22": 3155,
+        "27": 1,
+        "29": 13,
+        "36": 2
+      },
+      "file": "/data/layers/layer.30.json"
+    },
+    {
+      "y": 31,
+      "label": "Gebirgsebene (Y=31)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3517,
+      "materials": {
+        "3": 247,
+        "6": 120,
+        "13": 13,
+        "22": 3124,
+        "29": 13
+      },
+      "file": "/data/layers/layer.31.json"
+    },
+    {
+      "y": 32,
+      "label": "Gebirgsebene (Y=32)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3533,
+      "materials": {
+        "3": 247,
+        "6": 120,
+        "13": 13,
+        "22": 3140,
+        "29": 13
+      },
+      "file": "/data/layers/layer.32.json"
+    },
+    {
+      "y": 33,
+      "label": "Gebirgsebene (Y=33)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3540,
+      "materials": {
+        "3": 247,
+        "6": 120,
+        "13": 13,
+        "22": 3147,
+        "29": 13
+      },
+      "file": "/data/layers/layer.33.json"
+    },
+    {
+      "y": 34,
+      "label": "Gebirgsebene (Y=34)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3545,
+      "materials": {
+        "3": 260,
+        "6": 120,
+        "13": 13,
+        "22": 3139,
+        "29": 13
+      },
+      "file": "/data/layers/layer.34.json"
+    },
+    {
+      "y": 35,
+      "label": "Gebirgsebene (Y=35)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3573,
+      "materials": {
+        "3": 260,
+        "6": 120,
+        "13": 13,
+        "22": 3167,
+        "29": 13
+      },
+      "file": "/data/layers/layer.35.json"
+    },
+    {
+      "y": 36,
+      "label": "Gebirgsebene (Y=36)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3575,
+      "materials": {
+        "3": 273,
+        "6": 120,
+        "13": 13,
+        "22": 3156,
+        "29": 13
+      },
+      "file": "/data/layers/layer.36.json"
+    },
+    {
+      "y": 37,
+      "label": "Gebirgsebene (Y=37)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3586,
+      "materials": {
+        "3": 273,
+        "6": 120,
+        "13": 13,
+        "22": 3167,
+        "29": 13
+      },
+      "file": "/data/layers/layer.37.json"
+    },
+    {
+      "y": 38,
+      "label": "Gebirgsebene (Y=38)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3613,
+      "materials": {
+        "3": 273,
+        "6": 120,
+        "13": 13,
+        "22": 3194,
+        "29": 13
+      },
+      "file": "/data/layers/layer.38.json"
+    },
+    {
+      "y": 39,
+      "label": "Gebirgsebene (Y=39)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3631,
+      "materials": {
+        "3": 286,
+        "6": 120,
+        "13": 13,
+        "22": 3199,
+        "29": 13
+      },
+      "file": "/data/layers/layer.39.json"
+    },
+    {
+      "y": 40,
+      "label": "Gebirgsebene (Y=40)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3630,
+      "materials": {
+        "3": 286,
+        "6": 120,
+        "13": 13,
+        "22": 3198,
+        "29": 13
+      },
+      "file": "/data/layers/layer.40.json"
+    },
+    {
+      "y": 41,
+      "label": "Gebirgsebene (Y=41)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3649,
+      "materials": {
+        "3": 299,
+        "6": 120,
+        "13": 13,
+        "22": 3204,
+        "29": 13
+      },
+      "file": "/data/layers/layer.41.json"
+    },
+    {
+      "y": 42,
+      "label": "Gebirgsebene (Y=42)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3723,
+      "materials": {
+        "3": 299,
+        "6": 120,
+        "13": 13,
+        "22": 3278,
+        "29": 13
+      },
+      "file": "/data/layers/layer.42.json"
+    },
+    {
+      "y": 43,
+      "label": "Gebirgsebene (Y=43)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3736,
+      "materials": {
+        "3": 299,
+        "6": 120,
+        "13": 13,
+        "22": 3291,
+        "29": 13
+      },
+      "file": "/data/layers/layer.43.json"
+    },
+    {
+      "y": 44,
+      "label": "Gebirgsebene (Y=44)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3746,
+      "materials": {
+        "3": 312,
+        "6": 120,
+        "13": 13,
+        "22": 3288,
+        "29": 13
+      },
+      "file": "/data/layers/layer.44.json"
+    },
+    {
+      "y": 45,
+      "label": "Gebirgsebene (Y=45)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3944,
+      "materials": {
+        "1": 126,
+        "3": 312,
+        "6": 120,
+        "13": 13,
+        "22": 3360,
+        "29": 13
+      },
+      "file": "/data/layers/layer.45.json"
+    },
+    {
+      "y": 46,
+      "label": "Gebirgsebene (Y=46)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 3982,
+      "materials": {
+        "1": 126,
+        "3": 325,
+        "6": 120,
+        "13": 13,
+        "22": 3385,
+        "29": 13
+      },
+      "file": "/data/layers/layer.46.json"
+    },
+    {
+      "y": 47,
+      "label": "Gebirgsebene (Y=47)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4066,
+      "materials": {
+        "1": 126,
+        "3": 325,
+        "6": 120,
+        "13": 13,
+        "22": 3469,
+        "29": 13
+      },
+      "file": "/data/layers/layer.47.json"
+    },
+    {
+      "y": 48,
+      "label": "Gebirgsebene (Y=48)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4166,
+      "materials": {
+        "1": 126,
+        "3": 338,
+        "6": 120,
+        "13": 13,
+        "22": 3512,
+        "28": 44,
+        "29": 13
+      },
+      "file": "/data/layers/layer.48.json"
+    },
+    {
+      "y": 49,
+      "label": "Gebirgsebene (Y=49)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4234,
+      "materials": {
+        "1": 126,
+        "3": 340,
+        "6": 120,
+        "13": 13,
+        "22": 3545,
+        "28": 77,
+        "29": 13
+      },
+      "file": "/data/layers/layer.49.json"
+    },
+    {
+      "y": 50,
+      "label": "Gebirgsebene (Y=50)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4413,
+      "materials": {
+        "1": 126,
+        "3": 388,
+        "6": 120,
+        "13": 13,
+        "22": 3698,
+        "28": 55,
+        "29": 13
+      },
+      "file": "/data/layers/layer.50.json"
+    },
+    {
+      "y": 51,
+      "label": "Gebirgsebene (Y=51)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4557,
+      "materials": {
+        "1": 126,
+        "2": 8,
+        "3": 421,
+        "6": 120,
+        "13": 13,
+        "22": 3823,
+        "28": 33,
+        "29": 13
+      },
+      "file": "/data/layers/layer.51.json"
+    },
+    {
+      "y": 52,
+      "label": "Gebirgsebene (Y=52)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 4819,
+      "materials": {
+        "1": 126,
+        "2": 14,
+        "3": 432,
+        "6": 120,
+        "13": 13,
+        "22": 4068,
+        "28": 33,
+        "29": 13
+      },
+      "file": "/data/layers/layer.52.json"
+    },
+    {
+      "y": 53,
+      "label": "Gebirgsebene (Y=53)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 5417,
+      "materials": {
+        "1": 126,
+        "2": 18,
+        "3": 359,
+        "6": 120,
+        "13": 13,
+        "22": 4636,
+        "28": 132,
+        "29": 13
+      },
+      "file": "/data/layers/layer.53.json"
+    },
+    {
+      "y": 54,
+      "label": "Gebirgsebene (Y=54)",
+      "zone": "all",
+      "description": "Topografischer Bergschnitt & Festungsstrukturen",
+      "totalBlocks": 147961,
+      "materials": {
+        "1": 126,
+        "2": 20,
+        "3": 339,
+        "6": 120,
+        "13": 13,
+        "22": 145861,
+        "23": 1282,
+        "28": 187,
+        "29": 13
+      },
+      "file": "/data/layers/layer.54.json"
+    },
+    {
+      "y": 55,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=55)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 148052,
+      "materials": {
+        "1": 126,
+        "2": 24,
+        "3": 755,
+        "4": 22348,
+        "5": 27211,
+        "6": 13397,
+        "13": 13,
+        "21": 441,
+        "22": 3689,
+        "23": 63273,
+        "28": 132,
+        "30": 372,
+        "32": 6938,
+        "33": 9333
+      },
+      "file": "/data/layers/layer.55.json"
+    },
+    {
+      "y": 56,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=56)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 27664,
+      "materials": {
+        "1": 126,
+        "2": 44,
+        "3": 784,
+        "4": 4358,
+        "5": 3199,
+        "6": 1746,
+        "7": 627,
+        "11": 2526,
+        "13": 13,
+        "20": 199,
+        "21": 392,
+        "22": 4128,
+        "23": 1063,
+        "26": 49,
+        "28": 425,
+        "29": 49,
+        "30": 5377,
+        "31": 480,
+        "32": 1910,
+        "34": 49,
+        "35": 120
+      },
+      "file": "/data/layers/layer.56.json"
+    },
+    {
+      "y": 57,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=57)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 17609,
+      "materials": {
+        "1": 126,
+        "2": 58,
+        "3": 775,
+        "4": 4363,
+        "5": 3199,
+        "6": 1746,
+        "11": 84,
+        "13": 13,
+        "21": 392,
+        "22": 4448,
+        "23": 1066,
+        "28": 436,
+        "29": 49,
+        "30": 52,
+        "32": 681,
+        "35": 121
+      },
+      "file": "/data/layers/layer.57.json"
+    },
+    {
+      "y": 58,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=58)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 21055,
+      "materials": {
+        "1": 126,
+        "2": 68,
+        "3": 675,
+        "4": 4043,
+        "5": 3199,
+        "6": 1364,
+        "10": 558,
+        "11": 84,
+        "13": 13,
+        "22": 5005,
+        "23": 1246,
+        "27": 588,
+        "28": 579,
+        "29": 49,
+        "30": 52,
+        "32": 624,
+        "35": 122,
+        "36": 2660
+      },
+      "file": "/data/layers/layer.58.json"
+    },
+    {
+      "y": 59,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=59)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 21014,
+      "materials": {
+        "1": 126,
+        "2": 72,
+        "3": 723,
+        "4": 4071,
+        "5": 3199,
+        "6": 1368,
+        "10": 558,
+        "11": 84,
+        "13": 13,
+        "22": 5756,
+        "23": 1728,
+        "27": 432,
+        "28": 557,
+        "29": 49,
+        "30": 52,
+        "32": 567,
+        "35": 123,
+        "36": 1536
+      },
+      "file": "/data/layers/layer.59.json"
+    },
+    {
+      "y": 60,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=60)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 20741,
+      "materials": {
+        "1": 126,
+        "2": 84,
+        "3": 848,
+        "4": 4119,
+        "5": 3235,
+        "6": 1382,
+        "10": 558,
+        "11": 42,
+        "13": 13,
+        "22": 4976,
+        "23": 2517,
+        "27": 448,
+        "28": 473,
+        "29": 49,
+        "30": 52,
+        "32": 510,
+        "35": 129,
+        "36": 1180
+      },
+      "file": "/data/layers/layer.60.json"
+    },
+    {
+      "y": 61,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=61)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 20497,
+      "materials": {
+        "1": 126,
+        "2": 114,
+        "3": 729,
+        "4": 4179,
+        "5": 3270,
+        "6": 2252,
+        "10": 558,
+        "13": 13,
+        "22": 4543,
+        "23": 1859,
+        "27": 540,
+        "28": 595,
+        "29": 49,
+        "30": 52,
+        "32": 404,
+        "35": 138,
+        "36": 1076
+      },
+      "file": "/data/layers/layer.61.json"
+    },
+    {
+      "y": 62,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=62)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 19607,
+      "materials": {
+        "1": 126,
+        "2": 114,
+        "3": 756,
+        "4": 4569,
+        "5": 3308,
+        "6": 2223,
+        "20": 49,
+        "22": 4230,
+        "23": 1612,
+        "27": 324,
+        "28": 911,
+        "29": 49,
+        "30": 52,
+        "32": 347,
+        "35": 141,
+        "36": 796
+      },
+      "file": "/data/layers/layer.62.json"
+    },
+    {
+      "y": 63,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=63)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 17441,
+      "materials": {
+        "1": 132,
+        "2": 114,
+        "3": 853,
+        "4": 2807,
+        "5": 3441,
+        "6": 2264,
+        "20": 29,
+        "22": 4181,
+        "23": 1429,
+        "27": 248,
+        "28": 647,
+        "29": 49,
+        "30": 52,
+        "32": 290,
+        "33": 28,
+        "35": 112,
+        "36": 765
+      },
+      "file": "/data/layers/layer.63.json"
+    },
+    {
+      "y": 64,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=64)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 70945,
+      "materials": {
+        "1": 138,
+        "2": 124,
+        "3": 918,
+        "4": 21344,
+        "5": 27643,
+        "6": 13624,
+        "20": 13,
+        "22": 3955,
+        "23": 1440,
+        "27": 134,
+        "28": 419,
+        "29": 49,
+        "30": 52,
+        "32": 131,
+        "33": 225,
+        "35": 90,
+        "36": 646
+      },
+      "file": "/data/layers/layer.64.json"
+    },
+    {
+      "y": 65,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=65)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 26941,
+      "materials": {
+        "1": 138,
+        "2": 136,
+        "3": 911,
+        "4": 4630,
+        "5": 3457,
+        "6": 1307,
+        "7": 627,
+        "11": 2448,
+        "20": 5,
+        "22": 3672,
+        "23": 1301,
+        "27": 81,
+        "28": 408,
+        "29": 49,
+        "30": 5356,
+        "31": 480,
+        "32": 1250,
+        "33": 98,
+        "35": 71,
+        "36": 516
+      },
+      "file": "/data/layers/layer.65.json"
+    },
+    {
+      "y": 66,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=66)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 16591,
+      "materials": {
+        "1": 147,
+        "2": 136,
+        "3": 988,
+        "4": 4634,
+        "5": 3473,
+        "6": 1316,
+        "11": 84,
+        "20": 5,
+        "22": 3511,
+        "23": 1160,
+        "27": 80,
+        "28": 313,
+        "29": 49,
+        "33": 98,
+        "35": 44,
+        "36": 553
+      },
+      "file": "/data/layers/layer.66.json"
+    },
+    {
+      "y": 67,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=67)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 17393,
+      "materials": {
+        "1": 153,
+        "2": 148,
+        "3": 876,
+        "4": 4314,
+        "5": 3489,
+        "6": 1106,
+        "10": 558,
+        "11": 84,
+        "22": 4538,
+        "27": 61,
+        "28": 1379,
+        "29": 49,
+        "33": 105,
+        "34": 2,
+        "35": 43,
+        "36": 488
+      },
+      "file": "/data/layers/layer.67.json"
+    },
+    {
+      "y": 68,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=68)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 16135,
+      "materials": {
+        "1": 159,
+        "2": 144,
+        "3": 849,
+        "4": 4342,
+        "5": 3609,
+        "6": 1106,
+        "10": 558,
+        "11": 84,
+        "22": 4494,
+        "27": 56,
+        "28": 134,
+        "29": 49,
+        "33": 105,
+        "34": 2,
+        "35": 42,
+        "36": 402
+      },
+      "file": "/data/layers/layer.68.json"
+    },
+    {
+      "y": 69,
+      "label": "Süd-Campus Zitadelle, Innenräume & Hofgärten (Y=69)",
+      "zone": "south-campus",
+      "description": "Heiler-Krankensäle, Infanterie-Kasernen, Verwaltung, Sorrengails Büro & Drachenbrunnen im Hof",
+      "totalBlocks": 16025,
+      "materials": {
+        "1": 165,
+        "2": 138,
+        "3": 859,
+        "4": 4370,
+        "5": 3609,
+        "6": 1106,
+        "10": 558,
+        "11": 42,
+        "22": 4469,
+        "27": 81,
+        "28": 101,
+        "29": 49,
+        "33": 105,
+        "34": 2,
+        "35": 41,
+        "36": 330
+      },
+      "file": "/data/layers/layer.69.json"
+    },
+    {
+      "y": 70,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=70)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 16056,
+      "materials": {
+        "1": 174,
+        "2": 136,
+        "3": 817,
+        "4": 4384,
+        "5": 3609,
+        "6": 1106,
+        "10": 558,
+        "22": 4583,
+        "27": 45,
+        "28": 90,
+        "29": 49,
+        "33": 112,
+        "34": 2,
+        "35": 40,
+        "36": 351
+      },
+      "file": "/data/layers/layer.70.json"
+    },
+    {
+      "y": 71,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=71)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 16042,
+      "materials": {
+        "1": 180,
+        "2": 124,
+        "3": 783,
+        "4": 4732,
+        "5": 3609,
+        "6": 1316,
+        "22": 4671,
+        "24": 15,
+        "27": 46,
+        "28": 90,
+        "29": 49,
+        "33": 119,
+        "34": 2,
+        "35": 42,
+        "36": 264
+      },
+      "file": "/data/layers/layer.71.json"
+    },
+    {
+      "y": 72,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=72)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 15463,
+      "materials": {
+        "1": 201,
+        "2": 110,
+        "3": 735,
+        "4": 4094,
+        "5": 3609,
+        "6": 1316,
+        "22": 4672,
+        "24": 173,
+        "27": 58,
+        "28": 90,
+        "33": 126,
+        "35": 40,
+        "36": 239
+      },
+      "file": "/data/layers/layer.72.json"
+    },
+    {
+      "y": 73,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=73)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 69604,
+      "materials": {
+        "1": 199,
+        "2": 94,
+        "3": 747,
+        "4": 20030,
+        "5": 29302,
+        "6": 13624,
+        "22": 4764,
+        "24": 51,
+        "27": 80,
+        "28": 89,
+        "33": 126,
+        "34": 2,
+        "35": 41,
+        "36": 455
+      },
+      "file": "/data/layers/layer.73.json"
+    },
+    {
+      "y": 74,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=74)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 19779,
+      "materials": {
+        "1": 204,
+        "2": 84,
+        "3": 718,
+        "4": 1606,
+        "5": 778,
+        "6": 343,
+        "8": 9650,
+        "11": 78,
+        "20": 199,
+        "22": 4923,
+        "23": 268,
+        "24": 54,
+        "26": 49,
+        "27": 64,
+        "28": 190,
+        "33": 140,
+        "34": 51,
+        "35": 36,
+        "36": 344
+      },
+      "file": "/data/layers/layer.74.json"
+    },
+    {
+      "y": 75,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=75)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 22165,
+      "materials": {
+        "1": 246,
+        "2": 62,
+        "3": 632,
+        "4": 3886,
+        "5": 788,
+        "6": 299,
+        "8": 9899,
+        "22": 5651,
+        "24": 57,
+        "27": 106,
+        "28": 80,
+        "33": 154,
+        "34": 4,
+        "35": 34,
+        "36": 267
+      },
+      "file": "/data/layers/layer.75.json"
+    },
+    {
+      "y": 76,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=76)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 22176,
+      "materials": {
+        "1": 279,
+        "2": 34,
+        "3": 644,
+        "4": 1668,
+        "5": 742,
+        "6": 255,
+        "8": 10212,
+        "22": 7621,
+        "24": 66,
+        "27": 75,
+        "28": 56,
+        "33": 161,
+        "34": 2,
+        "35": 37,
+        "36": 324
+      },
+      "file": "/data/layers/layer.76.json"
+    },
+    {
+      "y": 77,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=77)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 24215,
+      "materials": {
+        "1": 243,
+        "2": 25,
+        "3": 619,
+        "4": 1648,
+        "5": 698,
+        "6": 203,
+        "8": 10190,
+        "22": 9952,
+        "24": 78,
+        "27": 45,
+        "28": 45,
+        "33": 182,
+        "34": 2,
+        "35": 39,
+        "36": 246
+      },
+      "file": "/data/layers/layer.77.json"
+    },
+    {
+      "y": 78,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=78)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 27517,
+      "materials": {
+        "1": 183,
+        "2": 27,
+        "3": 639,
+        "4": 1627,
+        "5": 650,
+        "6": 163,
+        "8": 10481,
+        "22": 13002,
+        "24": 105,
+        "27": 84,
+        "28": 38,
+        "33": 196,
+        "34": 2,
+        "35": 44,
+        "36": 276
+      },
+      "file": "/data/layers/layer.78.json"
+    },
+    {
+      "y": 79,
+      "label": "Das Parapet, Ostbrücke & Süd-Campus Obergeschosse (Y=79)",
+      "zone": "parapet",
+      "description": "Brücken über die 100 Blöcke tiefe Schlucht & Dächer des Süd-Campus",
+      "totalBlocks": 116940,
+      "materials": {
+        "1": 36,
+        "2": 36,
+        "3": 516,
+        "4": 1605,
+        "5": 602,
+        "6": 119,
+        "8": 10632,
+        "22": 97134,
+        "23": 5383,
+        "24": 210,
+        "27": 53,
+        "28": 34,
+        "33": 154,
+        "34": 4,
+        "35": 52,
+        "36": 370
+      },
+      "file": "/data/layers/layer.79.json"
+    },
+    {
+      "y": 80,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=80)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 123017,
+      "materials": {
+        "1": 20566,
+        "2": 23540,
+        "3": 9709,
+        "4": 1584,
+        "5": 528,
+        "6": 67,
+        "8": 10973,
+        "20": 92,
+        "21": 64,
+        "22": 29257,
+        "23": 14796,
+        "24": 123,
+        "26": 48,
+        "27": 71,
+        "28": 84,
+        "29": 2631,
+        "30": 2412,
+        "32": 1108,
+        "33": 4943,
+        "34": 2,
+        "35": 48,
+        "36": 371
+      },
+      "file": "/data/layers/layer.80.json"
+    },
+    {
+      "y": 81,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=81)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 62261,
+      "materials": {
+        "1": 4890,
+        "2": 4719,
+        "3": 4629,
+        "4": 732,
+        "5": 40,
+        "6": 23,
+        "7": 96,
+        "8": 12240,
+        "9": 27,
+        "11": 1803,
+        "20": 436,
+        "21": 29,
+        "22": 12202,
+        "23": 10308,
+        "26": 39,
+        "27": 143,
+        "28": 567,
+        "29": 4040,
+        "30": 4512,
+        "31": 120,
+        "32": 18,
+        "33": 108,
+        "34": 59,
+        "35": 57,
+        "36": 424
+      },
+      "file": "/data/layers/layer.81.json"
+    },
+    {
+      "y": 82,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=82)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 40498,
+      "materials": {
+        "2": 4040,
+        "3": 4198,
+        "4": 703,
+        "8": 10543,
+        "9": 27,
+        "11": 1080,
+        "20": 244,
+        "21": 29,
+        "22": 10000,
+        "23": 7114,
+        "26": 39,
+        "27": 145,
+        "28": 1212,
+        "30": 427,
+        "32": 9,
+        "33": 108,
+        "34": 71,
+        "35": 68,
+        "36": 441
+      },
+      "file": "/data/layers/layer.82.json"
+    },
+    {
+      "y": 83,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=83)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 30439,
+      "materials": {
+        "2": 4737,
+        "3": 4188,
+        "4": 2697,
+        "8": 3238,
+        "9": 27,
+        "11": 316,
+        "13": 184,
+        "22": 7780,
+        "23": 5404,
+        "27": 175,
+        "28": 524,
+        "30": 273,
+        "32": 18,
+        "33": 117,
+        "34": 2,
+        "35": 75,
+        "36": 684
+      },
+      "file": "/data/layers/layer.83.json"
+    },
+    {
+      "y": 84,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=84)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 24681,
+      "materials": {
+        "2": 4586,
+        "3": 4099,
+        "4": 352,
+        "8": 1104,
+        "9": 27,
+        "10": 163,
+        "11": 324,
+        "13": 184,
+        "22": 8343,
+        "23": 3441,
+        "27": 207,
+        "28": 584,
+        "30": 388,
+        "32": 9,
+        "33": 108,
+        "34": 32,
+        "35": 79,
+        "36": 651
+      },
+      "file": "/data/layers/layer.84.json"
+    },
+    {
+      "y": 85,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=85)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 24877,
+      "materials": {
+        "2": 4664,
+        "3": 3979,
+        "4": 352,
+        "8": 936,
+        "9": 27,
+        "10": 511,
+        "11": 376,
+        "13": 184,
+        "20": 212,
+        "22": 11581,
+        "27": 229,
+        "28": 594,
+        "30": 321,
+        "32": 126,
+        "34": 1,
+        "35": 85,
+        "36": 699
+      },
+      "file": "/data/layers/layer.85.json"
+    },
+    {
+      "y": 86,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=86)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 22740,
+      "materials": {
+        "2": 4416,
+        "3": 3771,
+        "4": 352,
+        "8": 876,
+        "9": 39,
+        "10": 511,
+        "11": 316,
+        "13": 184,
+        "14": 6,
+        "15": 66,
+        "16": 66,
+        "17": 6,
+        "18": 66,
+        "19": 66,
+        "22": 10178,
+        "27": 230,
+        "28": 642,
+        "30": 345,
+        "32": 9,
+        "34": 2,
+        "35": 89,
+        "36": 504
+      },
+      "file": "/data/layers/layer.86.json"
+    },
+    {
+      "y": 87,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=87)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 21324,
+      "materials": {
+        "2": 4473,
+        "3": 3875,
+        "4": 352,
+        "8": 816,
+        "9": 39,
+        "10": 511,
+        "11": 344,
+        "13": 184,
+        "14": 6,
+        "15": 71,
+        "16": 69,
+        "17": 6,
+        "18": 71,
+        "19": 69,
+        "22": 8354,
+        "27": 288,
+        "28": 623,
+        "29": 129,
+        "30": 369,
+        "32": 18,
+        "35": 91,
+        "36": 566
+      },
+      "file": "/data/layers/layer.87.json"
+    },
+    {
+      "y": 88,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=88)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 19866,
+      "materials": {
+        "2": 4561,
+        "3": 3753,
+        "4": 352,
+        "8": 720,
+        "9": 39,
+        "10": 513,
+        "11": 372,
+        "13": 184,
+        "14": 6,
+        "15": 66,
+        "16": 67,
+        "17": 6,
+        "18": 66,
+        "19": 67,
+        "20": 52,
+        "22": 7142,
+        "27": 260,
+        "28": 537,
+        "30": 393,
+        "32": 18,
+        "35": 89,
+        "36": 603
+      },
+      "file": "/data/layers/layer.88.json"
+    },
+    {
+      "y": 89,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=89)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 27279,
+      "materials": {
+        "2": 9531,
+        "3": 8073,
+        "4": 352,
+        "8": 576,
+        "10": 348,
+        "11": 392,
+        "13": 184,
+        "14": 6,
+        "15": 64,
+        "16": 62,
+        "17": 6,
+        "18": 64,
+        "19": 62,
+        "20": 52,
+        "22": 5365,
+        "27": 208,
+        "28": 842,
+        "30": 417,
+        "32": 9,
+        "35": 81,
+        "36": 585
+      },
+      "file": "/data/layers/layer.89.json"
+    },
+    {
+      "y": 90,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=90)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 22919,
+      "materials": {
+        "2": 3986,
+        "3": 4518,
+        "4": 384,
+        "7": 276,
+        "8": 552,
+        "9": 153,
+        "10": 348,
+        "11": 1660,
+        "13": 298,
+        "14": 1,
+        "15": 42,
+        "16": 42,
+        "17": 1,
+        "18": 42,
+        "19": 42,
+        "20": 52,
+        "22": 3895,
+        "27": 235,
+        "28": 1885,
+        "29": 1606,
+        "30": 2214,
+        "31": 120,
+        "32": 18,
+        "35": 65,
+        "36": 484
+      },
+      "file": "/data/layers/layer.90.json"
+    },
+    {
+      "y": 91,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=91)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 24593,
+      "materials": {
+        "2": 12492,
+        "3": 4750,
+        "4": 416,
+        "8": 432,
+        "10": 348,
+        "11": 540,
+        "13": 184,
+        "14": 42,
+        "15": 46,
+        "16": 44,
+        "17": 44,
+        "18": 46,
+        "19": 44,
+        "22": 3990,
+        "27": 175,
+        "28": 56,
+        "30": 451,
+        "32": 9,
+        "34": 2,
+        "35": 56,
+        "36": 426
+      },
+      "file": "/data/layers/layer.91.json"
+    },
+    {
+      "y": 92,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=92)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 27317,
+      "materials": {
+        "2": 3935,
+        "3": 6412,
+        "4": 448,
+        "7": 251,
+        "8": 384,
+        "10": 348,
+        "11": 773,
+        "13": 184,
+        "14": 42,
+        "15": 43,
+        "16": 41,
+        "17": 42,
+        "18": 43,
+        "19": 41,
+        "22": 4816,
+        "23": 253,
+        "24": 1347,
+        "27": 154,
+        "28": 420,
+        "29": 6318,
+        "30": 651,
+        "32": 18,
+        "35": 41,
+        "36": 312
+      },
+      "file": "/data/layers/layer.92.json"
+    },
+    {
+      "y": 93,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=93)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 16339,
+      "materials": {
+        "2": 3373,
+        "3": 5051,
+        "4": 688,
+        "8": 264,
+        "10": 348,
+        "11": 112,
+        "12": 112,
+        "13": 377,
+        "14": 45,
+        "15": 44,
+        "16": 44,
+        "17": 45,
+        "18": 44,
+        "19": 44,
+        "20": 24,
+        "22": 5206,
+        "27": 112,
+        "29": 129,
+        "32": 9,
+        "35": 35,
+        "36": 233
+      },
+      "file": "/data/layers/layer.93.json"
+    },
+    {
+      "y": 94,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=94)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 16476,
+      "materials": {
+        "2": 3552,
+        "3": 4269,
+        "4": 688,
+        "8": 216,
+        "11": 132,
+        "14": 51,
+        "15": 49,
+        "16": 49,
+        "17": 51,
+        "18": 49,
+        "19": 49,
+        "20": 12,
+        "22": 4858,
+        "27": 85,
+        "29": 2148,
+        "32": 18,
+        "35": 29,
+        "36": 171
+      },
+      "file": "/data/layers/layer.94.json"
+    },
+    {
+      "y": 95,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=95)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 14555,
+      "materials": {
+        "2": 2514,
+        "3": 5129,
+        "4": 688,
+        "8": 87,
+        "10": 187,
+        "14": 55,
+        "15": 52,
+        "16": 52,
+        "17": 55,
+        "18": 52,
+        "19": 52,
+        "20": 12,
+        "22": 4546,
+        "27": 66,
+        "28": 874,
+        "32": 9,
+        "35": 16,
+        "36": 109
+      },
+      "file": "/data/layers/layer.95.json"
+    },
+    {
+      "y": 96,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=96)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 13844,
+      "materials": {
+        "2": 3377,
+        "3": 3991,
+        "4": 688,
+        "8": 395,
+        "9": 153,
+        "10": 187,
+        "13": 114,
+        "14": 59,
+        "15": 59,
+        "16": 59,
+        "17": 59,
+        "18": 59,
+        "19": 59,
+        "20": 12,
+        "22": 4436,
+        "27": 35,
+        "32": 18,
+        "34": 2,
+        "35": 12,
+        "36": 70
+      },
+      "file": "/data/layers/layer.96.json"
+    },
+    {
+      "y": 97,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=97)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 13021,
+      "materials": {
+        "2": 3210,
+        "3": 3063,
+        "4": 688,
+        "8": 384,
+        "10": 535,
+        "14": 63,
+        "15": 62,
+        "16": 62,
+        "17": 63,
+        "18": 62,
+        "19": 62,
+        "20": 12,
+        "22": 4666,
+        "27": 26,
+        "32": 9,
+        "35": 7,
+        "36": 47
+      },
+      "file": "/data/layers/layer.97.json"
+    },
+    {
+      "y": 98,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=98)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 26661,
+      "materials": {
+        "2": 10468,
+        "3": 7470,
+        "8": 2902,
+        "10": 535,
+        "14": 67,
+        "15": 64,
+        "16": 64,
+        "17": 67,
+        "18": 64,
+        "19": 64,
+        "20": 12,
+        "22": 4826,
+        "27": 14,
+        "32": 18,
+        "35": 5,
+        "36": 21
+      },
+      "file": "/data/layers/layer.98.json"
+    },
+    {
+      "y": 99,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=99)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 15004,
+      "materials": {
+        "2": 1946,
+        "3": 1521,
+        "8": 5841,
+        "10": 535,
+        "14": 73,
+        "15": 70,
+        "16": 70,
+        "17": 73,
+        "18": 70,
+        "19": 70,
+        "20": 24,
+        "22": 4546,
+        "27": 10,
+        "29": 129,
+        "32": 9,
+        "35": 3,
+        "36": 14
+      },
+      "file": "/data/layers/layer.99.json"
+    },
+    {
+      "y": 100,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=100)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 14910,
+      "materials": {
+        "2": 2101,
+        "3": 1481,
+        "8": 5972,
+        "9": 5,
+        "10": 348,
+        "14": 77,
+        "15": 72,
+        "16": 72,
+        "17": 77,
+        "18": 72,
+        "19": 72,
+        "20": 24,
+        "22": 4500,
+        "27": 5,
+        "28": 2,
+        "32": 18,
+        "35": 2,
+        "36": 10
+      },
+      "file": "/data/layers/layer.100.json"
+    },
+    {
+      "y": 101,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=101)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 14985,
+      "materials": {
+        "2": 956,
+        "3": 1441,
+        "8": 5960,
+        "9": 5,
+        "10": 348,
+        "14": 83,
+        "15": 76,
+        "16": 76,
+        "17": 83,
+        "18": 76,
+        "19": 76,
+        "20": 12,
+        "22": 4666,
+        "27": 5,
+        "28": 1096,
+        "32": 18,
+        "34": 2,
+        "36": 6
+      },
+      "file": "/data/layers/layer.101.json"
+    },
+    {
+      "y": 102,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=102)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 21718,
+      "materials": {
+        "2": 9264,
+        "3": 1400,
+        "8": 5259,
+        "9": 158,
+        "10": 348,
+        "12": 12,
+        "13": 234,
+        "14": 85,
+        "15": 82,
+        "16": 82,
+        "17": 87,
+        "18": 82,
+        "19": 82,
+        "20": 12,
+        "22": 4520,
+        "27": 1,
+        "32": 9,
+        "36": 1
+      },
+      "file": "/data/layers/layer.102.json"
+    },
+    {
+      "y": 103,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=103)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 21149,
+      "materials": {
+        "2": 1980,
+        "3": 1347,
+        "8": 5105,
+        "9": 5,
+        "10": 348,
+        "11": 240,
+        "12": 49,
+        "14": 61,
+        "15": 58,
+        "16": 58,
+        "17": 61,
+        "18": 58,
+        "19": 58,
+        "20": 188,
+        "22": 4569,
+        "32": 6964
+      },
+      "file": "/data/layers/layer.103.json"
+    },
+    {
+      "y": 104,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=104)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 14742,
+      "materials": {
+        "2": 1957,
+        "3": 2788,
+        "8": 4789,
+        "9": 5,
+        "10": 348,
+        "14": 29,
+        "15": 29,
+        "16": 29,
+        "17": 29,
+        "18": 29,
+        "19": 29,
+        "22": 4672,
+        "32": 9
+      },
+      "file": "/data/layers/layer.104.json"
+    },
+    {
+      "y": 105,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=105)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 12303,
+      "materials": {
+        "2": 1916,
+        "3": 1278,
+        "8": 4034,
+        "9": 5,
+        "10": 348,
+        "14": 29,
+        "15": 29,
+        "16": 29,
+        "17": 29,
+        "18": 29,
+        "19": 29,
+        "22": 4399,
+        "28": 2,
+        "29": 129,
+        "32": 18
+      },
+      "file": "/data/layers/layer.105.json"
+    },
+    {
+      "y": 106,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=106)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 11436,
+      "materials": {
+        "2": 1698,
+        "3": 1285,
+        "8": 3217,
+        "9": 5,
+        "10": 535,
+        "12": 18,
+        "13": 178,
+        "14": 29,
+        "15": 29,
+        "16": 29,
+        "17": 29,
+        "18": 29,
+        "19": 29,
+        "22": 4315,
+        "32": 9,
+        "34": 2
+      },
+      "file": "/data/layers/layer.106.json"
+    },
+    {
+      "y": 107,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=107)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 10193,
+      "materials": {
+        "2": 1861,
+        "3": 1281,
+        "8": 2226,
+        "9": 5,
+        "10": 187,
+        "12": 12,
+        "14": 13,
+        "15": 15,
+        "16": 15,
+        "17": 13,
+        "18": 15,
+        "19": 15,
+        "22": 4517,
+        "32": 18
+      },
+      "file": "/data/layers/layer.107.json"
+    },
+    {
+      "y": 108,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=108)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 10101,
+      "materials": {
+        "2": 974,
+        "3": 1292,
+        "8": 1916,
+        "9": 158,
+        "10": 187,
+        "12": 12,
+        "13": 114,
+        "14": 13,
+        "15": 15,
+        "16": 15,
+        "17": 13,
+        "18": 15,
+        "19": 15,
+        "22": 4481,
+        "28": 872,
+        "32": 9
+      },
+      "file": "/data/layers/layer.108.json"
+    },
+    {
+      "y": 109,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=109)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 9270,
+      "materials": {
+        "2": 1821,
+        "3": 1303,
+        "8": 1239,
+        "9": 5,
+        "10": 187,
+        "14": 13,
+        "15": 12,
+        "16": 12,
+        "17": 13,
+        "18": 12,
+        "19": 12,
+        "20": 24,
+        "22": 4599,
+        "32": 18
+      },
+      "file": "/data/layers/layer.109.json"
+    },
+    {
+      "y": 110,
+      "label": "Riders Quadrant, Dragon Rotunda & Innenräume (Y=110)",
+      "zone": "dragon-rotunda",
+      "description": "Dragon Rotunda (6 Drachenstatuen), Mattenraum, Gathering Hall, Schlafsäle, Nordzitadelle & Appellplatz",
+      "totalBlocks": 8891,
+      "materials": {
+        "2": 1826,
+        "3": 1305,
+        "8": 834,
+        "9": 5,
+        "10": 187,
+        "14": 13,
+        "15": 13,
+        "16": 13,
+        "17": 13,
+        "18": 13,
+        "19": 13,
+        "20": 24,
+        "22": 4623,
+        "32": 9
+      },
+      "file": "/data/layers/layer.110.json"
+    },
+    {
+      "y": 111,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=111)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7692,
+      "materials": {
+        "2": 1141,
+        "3": 1113,
+        "8": 121,
+        "9": 161,
+        "10": 622,
+        "22": 4385,
+        "28": 2,
+        "29": 129,
+        "32": 18
+      },
+      "file": "/data/layers/layer.111.json"
+    },
+    {
+      "y": 112,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=112)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7348,
+      "materials": {
+        "2": 1141,
+        "3": 1073,
+        "8": 49,
+        "9": 161,
+        "10": 592,
+        "22": 4321,
+        "32": 9,
+        "34": 2
+      },
+      "file": "/data/layers/layer.112.json"
+    },
+    {
+      "y": 113,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=113)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7473,
+      "materials": {
+        "2": 45,
+        "3": 1079,
+        "9": 161,
+        "10": 577,
+        "20": 13,
+        "22": 4484,
+        "28": 1096,
+        "32": 18
+      },
+      "file": "/data/layers/layer.113.json"
+    },
+    {
+      "y": 114,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=114)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 14971,
+      "materials": {
+        "2": 8367,
+        "3": 1118,
+        "9": 314,
+        "10": 581,
+        "13": 114,
+        "20": 13,
+        "22": 4446,
+        "32": 18
+      },
+      "file": "/data/layers/layer.114.json"
+    },
+    {
+      "y": 115,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=115)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7221,
+      "materials": {
+        "2": 237,
+        "3": 1040,
+        "8": 886,
+        "9": 161,
+        "10": 529,
+        "20": 60,
+        "22": 4299,
+        "32": 9
+      },
+      "file": "/data/layers/layer.115.json"
+    },
+    {
+      "y": 116,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=116)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 8913,
+      "materials": {
+        "2": 228,
+        "3": 2511,
+        "8": 1078,
+        "9": 161,
+        "10": 484,
+        "22": 4431,
+        "28": 2,
+        "32": 18
+      },
+      "file": "/data/layers/layer.116.json"
+    },
+    {
+      "y": 117,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=117)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7618,
+      "materials": {
+        "2": 237,
+        "3": 1018,
+        "8": 1110,
+        "9": 161,
+        "10": 469,
+        "22": 4483,
+        "29": 129,
+        "32": 9,
+        "34": 2
+      },
+      "file": "/data/layers/layer.117.json"
+    },
+    {
+      "y": 118,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=118)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7493,
+      "materials": {
+        "2": 228,
+        "3": 1014,
+        "8": 966,
+        "9": 161,
+        "10": 430,
+        "22": 4676,
+        "32": 18
+      },
+      "file": "/data/layers/layer.118.json"
+    },
+    {
+      "y": 119,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=119)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7603,
+      "materials": {
+        "2": 225,
+        "3": 1012,
+        "8": 1262,
+        "9": 161,
+        "10": 364,
+        "22": 4570,
+        "32": 9
+      },
+      "file": "/data/layers/layer.119.json"
+    },
+    {
+      "y": 120,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=120)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7591,
+      "materials": {
+        "2": 192,
+        "3": 1008,
+        "8": 1372,
+        "9": 314,
+        "10": 318,
+        "13": 114,
+        "22": 4255,
+        "32": 18
+      },
+      "file": "/data/layers/layer.120.json"
+    },
+    {
+      "y": 121,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=121)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7267,
+      "materials": {
+        "2": 185,
+        "3": 1008,
+        "8": 1170,
+        "9": 161,
+        "10": 269,
+        "22": 4463,
+        "28": 2,
+        "32": 9
+      },
+      "file": "/data/layers/layer.121.json"
+    },
+    {
+      "y": 122,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=122)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7188,
+      "materials": {
+        "2": 152,
+        "3": 1006,
+        "8": 1170,
+        "9": 161,
+        "10": 196,
+        "22": 4483,
+        "32": 18,
+        "34": 2
+      },
+      "file": "/data/layers/layer.122.json"
+    },
+    {
+      "y": 123,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=123)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7187,
+      "materials": {
+        "2": 137,
+        "3": 1008,
+        "8": 1404,
+        "9": 161,
+        "10": 138,
+        "22": 4201,
+        "29": 129,
+        "32": 9
+      },
+      "file": "/data/layers/layer.123.json"
+    },
+    {
+      "y": 124,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=124)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7173,
+      "materials": {
+        "2": 113,
+        "3": 1008,
+        "8": 1404,
+        "9": 156,
+        "10": 60,
+        "12": 49,
+        "20": 148,
+        "22": 4217,
+        "32": 18
+      },
+      "file": "/data/layers/layer.124.json"
+    },
+    {
+      "y": 125,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=125)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 6495,
+      "materials": {
+        "2": 97,
+        "3": 1096,
+        "8": 1170,
+        "22": 4123,
+        "32": 9
+      },
+      "file": "/data/layers/layer.125.json"
+    },
+    {
+      "y": 126,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=126)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 6973,
+      "materials": {
+        "2": 73,
+        "3": 1096,
+        "8": 1404,
+        "9": 153,
+        "13": 114,
+        "22": 29,
+        "26": 4084,
+        "28": 2,
+        "32": 18
+      },
+      "file": "/data/layers/layer.126.json"
+    },
+    {
+      "y": 127,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=127)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 6756,
+      "materials": {
+        "2": 40,
+        "3": 104,
+        "8": 1404,
+        "22": 18,
+        "26": 4178,
+        "28": 992,
+        "32": 18,
+        "34": 2
+      },
+      "file": "/data/layers/layer.127.json"
+    },
+    {
+      "y": 128,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=128)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 7591,
+      "materials": {
+        "2": 45,
+        "3": 106,
+        "8": 819,
+        "22": 31,
+        "26": 4105,
+        "28": 2476,
+        "32": 9
+      },
+      "file": "/data/layers/layer.128.json"
+    },
+    {
+      "y": 129,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=129)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 6712,
+      "materials": {
+        "2": 36,
+        "3": 112,
+        "8": 2108,
+        "22": 22,
+        "26": 4287,
+        "29": 129,
+        "32": 18
+      },
+      "file": "/data/layers/layer.129.json"
+    },
+    {
+      "y": 130,
+      "label": "Rotunden-Kuppel, Nordburg-Türme & Gauntlet (Y=130)",
+      "zone": "dragon-rotunda",
+      "description": "Gerippte Rotunden-Kuppel mit Kronleuchter, Ecktürme der Nordburg & Gauntlet-Hindernisse",
+      "totalBlocks": 6768,
+      "materials": {
+        "2": 27,
+        "3": 108,
+        "8": 1940,
+        "22": 22,
+        "26": 4662,
+        "32": 9
+      },
+      "file": "/data/layers/layer.130.json"
+    },
+    {
+      "y": 131,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=131)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 34530,
+      "materials": {
+        "2": 9,
+        "3": 102,
+        "8": 1812,
+        "22": 29,
+        "26": 32558,
+        "28": 2,
+        "32": 18
+      },
+      "file": "/data/layers/layer.131.json"
+    },
+    {
+      "y": 132,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=132)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 33711,
+      "materials": {
+        "1": 5781,
+        "3": 89,
+        "8": 1516,
+        "9": 153,
+        "13": 114,
+        "20": 512,
+        "22": 17,
+        "26": 24547,
+        "32": 332,
+        "33": 650
+      },
+      "file": "/data/layers/layer.132.json"
+    },
+    {
+      "y": 133,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=133)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 5279,
+      "materials": {
+        "3": 90,
+        "8": 1260,
+        "14": 675,
+        "20": 107,
+        "22": 13,
+        "26": 3134
+      },
+      "file": "/data/layers/layer.133.json"
+    },
+    {
+      "y": 134,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=134)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 4975,
+      "materials": {
+        "3": 88,
+        "8": 1140,
+        "14": 567,
+        "20": 93,
+        "22": 13,
+        "26": 3074
+      },
+      "file": "/data/layers/layer.134.json"
+    },
+    {
+      "y": 135,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=135)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 4841,
+      "materials": {
+        "3": 88,
+        "8": 900,
+        "14": 576,
+        "20": 132,
+        "22": 10,
+        "26": 3006,
+        "29": 129
+      },
+      "file": "/data/layers/layer.135.json"
+    },
+    {
+      "y": 136,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=136)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 4432,
+      "materials": {
+        "3": 88,
+        "8": 692,
+        "14": 629,
+        "20": 83,
+        "22": 5,
+        "26": 2935
+      },
+      "file": "/data/layers/layer.136.json"
+    },
+    {
+      "y": 137,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=137)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 4389,
+      "materials": {
+        "3": 88,
+        "8": 692,
+        "14": 657,
+        "20": 83,
+        "22": 8,
+        "26": 2861
+      },
+      "file": "/data/layers/layer.137.json"
+    },
+    {
+      "y": 138,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=138)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 4199,
+      "materials": {
+        "3": 88,
+        "8": 524,
+        "9": 153,
+        "13": 107,
+        "14": 563,
+        "22": 4,
+        "26": 2760
+      },
+      "file": "/data/layers/layer.138.json"
+    },
+    {
+      "y": 139,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=139)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 3897,
+      "materials": {
+        "3": 88,
+        "8": 388,
+        "14": 603,
+        "22": 4,
+        "26": 2814
+      },
+      "file": "/data/layers/layer.139.json"
+    },
+    {
+      "y": 140,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=140)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 3810,
+      "materials": {
+        "3": 88,
+        "8": 260,
+        "14": 643,
+        "22": 5,
+        "26": 2814
+      },
+      "file": "/data/layers/layer.140.json"
+    },
+    {
+      "y": 141,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=141)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 3855,
+      "materials": {
+        "3": 88,
+        "8": 196,
+        "22": 9,
+        "26": 3441,
+        "29": 121
+      },
+      "file": "/data/layers/layer.141.json"
+    },
+    {
+      "y": 142,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=142)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 3607,
+      "materials": {
+        "3": 88,
+        "8": 116,
+        "22": 6,
+        "26": 3397
+      },
+      "file": "/data/layers/layer.142.json"
+    },
+    {
+      "y": 143,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=143)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 2615,
+      "materials": {
+        "3": 88,
+        "8": 52,
+        "22": 2,
+        "26": 2473
+      },
+      "file": "/data/layers/layer.143.json"
+    },
+    {
+      "y": 144,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=144)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 2720,
+      "materials": {
+        "3": 148,
+        "9": 106,
+        "13": 84,
+        "20": 85,
+        "22": 2,
+        "26": 2295
+      },
+      "file": "/data/layers/layer.144.json"
+    },
+    {
+      "y": 145,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=145)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 2121,
+      "materials": {
+        "20": 20,
+        "22": 2,
+        "26": 2099
+      },
+      "file": "/data/layers/layer.145.json"
+    },
+    {
+      "y": 146,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=146)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1939,
+      "materials": {
+        "20": 20,
+        "22": 1,
+        "26": 1918
+      },
+      "file": "/data/layers/layer.146.json"
+    },
+    {
+      "y": 147,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=147)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1798,
+      "materials": {
+        "26": 1798
+      },
+      "file": "/data/layers/layer.147.json"
+    },
+    {
+      "y": 148,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=148)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1715,
+      "materials": {
+        "26": 1715
+      },
+      "file": "/data/layers/layer.148.json"
+    },
+    {
+      "y": 149,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=149)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1624,
+      "materials": {
+        "26": 1624
+      },
+      "file": "/data/layers/layer.149.json"
+    },
+    {
+      "y": 150,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=150)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1444,
+      "materials": {
+        "26": 1444
+      },
+      "file": "/data/layers/layer.150.json"
+    },
+    {
+      "y": 151,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=151)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1213,
+      "materials": {
+        "26": 1213
+      },
+      "file": "/data/layers/layer.151.json"
+    },
+    {
+      "y": 152,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=152)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1041,
+      "materials": {
+        "26": 1041
+      },
+      "file": "/data/layers/layer.152.json"
+    },
+    {
+      "y": 153,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=153)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 946,
+      "materials": {
+        "26": 946
+      },
+      "file": "/data/layers/layer.153.json"
+    },
+    {
+      "y": 154,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=154)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 882,
+      "materials": {
+        "26": 882
+      },
+      "file": "/data/layers/layer.154.json"
+    },
+    {
+      "y": 155,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=155)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 2094,
+      "materials": {
+        "26": 2094
+      },
+      "file": "/data/layers/layer.155.json"
+    },
+    {
+      "y": 156,
+      "label": "Hochgebirge, Gauntlet-Gipfel & Flight Field (Y=156)",
+      "zone": "gauntlet-flight-field",
+      "description": "Schneebedeckte Alpengipfel, vertikaler Gauntlet-Kamin und Drachen-Flugfeld (Tairn & Andarna)",
+      "totalBlocks": 1750,
+      "materials": {
+        "26": 1750
+      },
+      "file": "/data/layers/layer.156.json"
+    }
+  ]
+}

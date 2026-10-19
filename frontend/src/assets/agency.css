@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg-main: #0f1014;      /* Tiefes Obsidian-Schwarz (Riders Quadrant) */
+  --bg-sidebar: #15171e;   /* Dunkles Basaltschwarz */
+  --bg-panel: #191c24;     /* Panels & Karten-Container */
+  --bg-panel-hover: #212530;
+  --accent: #e5a93c;       /* Drachengold / Andarna-Gold */
+  --accent-hover: #f3c66b;
+  --accent-blue: #60a5fa;  /* Signet-Blitzblau (Violet) */
+  --text-white: #f2f3f5;
+  --text-muted: #8b92a5;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(229, 169, 60, 0.35);
+  --grid-line: rgba(229, 169, 60, 0.035);
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-white);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Das dezente vertikale Raster im Hintergrund (Schema fubsi-site) */
+.bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-evenly;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bg-grid .line {
+  width: 1px;
+  height: 100%;
+  background-color: var(--grid-line);
+}
+
+@media (min-width: 768px) {
+  .bg-grid {
+    left: 90px;
+  }
+}

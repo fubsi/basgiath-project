@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  vue-app:
+    build: .
+    container_name: basgiath-site
+    ports:
+      - "4001:80"
+    restart: unless-stopped

@@ -1,0 +1,341 @@
+{
+  "version": "3.0.0",
+  "modpack": "All the Mods 11 (ATM 11 - MC 26.1.2)",
+  "blocks": {
+    "1": {
+      "id": "minecraft:deepslate_bricks",
+      "name": "Deepslate Bricks (Hof & Fundament)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#2f2f37",
+      "texture": "/textures/blocks/deepslate_bricks.png",
+      "roughness": 0.85
+    },
+    "2": {
+      "id": "chisel:blackstone_bricks_solid",
+      "name": "Chiseled Blackstone Bricks (Reiter-Festung)",
+      "mod": "Chisel",
+      "category": "Riders Quadrant",
+      "color": "#211f26",
+      "texture": "/textures/blocks/chisel_blackstone_bricks.png",
+      "roughness": 0.78
+    },
+    "3": {
+      "id": "minecraft:polished_blackstone_bricks",
+      "name": "Polished Blackstone Bricks (Pfeiler & Bögen)",
+      "mod": "Vanilla",
+      "category": "Riders Quadrant",
+      "color": "#27232c",
+      "texture": "/textures/blocks/polished_blackstone_bricks.png",
+      "roughness": 0.7
+    },
+    "4": {
+      "id": "chisel:andesite_bricks_solid",
+      "name": "Chiseled Andesite Bricks (Süd-Campus Fassade)",
+      "mod": "Chisel",
+      "category": "Süd-Campus (Hauptkomplex)",
+      "color": "#797d7f",
+      "texture": "/textures/blocks/chisel_andesite_bricks.png",
+      "roughness": 0.8
+    },
+    "5": {
+      "id": "minecraft:stone_bricks",
+      "name": "Stone Bricks (Infanterie & Wehrmauern)",
+      "mod": "Vanilla",
+      "category": "Süd-Campus (Hauptkomplex)",
+      "color": "#8a8d8f",
+      "texture": "/textures/blocks/stone_bricks.png",
+      "roughness": 0.8
+    },
+    "6": {
+      "id": "chisel:limestone_bricks_solid",
+      "name": "Chiseled Limestone Bricks (Heiler & Archive)",
+      "mod": "Chisel",
+      "category": "Healer & Scribe Quadrant",
+      "color": "#d4ccb8",
+      "texture": "/textures/blocks/chisel_limestone_bricks.png",
+      "roughness": 0.65
+    },
+    "7": {
+      "id": "chisel:bookshelf_historian",
+      "name": "Historian Archiv-Bücherregal",
+      "mod": "Chisel",
+      "category": "Innenausbau & Deko",
+      "color": "#8c5832",
+      "texture": "/textures/blocks/chisel_bookshelf_historian.png",
+      "roughness": 0.75
+    },
+    "8": {
+      "id": "mcwroofs:deepslate_tile_roof",
+      "name": "Deepslate Schieferdach (Macaw's Roofs)",
+      "mod": "Macaw's Roofs",
+      "category": "Dächer & Kuppel",
+      "color": "#383a45",
+      "texture": "/textures/blocks/deepslate_tiles.png",
+      "roughness": 0.6
+    },
+    "9": {
+      "id": "chisel:steel_bolted",
+      "name": "Bolted Steel Block (Kuppelrippen & Gitter)",
+      "mod": "Chisel",
+      "category": "Dächer & Kuppel",
+      "color": "#464b52",
+      "texture": "/textures/blocks/chisel_steel_bolted.png",
+      "roughness": 0.35
+    },
+    "10": {
+      "id": "chisel:steel_framed_stained_glass_black_diamond",
+      "name": "Stahlgerahmtes Bleiglas (Fenster & Kuppel)",
+      "mod": "Chisel",
+      "category": "Dächer & Kuppel",
+      "color": "#524b69",
+      "texture": "/textures/blocks/chisel_glass_black.png",
+      "roughness": 0.15,
+      "transparent": true
+    },
+    "11": {
+      "id": "chisel:dark_oak_planks_crude_paneling",
+      "name": "Dark Oak Bänke, Tafeln & Vertäfelung",
+      "mod": "Chisel",
+      "category": "Innenausbau & Deko",
+      "color": "#4a321f",
+      "texture": "/textures/blocks/chisel_dark_oak.png",
+      "roughness": 0.7
+    },
+    "12": {
+      "id": "forbidden_arcanus:arcane_crystal_block",
+      "name": "Arcane Crystal Magelight & Kronleuchter",
+      "mod": "Forbidden & Arcanus",
+      "category": "Innenausbau & Deko",
+      "color": "#ffd966",
+      "texture": "/textures/blocks/arcane_crystal_block.png",
+      "roughness": 0.1,
+      "emissive": true
+    },
+    "13": {
+      "id": "chisel:bronze_bolted",
+      "name": "Bolted Bronze Mechanik & Zahnräder",
+      "mod": "Chisel",
+      "category": "Magie & Technik",
+      "color": "#e0ab43",
+      "texture": "/textures/blocks/chisel_bronze_bolted.png",
+      "roughness": 0.3
+    },
+    "14": {
+      "id": "iceandfire:dragonscale_black",
+      "name": "Schwarze Drachenschuppen (Morningstail / Tairn)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#1c1a22",
+      "texture": "/textures/blocks/dragonscale_black.png",
+      "roughness": 0.4
+    },
+    "15": {
+      "id": "iceandfire:dragonscale_blue",
+      "name": "Blaue Drachenschuppen (Blauer Drache / Daggertail)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#2565a8",
+      "texture": "/textures/blocks/dragonscale_blue.png",
+      "roughness": 0.45
+    },
+    "16": {
+      "id": "iceandfire:dragonscale_green",
+      "name": "Grüne Drachenschuppen (Grüner Drache / Clubtail)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#2b8a57",
+      "texture": "/textures/blocks/dragonscale_green.png",
+      "roughness": 0.45
+    },
+    "17": {
+      "id": "iceandfire:dragonscale_red",
+      "name": "Rote Drachenschuppen (Roter Drache / Swordtail)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#a82831",
+      "texture": "/textures/blocks/dragonscale_red.png",
+      "roughness": 0.45
+    },
+    "18": {
+      "id": "iceandfire:dragonscale_copper",
+      "name": "Kupfer-Drachenschuppen (Oranger Drache / Scorpiontail)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#d96b38",
+      "texture": "/textures/blocks/dragonscale_copper.png",
+      "roughness": 0.45
+    },
+    "19": {
+      "id": "iceandfire:dragonscale_bronze",
+      "name": "Bronze-Drachenschuppen (Brauner Drache / Feathertail)",
+      "mod": "Ice and Fire",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#7d5536",
+      "texture": "/textures/blocks/dragonscale_bronze.png",
+      "roughness": 0.5
+    },
+    "20": {
+      "id": "chisel:gold_125",
+      "name": "Chiseled Gold Block (Andarna / Gold-Zierleisten)",
+      "mod": "Chisel",
+      "category": "Drachenstatuen (6 Arten)",
+      "color": "#e5b84b",
+      "texture": "/textures/blocks/chisel_gold.png",
+      "roughness": 0.35
+    },
+    "21": {
+      "id": "minecraft:blue_ice",
+      "name": "Reißender Schlucht-Fluss & Brunnenwasser",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#2b6ca3",
+      "texture": "/textures/blocks/water_river.png",
+      "roughness": 0.2,
+      "isTerrain": true
+    },
+    "22": {
+      "id": "minecraft:tuff",
+      "name": "Schlucht- & Klippenfels (Tuff)",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#6b6d65",
+      "texture": "/textures/blocks/tuff.png",
+      "roughness": 0.95,
+      "isTerrain": true
+    },
+    "23": {
+      "id": "regions_unexplored:alpha_grass_block",
+      "name": "Gebirgswiese, Hofgärten & Fields",
+      "mod": "Regions Unexplored",
+      "category": "Terrain & Gebirge",
+      "color": "#4f823d",
+      "texture": "/textures/blocks/grass_fields.png",
+      "roughness": 0.9,
+      "isTerrain": true
+    },
+    "24": {
+      "id": "framedblocks:framed_slope",
+      "name": "Framed Cracked Stone (Das Parapet & Wehrgänge)",
+      "mod": "FramedBlocks",
+      "category": "Festung & Fundament",
+      "color": "#98948a",
+      "texture": "/textures/blocks/parapet_stone.png",
+      "roughness": 0.6
+    },
+    "25": {
+      "id": "chisel:mossy_deepslate_bricks_large_rough",
+      "name": "Tiefer Schluchtfels (Mossy Deepslate)",
+      "mod": "Chisel",
+      "category": "Terrain & Gebirge",
+      "color": "#474d49",
+      "texture": "/textures/blocks/mossy_deepslate.png",
+      "roughness": 0.95,
+      "isTerrain": true
+    },
+    "26": {
+      "id": "minecraft:calcite",
+      "name": "Hochgebirgs-Kalkstein & Schneegipfel (Calcite)",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#dcdbd5",
+      "texture": "/textures/blocks/calcite.png",
+      "roughness": 0.85,
+      "isTerrain": true
+    },
+    "27": {
+      "id": "forbidden_arcanus:aurum_leaves",
+      "name": "Goldenes Aurum-Laub (Zierbäume & Wälder)",
+      "mod": "Forbidden & Arcanus",
+      "category": "Terrain & Gebirge",
+      "color": "#c49b3b",
+      "texture": "/textures/blocks/mountain_leaves.png",
+      "roughness": 0.9,
+      "isTerrain": true
+    },
+    "28": {
+      "id": "forbidden_arcanus:arcane_polished_darkstone",
+      "name": "Arcane Gold-Darkstone (Ziergesimse & Runenringe)",
+      "mod": "Forbidden & Arcanus",
+      "category": "Riders Quadrant",
+      "color": "#3d3326",
+      "texture": "/textures/blocks/arcane_polished_darkstone.png",
+      "roughness": 0.5
+    },
+    "29": {
+      "id": "minecraft:spruce_planks",
+      "name": "Spruce Planks (Geschossdecken, Tische & Stege)",
+      "mod": "Vanilla",
+      "category": "Innenausbau & Deko",
+      "color": "#6e5233",
+      "texture": "/textures/blocks/spruce_planks.png",
+      "roughness": 0.8
+    },
+    "30": {
+      "id": "minecraft:red_wool",
+      "name": "Roter Samt / Teppich, Betten & Kampfmatten",
+      "mod": "Vanilla",
+      "category": "Innenausbau & Deko",
+      "color": "#a12723",
+      "texture": "/textures/blocks/red_wool.png",
+      "roughness": 0.9
+    },
+    "31": {
+      "id": "minecraft:white_wool",
+      "name": "Krankenbetten & Kissen (Healer & Dorms)",
+      "mod": "Vanilla",
+      "category": "Innenausbau & Deko",
+      "color": "#e8eced",
+      "texture": "/textures/blocks/white_wool.png",
+      "roughness": 0.9
+    },
+    "32": {
+      "id": "minecraft:chiseled_stone_bricks",
+      "name": "Chiseled Stone Bricks (Hof-Ornamente & Säulen)",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#7b7e80",
+      "texture": "/textures/blocks/chiseled_stone_bricks.png",
+      "roughness": 0.75
+    },
+    "33": {
+      "id": "minecraft:cobblestone",
+      "name": "Gepflasterte Hofwege & Plätze",
+      "mod": "Vanilla",
+      "category": "Festung & Fundament",
+      "color": "#6c6c6c",
+      "texture": "/textures/blocks/cobblestone.png",
+      "roughness": 0.9
+    },
+    "34": {
+      "id": "minecraft:shroomlight",
+      "name": "Lodernde Feuerschalen (Braziers) & Kaminfeuer",
+      "mod": "Vanilla",
+      "category": "Innenausbau & Deko",
+      "color": "#f29746",
+      "texture": "/textures/blocks/shroomlight.png",
+      "roughness": 0.2,
+      "emissive": true
+    },
+    "35": {
+      "id": "minecraft:spruce_log",
+      "name": "Fichtenstamm & Dachgebälk",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#3b2714",
+      "texture": "/textures/blocks/spruce_log.png",
+      "roughness": 0.85,
+      "isTerrain": true
+    },
+    "36": {
+      "id": "minecraft:spruce_leaves",
+      "name": "Dichter Gebirgs-Nadelwald (Spruce Leaves)",
+      "mod": "Vanilla",
+      "category": "Terrain & Gebirge",
+      "color": "#2d4c2e",
+      "texture": "/textures/blocks/spruce_leaves.png",
+      "roughness": 0.9,
+      "isTerrain": true
+    }
+  }
+}

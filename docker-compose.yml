@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  basgiath-site:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: basgiath-site
+    ports:
+      - "4001:80"
+    restart: unless-stopped
