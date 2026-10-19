@@ -163,12 +163,14 @@ function onMouseMoveFreeLook(e) {
   euler.x = Math.max(-maxPitch, Math.min(maxPitch, euler.x));
   camera.quaternion.setFromEuler(euler);
 
-  // In pointer-lock mode, raycast from center crosshair (0, 0)
-  const now = performance.now();
-  if (now - lastRaycastTime > 35) {
-    lastRaycastTime = now;
-    pointerNDC.set(0, 0);
-    perform3DRaycast();
+  // In pointer-lock mode, only raycast when editMode is active and throttle to 75ms
+  if (state.editMode) {
+    const now = performance.now();
+    if (now - lastRaycastTime > 75) {
+      lastRaycastTime = now;
+      pointerNDC.set(0, 0);
+      perform3DRaycast();
+    }
   }
 }
 
@@ -362,8 +364,20 @@ function perform3DRaycast() {
 
 function onCanvasPointerMove(e) {
   if (isPointerLocked.value || !renderer?.domElement) return;
+
+  // If user is currently dragging to rotate/pan the camera, DO NOT raycast!
+  const isMouseDown = (e.buttons & 1) === 1 || (e.buttons & 2) === 2 || (e.buttons & 4) === 4;
+  if (isMouseDown) {
+    if (state.hoveredVoxel) {
+      state.hoveredVoxel = null;
+      update3DCursorVisuals();
+    }
+    return;
+  }
+
+  // Throttle raycasting to ~16 Hz (60ms) so mouse movement has 0 impact on frame rate
   const now = performance.now();
-  if (now - lastRaycastTime < 28) return;
+  if (now - lastRaycastTime < 60) return;
   lastRaycastTime = now;
 
   const rect = renderer.domElement.getBoundingClientRect();
